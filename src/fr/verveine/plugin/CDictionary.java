@@ -433,7 +433,6 @@ public class CDictionary extends Dictionary<IBinding> {
 		Function fmx = getEntityIfNotNull(Function.class, key);
 
 		if (fmx == null) {
-Trace.trace("*-* ensuring Function: " + sig);
 			fmx = super.ensureFamixFunction(key, name, sig, /*returnType*/null, parent, /*persistIt*/true);
 			fmx.setCyclomaticComplexity(1);
 			fmx.setNumberOfStatements(0);
