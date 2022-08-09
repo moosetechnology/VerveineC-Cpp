@@ -44,6 +44,7 @@ import eu.synectique.verveine.core.gen.famix.TypeAlias;
 import eu.synectique.verveine.core.gen.famix.UnknownVariable;
 import fr.verveine.utils.FileUtil;
 import fr.verveine.utils.StubBinding;
+import fr.verveine.utils.Trace;
 import fr.verveine.utils.Visibility;
 import fr.verveine.utils.WrongClassGuessException;
 
@@ -432,6 +433,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		Function fmx = getEntityIfNotNull(Function.class, key);
 
 		if (fmx == null) {
+Trace.trace("*-* ensuring Function: " + sig);
 			fmx = super.ensureFamixFunction(key, name, sig, /*returnType*/null, parent, /*persistIt*/true);
 			fmx.setCyclomaticComplexity(1);
 			fmx.setNumberOfStatements(0);

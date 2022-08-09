@@ -170,4 +170,10 @@ public class FunctionBinding implements IFunction {
 		return cdtBnd.takesVarArgs();
 	}
 
+	@Override
+	public boolean isNoDiscard() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
