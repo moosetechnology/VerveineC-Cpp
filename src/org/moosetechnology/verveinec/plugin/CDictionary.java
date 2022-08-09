@@ -42,7 +42,6 @@ import org.moosetechnology.verveineCore.gen.famix.TypeAlias;
 import org.moosetechnology.verveineCore.gen.famix.UnknownVariable;
 import org.moosetechnology.verveinec.utils.FileUtil;
 import org.moosetechnology.verveinec.utils.StubBinding;
-import org.moosetechnology.verveinec.utils.Trace;
 import org.moosetechnology.verveinec.utils.Visibility;
 import org.moosetechnology.verveinec.utils.WrongClassGuessException;
 
@@ -432,7 +431,6 @@ public class CDictionary extends Dictionary<IBinding> {
 		Function fmx = getEntityIfNotNull(Function.class, key);
 
 		if (fmx == null) {
-Trace.trace("*-* ensuring Function: " + sig);
 			fmx = super.ensureFamixFunction(key, name, sig, /*returnType*/null, parent, /*persistIt*/true);
 			fmx.setCyclomaticComplexity(1);
 			fmx.setNumberOfStatements(0);
