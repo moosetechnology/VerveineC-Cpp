@@ -2,9 +2,13 @@ package org.moosetechnology.verveinec.utils;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.runtime.CoreException;
 import org.moosetechnology.verveinec.plugin.CDictionary;
@@ -74,6 +78,63 @@ public class NameResolver {
 			bnd = index.findBinding(name);
 		} catch (CoreException e) {
 			e.printStackTrace();
+		}
+
+		return bnd;
+	}
+
+	public IBinding getFunctionBinding(IASTFunctionDeclarator node, IASTName name) {
+		IBinding bnd;
+		
+		if (name == null) {
+			return null;
+		}
+
+		bnd = getBinding(name);   // generic getBinding method
+
+		if (bnd == null) {
+			// assuming we did not find the binding because it is a function/method and we need its signature
+			ContainerEntity parent = null;
+			String behavName = SignatureBuilderVisitor.signatureFromAST(node);
+
+			// need to decide whether it is a method or a function
+			QualifiedName qualName = new QualifiedName(name);
+			if (qualName.isFullyQualified()) {
+				// assume that a fully qualified BehaviouralEntity name is a method by default 
+				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.verveineCore.gen.famix.Class.class);
+			}
+			else {
+				parent = context.getTopCppNamespace();
+			}
+
+			if (parent instanceof org.moosetechnology.verveineCore.gen.famix.Class) {
+				bnd = mkStubKey( behavName, parent, Method.class);
+			}
+			else {
+				bnd = mkStubKey(behavName, (ContainerEntity) parent, Function.class);
+			}
+		}
+		else {
+			if ( ! (bnd instanceof IFunction) ) {
+				System.err.println("OUUUPS *** FunctionDeclarator:"+node.getRawSignature()+ " has CDT binding:="+bnd.getClass());
+			}
+			else {
+				int nodeNParams = 0;
+				int bndNParams = ((IFunction)bnd).getParameters().length;
+				if (node instanceof IASTStandardFunctionDeclarator) {
+					IASTParameterDeclaration[] paramDecls = ((IASTStandardFunctionDeclarator)node).getParameters();
+					nodeNParams = paramDecls.length;
+					if ( (nodeNParams == 1) && paramDecls[0].getRawSignature().equals("void")) {
+						nodeNParams = 0;
+					}
+				}
+				else if (node instanceof ICASTKnRFunctionDeclarator) {
+					nodeNParams = ((ICASTKnRFunctionDeclarator)node).getParameterNames().length;
+				}
+				if ( bndNParams != nodeNParams) {
+					System.err.println("OUUUPS *** CDT binding has "+bndNParams+" parameter(s) for:"+node.getRawSignature()+ " and FunctionDeclarator has "+nodeNParams);
+				}
+			}
 		}
 
 		return bnd;

@@ -465,7 +465,8 @@ public class VerveineCParser  extends VerveineParser {
 		}
 
 		for ( ; i < args.length; i++) {
-			userProjectDir = args[i];
+			// humm, possible bug here if there are more than 1 remaining args, only the last one is kept
+			setUserProjectDir( args[i]);
 			
 			if (autoinclude) {
 				for (String inc : FileUtil.gatherIncludeDirs(args[i])) {
@@ -473,6 +474,12 @@ public class VerveineCParser  extends VerveineParser {
 				}
 			}
 		}
+	}
+
+	/** For testing purposes
+	 */
+	public void setUserProjectDir(String dir) {
+		userProjectDir = dir;
 	}
 
 	private void parseMacroDefinition(String arg) {

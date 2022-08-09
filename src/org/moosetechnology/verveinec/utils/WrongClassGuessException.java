@@ -16,20 +16,28 @@ public class WrongClassGuessException extends Exception {
 	}
 
 	static public <T extends NamedEntity> void reportWrongClassGuess(Class<T> clazz, NamedEntity found) {
-		System.err.print(("Exception: wrong guessed type '"+found.getClass().getSimpleName()+"' instead of expected type '"+clazz.getSimpleName() + "' for entity "+found.getName()));
+		System.err.print("Exception: wrong guessed type '"
+				+ found.getClass().getSimpleName()
+				+ "' instead of expected type '"
+				+ clazz.getSimpleName()
+				+ "' for entity `"
+				+ found.getName()
+				+ "'");
 		if (found.getSourceAnchor() != null) {
-			System.err.println(" @" + found.getSourceAnchor());
+			System.err.println(" @" + found.getSourceAnchor().toString());
 		}
 		else {
 			System.err.println();
 		}
-
-		for (StackTraceElement stackEntry : new Throwable().getStackTrace()) {
+		
+		/*for (StackTraceElement stackEntry : new Throwable().getStackTrace()) {
 			if (! (stackEntry.getMethodName().equals("reportWrongClassGuess") || stackEntry.getMethodName().startsWith("getEntry")) ) {
 				System.err.println(" From parser code: " + stackEntry.toString());
 				break;
 			}
-		}
+		}*/
+		new Throwable().printStackTrace();
+		
 	}
  
 }
