@@ -5,94 +5,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import ch.akuhn.fame.Repository;
 import eu.synectique.verveine.core.gen.famix.Access;
 import eu.synectique.verveine.core.gen.famix.Attribute;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.Entity;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
 import eu.synectique.verveine.core.gen.famix.Invocation;
 import eu.synectique.verveine.core.gen.famix.Method;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import eu.synectique.verveine.core.gen.famix.UnknownBehaviouralEntity;
-import fr.verveine.plugin.VerveineCParser;
 
-class BookShopTest {
-	
-	protected static VerveineCParser parser;
-	protected static Repository repo;
+class BookShopTest extends AbstractTest {
 
-	/** All Entity of class <code>clazz</code> in the repository of the parser
-	 */
-    protected <T extends Entity> Collection<T> entitiesOfType(Class<T> clazz) {
-        return repo.all(clazz);
-    }
-
-	/** All NamedEntity with the right name
-	 */
-	protected Collection<NamedEntity> entitiesNamed( String name) {
-        return entitiesNamed( NamedEntity.class, name);
-    }
-
-	/** All NamedEntity of class <code>clazz</code> with the right name
-	 */
-    protected <T extends NamedEntity> Collection<T> entitiesNamed( Class<T> clazz, String name) {
-        List<T> ret = new LinkedList<>();
-
-        for (T fmx : entitiesOfType(clazz)) {
-            if (fmx.getName().equals(name)) {
-                ret.add(fmx);
-            }
-        }
-
-        return ret;
-    }
-
-	/** First NamedEntity of class <code>clazz</code> with the right name
-	 */
-    protected <T extends NamedEntity> T entityNamed(Class<T> clazz, String name) {
-        for (T fmx : entitiesOfType(clazz)) {
-            if (fmx.getName().equals(name)) {
-                return fmx;
-            }
-        }
-    	
-    	return null;
-    }
-
-	/** First Object in given collection or <code>null</code> if the collection is empty
-	 */
-   protected <T> T first(Collection<T> collection) {
-    	Iterator<T> iter = collection.iterator();
-    	if (iter.hasNext()) {
-    		return iter.next();
-    	}
-    	else {
-    		return null;
-    	}
-    }
-    
 	/* parsing only once for all tests
 	 */
 	@BeforeAll
 	public static void setup() {
-		parser = new VerveineCParser();
+		newParser();
+
 		parser.setUserProjectDir("./test_src/BookShopExample");
-		repo = parser.getFamixRepo();
 		parser.parse();
 	}
 
 	@Test
-	void testNumberOfEntities() {		
+	public void testNumberOfEntities() {		
 		assertEquals(
 				6,
 				entitiesOfType(GlobalVariable.class).size());		
@@ -125,7 +63,7 @@ class BookShopTest {
 	}
 
 	@Test
-	void testFunctionsInvocations() {
+	public void testFunctionsInvocations() {
 		Function fct = entityNamed(Function.class, "main");
 		assertNotNull(fct);
 		assertEquals(7, fct.getOutgoingInvocations().size());
@@ -144,7 +82,7 @@ class BookShopTest {
 	}
 
 	@Test
-	void testMethodsInvocations() {
+	public void testMethodsInvocations() {
 		Function fct = entityNamed(Function.class, "sal_menu");
 		assertNotNull(fct);
 		assertEquals(2, fct.getOutgoingInvocations().size());
@@ -159,7 +97,7 @@ class BookShopTest {
 	}
 
 	@Test
-	void testAccesses() {
+	public void testAccesses() {
 		// TODO access are not extracted as they should
 		// there should be only 4 access in main(), all to global variable conn
 		Function fct = entityNamed(Function.class, "main");
