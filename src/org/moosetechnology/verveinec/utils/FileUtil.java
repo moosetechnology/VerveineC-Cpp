@@ -145,6 +145,10 @@ public class FileUtil {
 				source = new IncludeWithHExtensionFilterStream(source);
 			}
 
+			if (file.exists()) {
+				// make sure we have a clean version of the file
+				file.delete(/*addHExtension*/false, Constants.NULL_PROGRESS_MONITOR);
+			}
 			file.create(source, /*force*/true, Constants.NULL_PROGRESS_MONITOR);
 			source.close();
 
