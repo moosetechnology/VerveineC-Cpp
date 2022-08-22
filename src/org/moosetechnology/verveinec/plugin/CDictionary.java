@@ -42,6 +42,7 @@ import org.moosetechnology.verveineCore.gen.famix.TypeAlias;
 import org.moosetechnology.verveineCore.gen.famix.UnknownVariable;
 import org.moosetechnology.verveinec.utils.FileUtil;
 import org.moosetechnology.verveinec.utils.StubBinding;
+import org.moosetechnology.verveinec.utils.Trace;
 import org.moosetechnology.verveinec.utils.Visibility;
 import org.moosetechnology.verveinec.utils.WrongClassGuessException;
 
@@ -342,7 +343,6 @@ public class CDictionary extends Dictionary<IBinding> {
 
 	public TypeAlias ensureFamixTypeAlias(IBinding key, String name, ContainerEntity owner) {
 		TypeAlias fmx;
-
 		fmx = super.ensureFamixEntity(TypeAlias.class, key, name, /*persistIt*/true);
 		fmx.setContainer(owner);
 
@@ -360,6 +360,7 @@ public class CDictionary extends Dictionary<IBinding> {
 	}
 
 	public org.moosetechnology.verveineCore.gen.famix.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner) {
+
 		org.moosetechnology.verveineCore.gen.famix.Class fmx = getEntityIfNotNull(org.moosetechnology.verveineCore.gen.famix.Class.class, key);
 
 		if (fmx == null) {

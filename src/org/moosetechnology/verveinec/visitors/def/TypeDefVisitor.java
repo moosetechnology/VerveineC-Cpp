@@ -15,7 +15,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
-
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTElaboratedTypeSpecifier;
 import org.moosetechnology.verveineCore.gen.famix.Class;
 import org.moosetechnology.verveineCore.gen.famix.ContainerEntity;
 import org.moosetechnology.verveineCore.gen.famix.NamedEntity;
@@ -24,6 +25,7 @@ import org.moosetechnology.verveineCore.gen.famix.Type;
 import org.moosetechnology.verveineCore.gen.famix.TypeAlias;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.utils.FileUtil;
+import org.moosetechnology.verveinec.utils.Trace;
 import org.moosetechnology.verveinec.visitors.AbstractVisitor;
 
 public class TypeDefVisitor extends AbstractVisitor {
@@ -32,6 +34,14 @@ public class TypeDefVisitor extends AbstractVisitor {
 	 * The file directory being visited at any given time
 	 */
 	protected Package currentPackage;
+
+	public Package getCurrentPackage() {
+		return currentPackage;
+	}
+
+	public void setCurrentPackage(Package currentPackage) {
+		this.currentPackage = currentPackage;
+	}
 
 	/**
 	 * used between {@link #visit(ICPPASTTemplateDeclaration)} and {@link #visit(ICPPASTCompositeTypeSpecifier)}
@@ -185,7 +195,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 	}
 
 	/**
-	 * a class declaration such as "class XYZ;"
+	 * a class declaration such as "class XYZ;" but also structs
 	 */
 	@Override
 	protected int visit(IASTElaboratedTypeSpecifier node) {

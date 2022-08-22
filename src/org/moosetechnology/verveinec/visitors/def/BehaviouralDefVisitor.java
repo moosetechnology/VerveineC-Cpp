@@ -30,8 +30,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.moosetechnology.verveineCore.Dictionary;
 import org.moosetechnology.verveineCore.gen.famix.BehaviouralEntity;
 import org.moosetechnology.verveineCore.gen.famix.Method;
 import org.moosetechnology.verveineCore.gen.famix.Parameter;
@@ -334,7 +332,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 				((Method)fmx).setKind(CDictionary.DESTRUCTOR_KIND_MARKER);
 			}
 			if (resolver.isConstructorBinding(nodeBnd)) {
-				((Method)fmx).setKind(Dictionary.CONSTRUCTOR_KIND_MARKER);
+				((Method)fmx).setKind(CDictionary.CONSTRUCTOR_KIND_MARKER);
 			}
 		}
 		catch (ClassCastException e) {

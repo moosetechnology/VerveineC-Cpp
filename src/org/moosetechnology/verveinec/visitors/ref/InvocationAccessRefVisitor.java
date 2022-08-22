@@ -21,8 +21,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.moosetechnology.verveineCore.Dictionary;
 import org.moosetechnology.verveineCore.gen.famix.Access;
 import org.moosetechnology.verveineCore.gen.famix.Association;
 import org.moosetechnology.verveineCore.gen.famix.Attribute;
@@ -316,10 +314,10 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 
 		if ( node.getKind() == ICPPASTLiteralExpression.lk_this ) {
 			if (getContext().topType() != null) {
-				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(Dictionary.SELF_NAME, /*type*/getContext().topType(), /*owner*/getContext().topBehaviouralEntity()));
+				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(CDictionary.SELF_NAME, /*type*/getContext().topType(), /*owner*/getContext().topBehaviouralEntity()));
 			}
 			else if (getContext().topMethod() != null) {
-				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(Dictionary.SELF_NAME, /*type*/getContext().topMethod().getParentType(), /*owner*/getContext().topBehaviouralEntity()));
+				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(CDictionary.SELF_NAME, /*type*/getContext().topMethod().getParentType(), /*owner*/getContext().topBehaviouralEntity()));
 			}
 			if (returnedEntity != null) {
 				dico.addSourceAnchor(returnedEntity, filename, node.getFileLocation());
