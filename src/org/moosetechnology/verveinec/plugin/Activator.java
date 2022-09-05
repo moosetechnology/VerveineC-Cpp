@@ -12,7 +12,6 @@ public class Activator implements BundleActivator {
 	}
 
 	public void start(BundleContext bundleContext) throws Exception {
-		System.out.println("VerveineC Activator started");
 		Activator.context = bundleContext;
 	}
 

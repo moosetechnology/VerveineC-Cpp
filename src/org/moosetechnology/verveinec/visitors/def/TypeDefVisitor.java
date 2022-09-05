@@ -1,18 +1,23 @@
 package org.moosetechnology.verveinec.visitors.def;
 
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
@@ -94,28 +99,28 @@ public class TypeDefVisitor extends AbstractVisitor {
 		Type concreteType = null;
 
 		if (declarationIsTypedef(node)) {
-			boolean functionPointerTypedef = false;
+//			boolean functionPointerTypedef = false;
 			String tmpFilename;
 
-			if (isFunctionPointerTypedef(node)) {
-				concreteType = null;  // TODO create a FunctionPointer special type?
-				functionPointerTypedef = true;
-			}
-			else {
+//			if (isFunctionPointerTypedef(node)) {
+//				concreteType = null;  // TODO create a FunctionPointer special type?
+//				functionPointerTypedef = true;
+//			}
+//			else {
 				returnedEntity = null;
 				node.getDeclSpecifier().accept(this);
 				concreteType = (Type) returnedEntity;
-			}
+//			}
 
 			for (IASTDeclarator declarator : node.getDeclarators()) {
 			// this is a typedef, so the declarator(s) should be FAMIXType(s)
 
-				if (functionPointerTypedef) {
-					nodeName = declarator.getNestedDeclarator().getName();
-				}
-				else {
+//				if (functionPointerTypedef) {
+//					nodeName = declarator.getNestedDeclarator().getName();
+//				}
+//				else {
 					nodeName = declarator.getName();
-				}
+//				}
 
 				nodeBnd = resolver.getBinding(nodeName);
 
@@ -134,7 +139,12 @@ public class TypeDefVisitor extends AbstractVisitor {
 				 Instead, we should recompute a file location based on the current processed ast node.*/
 				tmpFilename = FileUtil.localized( node.getFileLocation().getFileName(), rootFolder);
 				dico.addSourceAnchor(aliasType, tmpFilename, node.getFileLocation());
-				declarator.accept(this);
+				
+				// if it is a function pointer typedef, don't process the function definition any further
+				// is there any other cases where we wouldn't want to do it?
+				if (! isFunctionPointerTypedef(node)) {
+					declarator.accept(this);
+				}
 			}
 			
 			return PROCESS_SKIP;  // typedef already handled
@@ -231,11 +241,12 @@ public class TypeDefVisitor extends AbstractVisitor {
 		return PROCESS_SKIP;
 	}
 
-	/*
-	 * Overriding just to turn off definitionOfATemplate in case this is a method template
-	 */
 	@Override
-	protected int visit(ICPPASTFunctionDeclarator node) {
+	protected int visit(IASTFunctionDeclarator node) {
+		if (isFunctionPointerTypedef(node)) {
+			createFunctionPointerType(node);
+		}
+		// turn off definitionOfATemplate in case this is a method template
 		definitionOfATemplate = false;
 
 		return PROCESS_SKIP;
@@ -274,7 +285,19 @@ public class TypeDefVisitor extends AbstractVisitor {
 
 	
 	// ---- UTILITIES ----
-	
+
+	private Type createFunctionPointerType(IASTFunctionDeclarator node) {
+		nodeName = node.getNestedDeclarator().getName();
+		nodeBnd = resolver.getBinding(nodeName);
+
+		if (nodeBnd == null) {
+			// create one anyway, assume this is a Type
+			nodeBnd = resolver.mkStubKey(nodeName, Type.class);
+		}
+
+		return dico.ensureFamixType(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
+	}
+
 	/**
 	 * Common code to create a class that can be a template.
 	 * Used for ICPPASTCompositeTypeSpecifier, ICASTCompositeTypeSpecifier, ICPPASTElaboratedTypeSpecifier
@@ -327,11 +350,19 @@ public class TypeDefVisitor extends AbstractVisitor {
 		return fmx;
 	}
 
-	protected boolean isFunctionPointerTypedef(IASTSimpleDeclaration node) {
-		return (node.getDeclarators().length>0) &&                       // should always be the case, no?
-				(node.getDeclarators()[0].getNestedDeclarator()!=null);
+	protected boolean isFunctionPointerTypedef(IASTNode node) {
+		if (node == null) {
+			return false;
+		}
+		if (! (node instanceof IASTSimpleDeclaration) ) {
+			return false;
+		}
+		
+		IASTDeclarator[] declarators = ((IASTSimpleDeclaration)node).getDeclarators();
+		return (declarators.length>0) &&                       // should always be the case, no?
+				(declarators[0].getNestedDeclarator()!=null);
 	}
-
+	
 	private boolean isCppFriendDeclaration(IASTElaboratedTypeSpecifier node) {
 		if (node instanceof ICPPASTElaboratedTypeSpecifier) {
 			return ((ICPPASTDeclSpecifier) node).isFriend();
