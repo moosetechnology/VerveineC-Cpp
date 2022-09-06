@@ -29,7 +29,7 @@ class GameEngineBugsTest extends AbstractTest {
 	}
 
 	@Test
-	void testUBreakIteratorAlias() {		
+	void testStructAlias() {		
 		TypeAlias typ = entityNamed(TypeAlias.class, "UBreakIterator");
 		assertNotNull(typ);
 	}

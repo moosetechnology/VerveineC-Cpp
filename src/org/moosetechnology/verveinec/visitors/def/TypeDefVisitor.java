@@ -70,7 +70,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 	@Override
 	public void visit(ICContainer elt) {
 
-		enterPath(elt);
+		visitInternal(elt);
 		if (nodeBnd != null) {
 			currentPackage = dico.getEntityByKey(Package.class, nodeBnd);
 		}
@@ -78,12 +78,12 @@ public class TypeDefVisitor extends AbstractVisitor {
 			currentPackage = null;
 		}
 
-		super.visit(elt);                                // visit children
+		super.visit(elt);
 
 		if (currentPackage != null) {
 			currentPackage = currentPackage.getParentPackage();    // back to parent package
 		}
-		leavePath(elt);
+		leave(elt);
 	}
 
 	@Override
@@ -159,12 +159,21 @@ public class TypeDefVisitor extends AbstractVisitor {
 		fmx.setIsStub(false);
 
 		this.getContext().push(fmx);
-		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
+
+		/*
+		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive* /true)) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		*/
 
-		return PROCESS_SKIP;
+		return PROCESS_CONTINUE;
+	}
+	
+	@Override
+	protected int leave(ICPPASTCompositeTypeSpecifier node) {
+		returnedEntity = getContext().pop();
+		
+		return PROCESS_CONTINUE;
 	}
 
 	/** Visiting a struct in C

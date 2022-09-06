@@ -35,8 +35,7 @@ import org.moosetechnology.verveineCore.gen.famix.SourcedEntity;
 /**
  * Visitor that gets the {@link #nodeBnd} and {@link #nodeName} for the main entities.
  * It manages the context stack, the current path, and the current filename.
- * It also tries to recover the FAMIX entities from the IBindings and
- * it has a {@link #resolver} to further help recovering FAMIX entities from their name.
+ * It uses a {@link #resolver} to recover the binding of the nodes
  */
 public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 
@@ -101,7 +100,12 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 		currentPath = new Path("");
 	}
 
-	protected void enterPath(ICContainer elt) {
+	/** Basically this is a <code>visit(ICContainer)</code> method, but we cannot visit its children (as done in super class) here,
+	 * so we put it under a different name so that visitors can call it easily.
+	 * It is only needed in PackageDefVisitor and TypeDefVisitor as they are the only one that may define entities that are direct
+	 * children of packages
+	 */
+	protected void visitInternal(ICContainer elt) {
 		currentPath = (Path) currentPath.append(elt.getElementName());
 
 	    if (currentPath.segmentCount() > 2) {  // i.e. skip the project directories: tempProj/src
@@ -112,7 +116,7 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 	    }
 	}
 
-	protected void leavePath(ICContainer elt) {
+	protected void leave(ICContainer elt) {
 		currentPath = (Path) currentPath.removeLastSegments(1);
 	}
 

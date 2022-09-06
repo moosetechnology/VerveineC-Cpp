@@ -40,7 +40,7 @@ class BookShopTest extends AbstractTest {
 	}
 
 	@Test
-	public void testNumberOfEntities() {		
+	public void testNumberOfEntities() {	
 		assertEquals(
 				6,
 				entitiesOfType(GlobalVariable.class).size());		

@@ -43,7 +43,6 @@ import org.moosetechnology.verveineCore.gen.famix.Type;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.utils.QualifiedName;
 import org.moosetechnology.verveinec.utils.StubBinding;
-import org.moosetechnology.verveinec.utils.Trace;
 import org.moosetechnology.verveinec.visitors.AbstractVisitor;
 
 /**

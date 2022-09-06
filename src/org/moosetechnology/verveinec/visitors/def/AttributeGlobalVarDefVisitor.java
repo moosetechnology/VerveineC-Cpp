@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.index.IIndex;
-
+import org.eclipse.cdt.core.model.ICContainer;
 import org.moosetechnology.verveineCore.gen.famix.Attribute;
 import org.moosetechnology.verveineCore.gen.famix.ContainerEntity;
 import org.moosetechnology.verveineCore.gen.famix.Enum;
@@ -46,6 +46,10 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 
 	protected String msgTrace() {
 		return "creating attributes and struct members";
+	}
+
+	public void visit(ICContainer cont) {
+		visitChildren(cont);
 	}
 
 	/*

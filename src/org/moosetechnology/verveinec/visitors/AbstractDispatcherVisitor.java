@@ -145,6 +145,19 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 		}
 	}
 
+	/** To visit children of ICElements (see ICElementVisitor) because it is not implemented by CDT
+	 * ASTVisitor implements its own mechanism for this so we only need to return the value PROCESS_CONTINUE
+	 * and the CDT ASTVisitor will ensure children are visited
+	 */
+	protected void visitChildren(IParent elt) {
+		try {
+			for (ICElement child : elt.getChildren()) {
+				child.accept(this);
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
 
 	// CDT VISITING METODS ON AST (ASTVisitor) =============================================================================================
 
@@ -216,7 +229,7 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 	}
 
 	/* new visit method for "true IASTDeclarators" (e.g. attributes of struct in C)
-	 * this avoids surcharging visit(IASTDeclarator node) in the sub-classes of AbstractDispatcherVisitor
+	 * this avoids overriding visit(IASTDeclarator node) in the sub-classes of AbstractDispatcherVisitor
 	 * which would hide the dispatch done here
 	 */
 	protected int visitInternal(IASTDeclarator node) {
@@ -304,26 +317,11 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 	}
 
 	@Override
-	public int visit(ICPPASTTemplateParameter node) {
-		return super.visit(node);
-	}
-
-	@Override
 	public int visit(IASTParameterDeclaration node) {
 		if (node instanceof ICPPASTParameterDeclaration) {
 			return visit((ICPPASTParameterDeclaration)node);
 		}
 		// else is a valid choice (presumably for C language)
-		return super.visit(node);
-	}
-
-	@Override
-	public int visit(ICPPASTBaseSpecifier node) {
-		return super.visit(node);
-	}
-
-	@Override
-	public int visit(IASTTypeId node) {
 		return super.visit(node);
 	}
 
@@ -335,7 +333,6 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 	}
 
 	protected int visit(ICPPASTFunctionDefinition node) {
-//		Trace.trace("AbstractDispatcherVisitor.visit(ICPPASTFunctionDefinition " + node.getDeclarator().getRawSignature());
 		return this.visit( (IASTFunctionDefinition)node);
 	}
 
@@ -488,16 +485,279 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 		return PROCESS_CONTINUE;
 	}
 
-	// UTILITIES ======================================================================================================
+	// CDT LEAVE METODS ON AST (ASTVisitor) =============================================================================================
+	
+	@Override
+	public int leave(IASTName node) {
+		if (node instanceof ICPPASTTemplateId) {
+			return leave((ICPPASTTemplateId)node);
+		}
 
-	protected void visitChildren(IParent elt) {
-		try {
-			for (ICElement child : elt.getChildren()) {
-				child.accept(this);
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
+		return super.leave(node);
+	}
+
+	/* similar to visit(IASTDeclaration) */
+	@Override
+	public int leave(IASTDeclaration node) {
+		
+		if (node instanceof IASTSimpleDeclaration) {
+			return leave((IASTSimpleDeclaration)node);
+		}
+		else if (node instanceof ICPPASTFunctionDefinition) {
+			return leave((ICPPASTFunctionDefinition)node);
+		}
+		else if (node instanceof IASTFunctionDefinition) {
+			return leave((IASTFunctionDefinition)node);
+		}
+		else if (node instanceof ICPPASTTemplateDeclaration) {
+			return leave((ICPPASTTemplateDeclaration)node);
+		}
+		else if (node instanceof ICPPASTVisibilityLabel) {
+			return leave((ICPPASTVisibilityLabel)node);
+		}
+	
+		return super.leave(node);
+	}
+
+	/* similar to visit(IASTDeclarator) */
+	@Override
+	public int leave(IASTDeclarator node) {
+
+		if (node instanceof ICPPASTFunctionDeclarator) {
+			return this.leave((ICPPASTFunctionDeclarator)node);
+		}
+		else if (node instanceof IASTStandardFunctionDeclarator) {
+			return this.leave((IASTStandardFunctionDeclarator)node);
+		}
+		else if (node instanceof ICASTKnRFunctionDeclarator) {
+			return this.leave((ICASTKnRFunctionDeclarator)node);
+		}
+		else if (node instanceof IASTFunctionDeclarator) {
+			return this.leave((IASTFunctionDeclarator)node);
+		}
+		else if (node instanceof IASTFieldDeclarator) {
+			return this.leave((IASTFieldDeclarator)node);
+		}
+  		else {
+			return PROCESS_CONTINUE;
 		}
 	}
+
+	/* similar to visit(IASTDeclSpecifier) */
+	@Override
+	public int leave(IASTDeclSpecifier node) {
+		if (node instanceof ICPPASTCompositeTypeSpecifier) {
+			return this.leave((ICPPASTCompositeTypeSpecifier)node);
+		}
+		else if (node instanceof ICASTCompositeTypeSpecifier) {
+			return this.leave((ICASTCompositeTypeSpecifier)node);
+		}
+		else if (node instanceof IASTElaboratedTypeSpecifier) {
+			return this.leave((IASTElaboratedTypeSpecifier)node);
+		}
+		else if (node instanceof IASTSimpleDeclSpecifier) {
+			return this.leave((IASTSimpleDeclSpecifier)node);
+		}
+		else if (node instanceof IASTEnumerationSpecifier) {
+			return this.leave((IASTEnumerationSpecifier)node);
+		}
+		else if (node instanceof ICPPASTNamedTypeSpecifier) {
+			return this.leave((ICPPASTNamedTypeSpecifier)node);
+		}
+		else if (node instanceof IASTNamedTypeSpecifier) {
+			return this.leave((IASTNamedTypeSpecifier)node);
+		}
+	
+		return super.leave(node);
+	}
+
+	@Override
+	public int leave(IASTInitializer node) {
+		if (node instanceof ICPPASTConstructorChainInitializer) {
+			return leave( (ICPPASTConstructorChainInitializer)node );
+		}
+		else if (node instanceof ICPPASTConstructorInitializer) {
+			return leave( (ICPPASTConstructorInitializer)node );
+		}
+		return super.leave(node);
+	}
+
+	@Override
+	public int leave(IASTExpression node) {
+		if (node instanceof IASTFieldReference) {
+			return leave((IASTFieldReference)node);
+		}
+		else if (node instanceof IASTIdExpression) {
+			return leave((IASTIdExpression)node);
+		}
+		else if (node instanceof ICPPASTNewExpression) {
+			return leave((ICPPASTNewExpression)node);
+		}
+		else if (node instanceof IASTFunctionCallExpression) {
+			return leave((IASTFunctionCallExpression)node);
+		}
+		else if (node instanceof IASTUnaryExpression) {
+			return leave((IASTUnaryExpression)node);
+		}
+		else if (node instanceof IASTBinaryExpression) {
+			return leave((IASTBinaryExpression)node);
+		}
+		else if (node instanceof IASTLiteralExpression) {
+			return leave((IASTLiteralExpression)node);
+		}
+		else if (node instanceof IASTTypeIdExpression) {
+			return leave((IASTTypeIdExpression)node);
+		}
+		else if (node instanceof IASTCastExpression) {
+			return leave((IASTCastExpression)node);
+		}
+
+		return super.leave(node);
+	}
+
+	@Override
+	public int leave(IASTParameterDeclaration node) {
+		if (node instanceof ICPPASTParameterDeclaration) {
+			return leave((ICPPASTParameterDeclaration)node);
+		}
+		return super.leave(node);
+	}
+
+	// ADDITIONAL LEAVE METODS ON AST ===================================================================================================
+
+	protected int leave(IASTSimpleDeclaration node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTFunctionDefinition node) {
+		return this.leave( (IASTFunctionDefinition)node);
+	}
+
+	protected int leave(IASTFunctionDefinition node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTFunctionDeclarator node) {
+		return this.leave( (IASTStandardFunctionDeclarator)node);
+	}
+
+	protected int leave(IASTStandardFunctionDeclarator node) {
+		return this.leave( (IASTFunctionDeclarator)node);
+	}
+
+	protected int leave(ICASTKnRFunctionDeclarator node) {
+		return this.leave( (IASTFunctionDeclarator)node);
+	}
+
+	protected int leave(IASTFunctionDeclarator node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTFieldDeclarator node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTVisibilityLabel node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICASTCompositeTypeSpecifier node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTCompositeTypeSpecifier node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTElaboratedTypeSpecifier node) {
+		if (node instanceof ICASTElaboratedTypeSpecifier) {
+			return leave((ICASTElaboratedTypeSpecifier)node);
+		}
+		else if (node instanceof ICPPASTElaboratedTypeSpecifier) {
+			return leave((ICPPASTElaboratedTypeSpecifier)node);
+		}
+		return super.leave(node);
+	}
+
+	protected int leave(ICASTElaboratedTypeSpecifier node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTElaboratedTypeSpecifier node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTEnumerationSpecifier node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTNamedTypeSpecifier node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTNamedTypeSpecifier node) {
+		return this.leave( (IASTNamedTypeSpecifier)node);
+	}
+
+	public int leave(IASTSimpleDeclSpecifier node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTTemplateDeclaration node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTParameterDeclaration node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTFunctionCallExpression node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTNewExpression node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTUnaryExpression node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTBinaryExpression node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTLiteralExpression node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTFieldReference node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTIdExpression node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTTypeIdExpression node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTCastExpression node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTConstructorChainInitializer node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTConstructorInitializer node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(ICPPASTTemplateId node) {
+		return PROCESS_CONTINUE;
+	}
+
 
 }

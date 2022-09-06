@@ -23,13 +23,14 @@ The importer is made of:
 
 ## Running
 
-The main() method can be considered to be `PluginApplication.start()`. It creates the parser, the Repository, the dictionnary; it analyses the options given on command line (e.g. to find out where is the directory of the project to analyze); it parses the project; and it exports the resulting model (stored in the Repository) in a file.
+The main() method can be considered to be `PluginApplication.start()`. It creates the parser, the Repository, the dictionnary; it analyses the options given on command line (e.g. to find out where is the directory of the project to analyze); it parses the project; and it exports ("emits") the resulting model (stored in the Repository) in a file.
 
 ```Java
 VerveineCParser verveine = new VerveineCParser();
 verveine.setOptions(appArgs);
 if (verveine.parse()) {
 	verveine.emitMSE();
+}
 ```
 
 ## Parsing
@@ -40,11 +41,11 @@ if (verveine.parse()) {
 1. Asks CDT to analyze the project (compute index)
 1. then run all visitors on the "index" (basically an AST representation of the code)
 
+Simplified code: 
+
 ```Java
 ICProject cproject = createEclipseProject(DEFAULT_PROJECT_NAME, userProjectDir);
-...
 computeIndex(cproject);
-...
 runAllVisitors(dico, cproject);
 ```
 
@@ -70,9 +71,9 @@ The visitors are, in order:
 1. `PreprocessorStmtDefVisitor`: Creates preprocessors entities.
 
 There are also some abstract visitors that are inherited by the concrete ones listed above:
-1. `AbstractDispatcherVisitor`: Most abstract visitor, it dispatches more finely the visits than what CDT's ASTVisitor normally does (adds some `visit()` methods). It also merges two APIs: visit methods on AST (ASTVisitor) and visit methods on ICElements (ICElementVisitor);
-1. `AbstractVisitor`: Visitor that gets the binding and name of a node. It also manages the context stack, the current path, and the current filename. It also tries to recover the FAMIX entities from their IBindings.
-1. `AbstractIssueReporterVisitor`: Superclass for `IncludeVisitor` and `ErrorVisitor`, it collects issues on the AST and can report them.
+1. `AbstractDispatcherVisitor`: This is the most abstract visitor in the project, it dispatches more finely the visits than what CDT's ASTVisitor normally does (adds some `visit()` methods). It also merges two APIs: visit methods on AST (ASTVisitor) and visit methods on ICElements (ICElementVisitor). See also in [visitors.md](visitors.md#abstractdispatchervisitor);
+1. `AbstractVisitor`: Visitor that gets the binding and name of a node. It also manages the context stack, the current path, and the current filename. See also in [visitors.md](visitors.md#abstractvisitor);
+1. `AbstractIssueReporterVisitor`: Superclass for `IncludeVisitor` and `ErrorVisitor`, it collects issues on the AST and can report them;
 1. `AbstractRefVisitor`: Superclass for Reference visitors, it defines some utility methods to create references to names.
 
 There is finally a specialized visitor (`SignatureBuilderVisitor`) to reconstruct the signature of a method/function. It works by visiting a method/function node and gathers its name and parameters, and return type.

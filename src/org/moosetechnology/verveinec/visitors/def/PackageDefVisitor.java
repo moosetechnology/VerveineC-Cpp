@@ -32,19 +32,19 @@ public class PackageDefVisitor extends AbstractVisitor {
 	public void visit(ICContainer elt) {
 		Package fmx = null;
 
-		enterPath(elt);
+		visitInternal(elt);
 		if (nodeBnd != null) {
 			fmx = dico.ensureFamixPackage(nodeBnd, elt.getElementName(), currentPackage);
 			fmx.setIsStub(false);
 			currentPackage = fmx;
 		}
 
-		super.visit(elt);   // visiting children
+		super.visit(elt);
 
 		if (currentPackage != null) {
 			currentPackage = currentPackage.getParentPackage();
 		}
-		leavePath(elt);
+		leave(elt);
 	}
 
 
