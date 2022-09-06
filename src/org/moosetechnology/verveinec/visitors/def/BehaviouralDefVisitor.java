@@ -35,8 +35,8 @@ import org.moosetechnology.verveineCore.gen.famix.Method;
 import org.moosetechnology.verveineCore.gen.famix.Parameter;
 import org.moosetechnology.verveineCore.gen.famix.Type;
 import org.moosetechnology.verveinec.plugin.CDictionary;
-import org.moosetechnology.verveinec.utils.FileUtil;
 import org.moosetechnology.verveinec.utils.WrongClassGuessException;
+import org.moosetechnology.verveinec.utils.files.FileUtil;
 import org.moosetechnology.verveinec.visitors.AbstractVisitor;
 
 /**

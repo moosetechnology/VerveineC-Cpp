@@ -9,10 +9,9 @@ import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.plugin.VerveineCParser;
-import org.moosetechnology.verveinec.utils.FileUtil;
 import org.moosetechnology.verveinec.utils.NameResolver;
 import org.moosetechnology.verveinec.utils.StubBinding;
-
+import org.moosetechnology.verveinec.utils.files.FileUtil;
 import org.moosetechnology.verveineCore.gen.famix.CFile;
 
 public class IncludeVisitor extends AbstractIssueReporterVisitor {

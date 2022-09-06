@@ -40,11 +40,10 @@ import org.moosetechnology.verveineCore.gen.famix.StructuralEntity;
 import org.moosetechnology.verveineCore.gen.famix.Type;
 import org.moosetechnology.verveineCore.gen.famix.TypeAlias;
 import org.moosetechnology.verveineCore.gen.famix.UnknownVariable;
-import org.moosetechnology.verveinec.utils.FileUtil;
 import org.moosetechnology.verveinec.utils.StubBinding;
-import org.moosetechnology.verveinec.utils.Trace;
 import org.moosetechnology.verveinec.utils.Visibility;
 import org.moosetechnology.verveinec.utils.WrongClassGuessException;
+import org.moosetechnology.verveinec.utils.files.FileUtil;
 
 import ch.akuhn.fame.Repository;
 

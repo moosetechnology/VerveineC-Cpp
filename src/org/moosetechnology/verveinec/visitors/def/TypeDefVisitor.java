@@ -1,7 +1,6 @@
 package org.moosetechnology.verveinec.visitors.def;
 
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -10,18 +9,13 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTElaboratedTypeSpecifier;
 import org.moosetechnology.verveineCore.gen.famix.Class;
 import org.moosetechnology.verveineCore.gen.famix.ContainerEntity;
 import org.moosetechnology.verveineCore.gen.famix.NamedEntity;
@@ -29,8 +23,7 @@ import org.moosetechnology.verveineCore.gen.famix.Package;
 import org.moosetechnology.verveineCore.gen.famix.Type;
 import org.moosetechnology.verveineCore.gen.famix.TypeAlias;
 import org.moosetechnology.verveinec.plugin.CDictionary;
-import org.moosetechnology.verveinec.utils.FileUtil;
-import org.moosetechnology.verveinec.utils.Trace;
+import org.moosetechnology.verveinec.utils.files.FileUtil;
 import org.moosetechnology.verveinec.visitors.AbstractVisitor;
 
 public class TypeDefVisitor extends AbstractVisitor {

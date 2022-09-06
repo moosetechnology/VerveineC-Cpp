@@ -1,4 +1,4 @@
-package org.moosetechnology.verveinec.utils;
+package org.moosetechnology.verveinec.utils.files;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.moosetechnology.verveinec.utils.Constants;
 
 public class FileUtil {
 

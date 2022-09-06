@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.moosetechnology.verveineCore.gen.famix.Comment;
 import org.moosetechnology.verveinec.plugin.CDictionary;
-import org.moosetechnology.verveinec.utils.FileUtil;
+import org.moosetechnology.verveinec.utils.files.FileUtil;
 import org.moosetechnology.verveinec.visitors.AbstractVisitor;
 
 public class CommentDefVisitor extends AbstractVisitor {

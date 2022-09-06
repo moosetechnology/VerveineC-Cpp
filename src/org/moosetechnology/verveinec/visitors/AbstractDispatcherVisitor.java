@@ -80,13 +80,13 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 
 	public AbstractDispatcherVisitor(CDictionary dico, IIndex index) {
 		super(/*visitNodes*/true);
-		shouldVisitTemplateParameters = true;
 	    /* fine-tuning if visitNodes=false
 	    shouldVisitDeclarations = true;
 	    shouldVisitEnumerators = true;
 	    shouldVisitProblems = true;
 	    shouldVisitTranslationUnit = true;
 	    shouldVisit... */
+		shouldVisitTemplateParameters = true;
 		this.index = index;
 		this.dico = dico;
 

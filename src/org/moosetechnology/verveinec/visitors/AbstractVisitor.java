@@ -22,10 +22,9 @@ import org.eclipse.core.runtime.Path;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.utils.AnonymousName;
 import org.moosetechnology.verveinec.utils.CppEntityStack;
-import org.moosetechnology.verveinec.utils.FileUtil;
 import org.moosetechnology.verveinec.utils.NameResolver;
 import org.moosetechnology.verveinec.utils.StubBinding;
-
+import org.moosetechnology.verveinec.utils.files.FileUtil;
 import org.moosetechnology.verveineCore.gen.famix.BehaviouralEntity;
 import org.moosetechnology.verveineCore.gen.famix.Class;
 import org.moosetechnology.verveineCore.gen.famix.Namespace;
