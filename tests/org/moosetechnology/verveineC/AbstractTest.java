@@ -1,19 +1,11 @@
 package org.moosetechnology.verveineC;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.moosetechnology.verveineCore.gen.famix.Attribute;
 import org.moosetechnology.verveineCore.gen.famix.Entity;
-import org.moosetechnology.verveineCore.gen.famix.Function;
-import org.moosetechnology.verveineCore.gen.famix.GlobalVariable;
-import org.moosetechnology.verveineCore.gen.famix.Method;
 import org.moosetechnology.verveineCore.gen.famix.NamedEntity;
 import org.moosetechnology.verveinec.plugin.VerveineCParser;
 

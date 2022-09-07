@@ -35,14 +35,14 @@ public class InheritanceRefVisitor extends AbstractVisitor {
 		super.visit(node);
 		subClass = dico.getEntityByKey(Class.class, nodeBnd);
 
-		getContext().push(subClass);
+		contextPush(subClass);
 		lastInheritance = null;
 
 		for (ICPPASTBaseSpecifier base : node.getBaseSpecifiers()) {
 			base.accept(this);
 		}
 
-		this.getContext().pop();
+		this.contextPop();
 
 		return PROCESS_SKIP;
 	}

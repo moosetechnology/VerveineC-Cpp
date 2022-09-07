@@ -45,11 +45,11 @@ public class TemplateParameterDefVisitor extends AbstractVisitor {
 		/*
 		 * Visiting possible template methods
 		 */
-		this.getContext().push(fmx);
+		this.contextPush(fmx);
 		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = contextPop();
 
 		return PROCESS_SKIP;
 	}
@@ -95,7 +95,7 @@ public class TemplateParameterDefVisitor extends AbstractVisitor {
 		theTemplate = (ContainerEntity)returnedEntity;
 
 		// template parameters are local to the entity defined in the template declaration
-		getContext().push(theTemplate);
+		contextPush(theTemplate);
 		for (ICPPASTTemplateParameter param : node.getTemplateParameters()) {
 			String name;
 
@@ -126,7 +126,7 @@ public class TemplateParameterDefVisitor extends AbstractVisitor {
 				throw new IllegalStateException("Unrecognized type for ICPPASTTemplateParameter `"+param.getRawSignature()+"' in file "+node.getContainingFilename());
 			}
 		}
-		getContext().pop();
+		contextPop();
 
 		return PROCESS_SKIP;
 	}

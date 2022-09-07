@@ -158,20 +158,14 @@ public class TypeDefVisitor extends AbstractVisitor {
 		fmx = createClass(node);
 		fmx.setIsStub(false);
 
-		this.getContext().push(fmx);
-
-		/*
-		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive* /true)) {
-			decl.accept(this);
-		}
-		*/
+		this.contextPush(fmx);
 
 		return PROCESS_CONTINUE;
 	}
 	
 	@Override
 	protected int leave(ICPPASTCompositeTypeSpecifier node) {
-		returnedEntity = getContext().pop();
+		returnedEntity = contextPop();
 		
 		return PROCESS_CONTINUE;
 	}
@@ -188,13 +182,16 @@ public class TypeDefVisitor extends AbstractVisitor {
 		fmx = createClass(node);
 		fmx.setIsStub(false);
 
-		this.getContext().push(fmx);
-		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
-			decl.accept(this);
-		}
-		returnedEntity = getContext().pop();
+		this.contextPush(fmx);
 
-		return PROCESS_SKIP;
+		return PROCESS_CONTINUE;
+	}
+
+	@Override
+	protected int leave(ICASTCompositeTypeSpecifier node) {
+		returnedEntity = contextPop();
+		
+		return PROCESS_CONTINUE;
 	}
 
 	@Override
@@ -220,7 +217,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 		}
 
 		if (isCppFriendDeclaration(node)) {
-			ctxt = resolver.getContext().pop();
+			ctxt = contextPop();
 		}
 
 		switch (node.getKind()) {
@@ -237,7 +234,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 		}
 
 		if (ctxt != null) {
-			resolver.getContext().push(ctxt);
+			contextPush(ctxt);
 		}
 
 		return PROCESS_SKIP;

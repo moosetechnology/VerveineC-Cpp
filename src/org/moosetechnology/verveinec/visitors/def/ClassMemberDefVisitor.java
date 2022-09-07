@@ -64,11 +64,11 @@ public abstract class ClassMemberDefVisitor extends AbstractVisitor {
 		super.visit(node);
 		fmx = dico.getEntityByKey(Class.class, nodeBnd);
 
-		this.getContext().push(fmx);
+		this.contextPush(fmx);
 		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = contextPop();
 
 		return PROCESS_SKIP;
 	}

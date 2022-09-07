@@ -199,7 +199,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 
 		fmx.setNumberOfStatements(getContext().getTopMethodNOS());
 		fmx.setCyclomaticComplexity(getContext().getTopMethodCyclo());
-		this.getContext().pop();
+		this.contextPop();
 
 		return PROCESS_SKIP;  // we already visited the children
 	}
@@ -312,7 +312,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 		if (declarationIsFriend(node)) {
 			// friend function are outside the scope of the class
 			// so remove the class from the context stack
-			classCtxt = (Type) getContext().pop();
+			classCtxt = (Type) contextPop();
 		}
 
 		fmx = resolver.ensureBehavioural(node, nodeBnd, nodeName);
@@ -346,7 +346,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 		if (declarationIsFriend(node)) {
 			// friend function are outside the scope of the class
 			// push back the class in the context stack
-			getContext().push(classCtxt);
+			contextPush(classCtxt);
 		}
 
 		return fmx;

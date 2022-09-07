@@ -27,6 +27,7 @@ import org.moosetechnology.verveinec.utils.StubBinding;
 import org.moosetechnology.verveinec.utils.files.FileUtil;
 import org.moosetechnology.verveineCore.gen.famix.BehaviouralEntity;
 import org.moosetechnology.verveineCore.gen.famix.Class;
+import org.moosetechnology.verveineCore.gen.famix.NamedEntity;
 import org.moosetechnology.verveineCore.gen.famix.Namespace;
 import org.moosetechnology.verveineCore.gen.famix.Package;
 import org.moosetechnology.verveineCore.gen.famix.Parameter;
@@ -140,14 +141,14 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 
 		fmx = dico.getEntityByKey(Namespace.class, nodeBnd);
 		
-		getContext().push(fmx);
+		contextPush(fmx);
 
 		return PROCESS_CONTINUE;
 	}
 
 	@Override
 	public int leave(ICPPASTNamespaceDefinition node) {
-		getContext().pop();
+		contextPop();
 		return super.leave(node);
 	}
 
@@ -223,7 +224,7 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 	}
 
 	protected void visitParameters(IASTNode[] params, BehaviouralEntity fmx) {
-		getContext().push(fmx);
+		contextPush(fmx);
 		
 		// iParams allow to keep track of which parameter we are processing in the behavioural list of parameters
 		iParam = 0;
@@ -231,7 +232,7 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 			param.accept(this);
 			iParam++;
 		}
-		getContext().pop();
+		contextPop();
 	}
 
 	@Override
@@ -285,4 +286,11 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 		resolver.setContext( context);
 	}
 
+	protected void contextPush(NamedEntity entity) {
+		getContext().push(entity);
+	}
+	
+	protected NamedEntity contextPop() {
+		return getContext().pop();
+	}
 }

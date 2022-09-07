@@ -78,11 +78,11 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 
 		fmx = dico.getEntityByKey(Class.class, nodeBnd);
 
-		this.getContext().push(fmx);
+		this.contextPush(fmx);
 		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = contextPop();
 
 		return PROCESS_SKIP;
 	}
@@ -112,11 +112,11 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 	protected int visit(IASTFunctionDefinition node) {
 		returnedEntity = null;
 		node.getDeclarator().accept(this);
-		this.getContext().push((BehaviouralEntity)returnedEntity);
+		this.contextPush((BehaviouralEntity)returnedEntity);
 		if (node.getBody() != null) {
 			node.getBody().accept(this);
 		}
-		returnedEntity = this.getContext().pop();
+		returnedEntity = this.contextPop();
 
 		return PROCESS_SKIP;
 	}
@@ -131,13 +131,13 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 
 		visit( (IASTFunctionDefinition)node);  // visit declarator and body (see above)
 
-		this.getContext().push((BehaviouralEntity)returnedEntity);
+		this.contextPush((BehaviouralEntity)returnedEntity);
 
 		for (ICPPASTConstructorChainInitializer init : node.getMemberInitializers()) {
 			init.accept(this);
 		}
 
-		returnedEntity = this.getContext().pop();
+		returnedEntity = this.contextPop();
 
 		return PROCESS_SKIP;
 	}

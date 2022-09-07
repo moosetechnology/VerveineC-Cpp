@@ -37,7 +37,7 @@ public class NamespaceDefVisitor extends AbstractVisitor {
 			fmx = dico.ensureFamixNamespace(nodeBnd, nodeName.toString(), (Namespace) this.getContext().top());
 			fmx.setIsStub(false);
 			
-			this.getContext().push(fmx);
+			this.contextPush(fmx);
 		}
 
 		// may change global nodeName
@@ -46,7 +46,7 @@ public class NamespaceDefVisitor extends AbstractVisitor {
 		}
 
 		if (! localNodeName.toString().equals("")) {
-			getContext().pop();
+			contextPop();
 		}
 
 		return PROCESS_SKIP;

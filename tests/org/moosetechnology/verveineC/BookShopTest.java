@@ -5,27 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import org.moosetechnology.verveineCore.gen.famix.Access;
 import org.moosetechnology.verveineCore.gen.famix.Attribute;
 import org.moosetechnology.verveineCore.gen.famix.BehaviouralEntity;
-import org.moosetechnology.verveineCore.gen.famix.Entity;
 import org.moosetechnology.verveineCore.gen.famix.Function;
 import org.moosetechnology.verveineCore.gen.famix.GlobalVariable;
 import org.moosetechnology.verveineCore.gen.famix.Invocation;
 import org.moosetechnology.verveineCore.gen.famix.Method;
-import org.moosetechnology.verveineCore.gen.famix.NamedEntity;
 import org.moosetechnology.verveineCore.gen.famix.UnknownBehaviouralEntity;
-import org.moosetechnology.verveinec.plugin.VerveineCParser;
-
-import ch.akuhn.fame.Repository;
 
 class BookShopTest extends AbstractTest {
 
@@ -61,6 +50,7 @@ class BookShopTest extends AbstractTest {
 				9,
 				entitiesOfType(Function.class).size());
 				// main_menu, book_menu, sup_menu, pur_menu, emp_menu, mem_menu, sal_menu, pass, main
+		
 /* not exporting local variables
 		assertEquals(
 				24,

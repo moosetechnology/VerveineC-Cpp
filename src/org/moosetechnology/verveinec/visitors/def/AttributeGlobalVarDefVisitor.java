@@ -233,11 +233,11 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 			}
 		}
 
-		this.getContext().push(dico.getEntityByKey(nodeBnd));
+		this.contextPush(dico.getEntityByKey(nodeBnd));
 		for (IASTEnumerator decl : node.getEnumerators()) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = contextPop();
 
 		return PROCESS_SKIP;
 	}
