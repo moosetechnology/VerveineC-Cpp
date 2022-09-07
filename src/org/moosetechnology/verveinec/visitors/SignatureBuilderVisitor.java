@@ -45,7 +45,7 @@ import org.moosetechnology.verveinec.utils.QualifiedName;
  * 
  * @author anquetil
  */
-public class SignatureBuilderVisitor extends AbstractVisitor {
+public class SignatureBuilderVisitor extends AbstractContextVisitor {
 
 	public static final String CPP_FCT_RETURN_SEPARATOR = "->";
 

@@ -37,7 +37,7 @@ import org.moosetechnology.verveineCore.gen.famix.Type;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.utils.WrongClassGuessException;
 import org.moosetechnology.verveinec.utils.files.FileUtil;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
 /**
  * A visitor for Behavioural entities: Functions and methods.
@@ -397,7 +397,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 	 * Create a parameter for a behavioural
 	 * Relies on the facts that:
 	 * <ul>
-	 * <li> {@link AbstractVisitor#iParam} is the indice of this parameter in the parent behavioural list of parameters
+	 * <li> {@link AbstractContextVisitor#iParam} is the indice of this parameter in the parent behavioural list of parameters
 	 * <li> {@link #isDefinitiveParameters} is a List of booleans for parent behavioural indicating whether
 	 * its parameters are definitive or not. Said Booleans can also be null if the parameters were not created yet
 	 * <li> {@link #behaviouralParameters} is an array of the Behavioural's Parameters (if they were already created)

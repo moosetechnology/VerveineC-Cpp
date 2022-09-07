@@ -11,9 +11,9 @@ import org.moosetechnology.verveineCore.gen.famix.Class;
 import org.moosetechnology.verveineCore.gen.famix.Inheritance;
 import org.moosetechnology.verveineCore.gen.famix.Type;
 import org.moosetechnology.verveinec.plugin.CDictionary;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
-public class InheritanceRefVisitor extends AbstractVisitor {
+public class InheritanceRefVisitor extends AbstractContextVisitor {
 
 	private Inheritance lastInheritance;
 

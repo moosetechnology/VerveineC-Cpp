@@ -50,8 +50,10 @@ class TemplatesTest extends AbstractTest {
 		assertEquals(tparam, attribute.getDeclaredType());
 
 		assertEquals(1, generic.getMethods().size());
-		for (Method mth : generic.getMethods()) {
-			assertEquals(tparam, mth.getDeclaredType());
+		Collection<Parameter> params = first(generic.getMethods()).getParameters();
+		assertEquals(2, params.size());
+		for (Parameter p : params) {
+			assertEquals(tparam, p.getDeclaredType());
 		}
 	}
 
@@ -63,11 +65,11 @@ class TemplatesTest extends AbstractTest {
 		assertEquals("T", fct.getDeclaredType().getName());
 		assertEquals(ParameterType.class, fct.getDeclaredType().getClass());
 		ParameterType tparam = (ParameterType) fct.getDeclaredType();
-		// not sure this is what should be, but this is what we get
-		assertEquals("mypair", tparam.getContainer().getName());
+		
+		assertEquals("mypair", tparam.getContainer().getName());  // not sure this is what should be (the T of GetMax is the same as the one of mypair)
 		
 		for (Parameter param : fct.getParameters()) {
-			assertEquals("T", param.getDeclaredType().getName()); // this should be the same as 'tparam' but it is not ?
+			assertEquals("T", param.getDeclaredType().getName()); // this should be the same as 'tparam', no ?
 		}
 	}
 

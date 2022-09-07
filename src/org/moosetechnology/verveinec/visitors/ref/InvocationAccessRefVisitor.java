@@ -37,12 +37,12 @@ import org.moosetechnology.verveineCore.gen.famix.UnknownVariable;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.utils.QualifiedName;
 import org.moosetechnology.verveinec.visitors.AbstractDispatcherVisitor;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
 public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 
 	/**
-	 * A small visitor to set correctly the {@link AbstractVisitor#nodeName} of the function call depending on the type of the IASTExpression
+	 * A small visitor to set correctly the {@link AbstractContextVisitor#nodeName} of the function call depending on the type of the IASTExpression
 	 */
 	protected class FunctionCallNameVisitor extends AbstractDispatcherVisitor {
 

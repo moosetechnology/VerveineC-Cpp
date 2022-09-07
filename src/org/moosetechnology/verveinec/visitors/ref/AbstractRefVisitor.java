@@ -43,7 +43,7 @@ import org.moosetechnology.verveineCore.gen.famix.Type;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.utils.QualifiedName;
 import org.moosetechnology.verveinec.utils.StubBinding;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
 /**
  * Abstract superclass for Reference visitors.<BR>
@@ -51,7 +51,7 @@ import org.moosetechnology.verveinec.visitors.AbstractVisitor;
  * @author anquetil
  */
 @SuppressWarnings("unused")
-public abstract class AbstractRefVisitor extends AbstractVisitor {
+public abstract class AbstractRefVisitor extends AbstractContextVisitor {
 
 	/**
 	 * see {@link #returnedEntity}
@@ -66,7 +66,7 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 	}
 
 
-	/*
+	/**
 	 * putting class definition on the context stack
 	 */
 	@Override
@@ -79,12 +79,15 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 		fmx = dico.getEntityByKey(Class.class, nodeBnd);
 
 		this.contextPush(fmx);
-		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
-			decl.accept(this);
-		}
-		returnedEntity = contextPop();
 
-		return PROCESS_SKIP;
+		return PROCESS_CONTINUE;
+	}
+
+	@Override
+	protected int leave(ICPPASTCompositeTypeSpecifier node) {
+		returnedEntity = contextPop();
+	
+		return PROCESS_CONTINUE;
 	}
 
 	@Override

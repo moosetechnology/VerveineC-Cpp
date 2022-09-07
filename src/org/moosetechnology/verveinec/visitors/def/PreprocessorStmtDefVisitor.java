@@ -11,9 +11,9 @@ import org.eclipse.cdt.core.index.IIndex;
 
 import org.moosetechnology.verveineCore.gen.famix.PreprocessorIfdef;
 import org.moosetechnology.verveinec.plugin.CDictionary;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
-public class PreprocessorStmtDefVisitor extends AbstractVisitor {
+public class PreprocessorStmtDefVisitor extends AbstractContextVisitor {
 
 	public PreprocessorStmtDefVisitor(CDictionary dico, IIndex index, String rootFolder) {
 		super(dico, index, rootFolder);

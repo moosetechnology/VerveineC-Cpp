@@ -7,9 +7,9 @@ import org.eclipse.cdt.core.index.IIndex;
 
 import org.moosetechnology.verveineCore.gen.famix.Namespace;
 import org.moosetechnology.verveinec.plugin.CDictionary;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
-public class NamespaceDefVisitor extends AbstractVisitor {
+public class NamespaceDefVisitor extends AbstractContextVisitor {
 
 	public NamespaceDefVisitor(CDictionary dico, IIndex index, String rootFolder) {
 		super(dico, index, rootFolder);

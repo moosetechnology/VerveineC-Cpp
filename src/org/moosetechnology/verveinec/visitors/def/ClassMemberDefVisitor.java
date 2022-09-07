@@ -2,19 +2,17 @@ package org.moosetechnology.verveinec.visitors.def;
 
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.moosetechnology.verveineCore.gen.famix.Class;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.utils.Visibility;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
-public abstract class ClassMemberDefVisitor extends AbstractVisitor {
+public abstract class ClassMemberDefVisitor extends AbstractContextVisitor {
 
 	protected Visibility currentVisibility;
 	
@@ -42,8 +40,7 @@ public abstract class ClassMemberDefVisitor extends AbstractVisitor {
 		return PROCESS_CONTINUE;
 	}
 
-	/*
-	 * Putting class definition on the context stack
+	/* merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier into one visit method here
 	 */
 	@Override
 	protected int visit(ICPPASTCompositeTypeSpecifier node) {
@@ -51,12 +48,16 @@ public abstract class ClassMemberDefVisitor extends AbstractVisitor {
 		return visit((IASTCompositeTypeSpecifier)node);
 	}
 	
+	/* merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier into one visit method here
+	 */
 	@Override
 	protected int visit(ICASTCompositeTypeSpecifier node) {
 		currentVisibility = Visibility.PUBLIC;
 		return visit((IASTCompositeTypeSpecifier)node);
 	}
 
+	/* merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier into one visit method here
+	 */
 	@Override
 	protected int visit(IASTCompositeTypeSpecifier node) {
 		Class fmx;
@@ -65,12 +66,30 @@ public abstract class ClassMemberDefVisitor extends AbstractVisitor {
 		fmx = dico.getEntityByKey(Class.class, nodeBnd);
 
 		this.contextPush(fmx);
-		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
-			decl.accept(this);
-		}
-		returnedEntity = contextPop();
 
-		return PROCESS_SKIP;
+		return PROCESS_CONTINUE;
+	}
+	
+	/* Could have merged the leave methods too, but does not seem to be worthwhile
+	 */
+	@Override
+	protected int leave(ICPPASTCompositeTypeSpecifier node) {
+		returnedEntity = contextPop();
+		return PROCESS_CONTINUE;
+	}
+	
+	/* Could have merged the leave methods too, but does not seem to be worthwhile
+	 */
+	@Override
+	protected int leave(ICASTCompositeTypeSpecifier node) {
+		returnedEntity = contextPop();
+		return PROCESS_CONTINUE;
+	}
+
+	@Override
+	protected int leave(IASTCompositeTypeSpecifier node) {
+		returnedEntity = contextPop();
+		return PROCESS_CONTINUE;
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package org.moosetechnology.verveinec.visitors;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -389,6 +390,10 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 		return PROCESS_CONTINUE;
 	}
 
+	protected int visit(IASTCompositeTypeSpecifier node) {
+		return PROCESS_CONTINUE;
+	}
+
 	protected int visit(IASTElaboratedTypeSpecifier node) {
 		/* could also test node.getKind() ???
 		 * - IASTElaboratedTypeSpecifier.k_enum:
@@ -666,6 +671,10 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 	}
 
 	protected int leave(ICPPASTCompositeTypeSpecifier node) {
+		return PROCESS_CONTINUE;
+	}
+
+	protected int leave(IASTCompositeTypeSpecifier node) {
 		return PROCESS_CONTINUE;
 	}
 

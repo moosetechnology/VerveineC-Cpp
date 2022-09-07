@@ -10,9 +10,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.moosetechnology.verveineCore.gen.famix.Comment;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.utils.files.FileUtil;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
-public class CommentDefVisitor extends AbstractVisitor {
+public class CommentDefVisitor extends AbstractContextVisitor {
 
 	public CommentDefVisitor(CDictionary dico, IIndex index, String rootFolder) {
 		super(dico, index, rootFolder);

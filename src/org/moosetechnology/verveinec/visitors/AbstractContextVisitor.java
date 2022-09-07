@@ -38,7 +38,7 @@ import org.moosetechnology.verveineCore.gen.famix.SourcedEntity;
  * It manages the context stack, the current path, and the current filename.
  * It uses a {@link #resolver} to recover the binding of the nodes
  */
-public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
+public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 
 	public static final String ANONYMOUS_PARAMETER_DECLARATION = "--AnonymousParameterDeclaration--";
 
@@ -94,7 +94,7 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 	 */
 	protected int iParam;
 
-	public AbstractVisitor(CDictionary dico, IIndex index, String rootFolder) {
+	public AbstractContextVisitor(CDictionary dico, IIndex index, String rootFolder) {
 		super(dico, index);
 		this.rootFolder = rootFolder;
 		this.resolver = new NameResolver(dico, index);
@@ -154,6 +154,7 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 
 	/*
 	 * Visiting a class definition to get its key (IBinding) associated with the famix type entity
+	 * merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier
 	 */
 	@Override
 	protected int visit(ICPPASTCompositeTypeSpecifier node) {
@@ -162,6 +163,7 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 
 	/*
 	 * Visiting a class definition to get its key (IBinding) associated with the famix type entity
+	 * merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier
 	 */
 	@Override
 	protected int visit(ICASTCompositeTypeSpecifier node) {

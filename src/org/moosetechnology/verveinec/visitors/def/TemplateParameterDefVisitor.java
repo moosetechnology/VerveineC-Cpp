@@ -18,9 +18,9 @@ import org.moosetechnology.verveineCore.gen.famix.ContainerEntity;
 import org.moosetechnology.verveineCore.gen.famix.NamedEntity;
 import org.moosetechnology.verveineCore.gen.famix.UnknownVariable;
 import org.moosetechnology.verveinec.plugin.CDictionary;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
-public class TemplateParameterDefVisitor extends AbstractVisitor {
+public class TemplateParameterDefVisitor extends AbstractContextVisitor {
 
 	public TemplateParameterDefVisitor(CDictionary dico, IIndex index, String rootFolder) {
 		super(dico, index, rootFolder);

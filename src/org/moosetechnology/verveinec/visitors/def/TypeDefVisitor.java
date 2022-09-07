@@ -24,9 +24,9 @@ import org.moosetechnology.verveineCore.gen.famix.Type;
 import org.moosetechnology.verveineCore.gen.famix.TypeAlias;
 import org.moosetechnology.verveinec.plugin.CDictionary;
 import org.moosetechnology.verveinec.utils.files.FileUtil;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
-public class TypeDefVisitor extends AbstractVisitor {
+public class TypeDefVisitor extends AbstractContextVisitor {
 
 	/**
 	 * The file directory being visited at any given time

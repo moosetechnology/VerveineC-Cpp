@@ -7,9 +7,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.moosetechnology.verveineCore.gen.famix.Package;
 import org.moosetechnology.verveinec.plugin.CDictionary;
-import org.moosetechnology.verveinec.visitors.AbstractVisitor;
+import org.moosetechnology.verveinec.visitors.AbstractContextVisitor;
 
-public class PackageDefVisitor extends AbstractVisitor {
+public class PackageDefVisitor extends AbstractContextVisitor {
 
 	/**
 	 * The file directory being visited at any given time
