@@ -53,7 +53,7 @@ runAllVisitors(dico, cproject);
 
 Import of the project is done by several visitors visiting the AST created by CDT.
 
-The visitors are, in order:
+The visitors are, in order of use (see `VerveineCParser.runAllVisitors(...)`:
 
 1. `IncludeVisitor`: Creates CFile entities and include relationships;
 1. `ErrorVisitor`: Gathers all issues identified by CDT to list them at the end of the process;
@@ -72,7 +72,7 @@ The visitors are, in order:
 
 There are also some abstract visitors that are inherited by the concrete ones listed above:
 1. `AbstractDispatcherVisitor`: This is the most abstract visitor in the project, it dispatches more finely the visits than what CDT's ASTVisitor normally does (adds some `visit()` methods). It also merges two APIs: visit methods on AST (ASTVisitor) and visit methods on ICElements (ICElementVisitor). See also in [visitors.md](visitors.md#abstractdispatchervisitor);
-1. `AbstractVisitor`: Visitor that gets the binding and name of a node. It also manages the context stack, the current path, and the current filename. See also in [visitors.md](visitors.md#abstractvisitor);
+1. `AbstractContextVisitor`: Visitor that manages the context stack, the current path, and the current filename. It also gets the binding and name of a node. See also in [visitors.md](visitors.md#abstractcontextvisitor);
 1. `AbstractIssueReporterVisitor`: Superclass for `IncludeVisitor` and `ErrorVisitor`, it collects issues on the AST and can report them;
 1. `AbstractRefVisitor`: Superclass for Reference visitors, it defines some utility methods to create references to names.
 
