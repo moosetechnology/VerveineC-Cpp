@@ -151,7 +151,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 			parent = (ContainerEntity) resolver.resolveOrCreate( QualifiedName.parentNameFromEntityFullname(name.toString()), /*mayBeNull*/false, UnknownContainerEntity.class);
 		}
 		else {
-			parent = (ContainerEntity) getContext().top();
+			parent = (ContainerEntity) contextTop();
 		}
 
 		if ( (parent == null) || (parent instanceof Namespace) ) {
@@ -250,7 +250,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 		nodeName = node.getName();
 		if (nodeBnd == null) {
 		}
-		fmx = dico.ensureFamixEnumValue(nodeBnd, nodeName.toString(), (Enum)getContext().top(), /*persistIt*/true);
+		fmx = dico.ensureFamixEnumValue(nodeBnd, nodeName.toString(), (Enum)contextTop(), /*persistIt*/true);
 		fmx.setIsStub(false);
 		dico.addSourceAnchor(fmx, filename, node.getFileLocation());
 

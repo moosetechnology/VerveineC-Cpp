@@ -122,7 +122,7 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 					nodeBnd = resolver.mkStubKey(nodeName, Type.class);
 				}
 
-				aliasType = dico.ensureFamixTypeAlias(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
+				aliasType = dico.ensureFamixTypeAlias(nodeBnd, nodeName.toString(), (ContainerEntity)contextTop());
 				aliasType.setIsStub(false);
 				aliasType.setParentPackage(currentPackage);
 				aliasType.setAliasedType(concreteType);
@@ -294,7 +294,7 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 			nodeBnd = resolver.mkStubKey(nodeName, Type.class);
 		}
 
-		return dico.ensureFamixType(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
+		return dico.ensureFamixType(nodeBnd, nodeName.toString(), (ContainerEntity)contextTop());
 	}
 
 	/**
@@ -308,11 +308,11 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 		definitionOfATemplate = false;   // Immediately turn it off because it could pollute visiting the children
 
 		if (isTemplate) {
-			fmx = dico.ensureFamixParameterizableClass(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
+			fmx = dico.ensureFamixParameterizableClass(nodeBnd, nodeName.toString(), (ContainerEntity)contextTop());
 		}
 		else {
 			// if node is a stub with a fully qualified name, its parent is not context.top() :-(
-			fmx = dico.ensureFamixClass(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
+			fmx = dico.ensureFamixClass(nodeBnd, nodeName.toString(), (ContainerEntity)contextTop());
 		}
 		fmx.setParentPackage(currentPackage);
 		
@@ -341,7 +341,7 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 	protected org.moosetechnology.verveineCore.gen.famix.Enum createEnum(IASTDeclSpecifier node) {
 		org.moosetechnology.verveineCore.gen.famix.Enum fmx;
 
-		fmx = dico.ensureFamixEnum(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top(), /*persistIt*/true);
+		fmx = dico.ensureFamixEnum(nodeBnd, nodeName.toString(), (ContainerEntity)contextTop(), /*persistIt*/true);
 		dico.addSourceAnchor(fmx, filename, node.getFileLocation());
 
 		returnedEntity = fmx;

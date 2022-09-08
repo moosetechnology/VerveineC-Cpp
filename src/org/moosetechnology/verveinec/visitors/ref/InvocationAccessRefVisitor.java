@@ -386,7 +386,7 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 			fmx = dico.getEntityByKey(nodeBnd);
 		}
 		else {
-			fmx = resolver.findInParent(nodeName.toString(), getContext().top(), /*recursive*/true);
+			fmx = resolver.findInParent(nodeName.toString(), contextTop(), /*recursive*/true);
 		}
 
 		if (fmx instanceof StructuralEntity) {

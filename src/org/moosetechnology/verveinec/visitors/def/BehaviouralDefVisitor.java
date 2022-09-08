@@ -137,9 +137,8 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 
 	@Override
 	protected int visit(IASTStandardFunctionDeclarator node) {
-
 		// get node name and bnd
-		super.visit( node); // node.getParameters()
+		super.visit( node);
 
 		if (nodeBnd == null) {
 			// could not find the function (may happening if it is a actually a macro
@@ -159,7 +158,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 	@Override
 	protected int visit(ICASTKnRFunctionDeclarator node) {
 		// get node name and bnd
-		super.visit( node); // node.getParameterDeclarations()
+		super.visit( node);
 
 		inKnRParams = true;
 		returnedEntity = visitFunctionDeclarator(node, node.getParameterDeclarations());
@@ -341,7 +340,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 
 		fmx.setIsStub(false);  // used to say TRUE if could not find a binding. Not too sure ... 
 
-		visitParameters(params, fmx);
+		visitParameters(params, fmx); // TODO remove this explicit call by returning PROCESS_CONTINUE
 
 		if (declarationIsFriend(node)) {
 			// friend function are outside the scope of the class

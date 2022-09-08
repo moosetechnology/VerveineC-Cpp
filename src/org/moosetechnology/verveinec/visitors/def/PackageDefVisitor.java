@@ -48,12 +48,12 @@ public class PackageDefVisitor extends AbstractContextVisitor {
 	}
 
 
-	/**
+	/*
 	 * Files are treated as Modules
 	 */
 	@Override
 	public void visit(ITranslationUnit elt) {
-
+		// prune visiting
 	}
 
 }

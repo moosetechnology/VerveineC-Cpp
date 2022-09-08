@@ -49,7 +49,7 @@ public class InheritanceRefVisitor extends AbstractContextVisitor {
 
 	@Override
 	public int visit(ICPPASTBaseSpecifier node) {
-		Class subClass = (Class) getContext().top();
+		Class subClass = (Class) contextTop();
 		Type supClass = null;
 
 		// why isn't it an IASTName like everywhere else?

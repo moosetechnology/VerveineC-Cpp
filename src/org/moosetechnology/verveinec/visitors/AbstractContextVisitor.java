@@ -123,7 +123,7 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 
 	
 	/*
-	 * be creful, overriden in some subclasses so that this one is not called
+	 * be careful, overriden in some subclasses so that this one is not called
 	 */
 	@Override
 	public void visit(ITranslationUnit elt) {
@@ -141,6 +141,7 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 
 		fmx = dico.getEntityByKey(Namespace.class, nodeBnd);
 		
+		// Namespaces are created very early in the process, so we can rely on them being already created here 
 		contextPush(fmx);
 
 		return PROCESS_CONTINUE;
@@ -154,7 +155,7 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 
 	/*
 	 * Visiting a class definition to get its key (IBinding) associated with the famix type entity
-	 * merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier
+	 * +merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier
 	 */
 	@Override
 	protected int visit(ICPPASTCompositeTypeSpecifier node) {
@@ -163,7 +164,7 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 
 	/*
 	 * Visiting a class definition to get its key (IBinding) associated with the famix type entity
-	 * merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier
+	 * +merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier
 	 */
 	@Override
 	protected int visit(ICASTCompositeTypeSpecifier node) {
@@ -195,9 +196,7 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 	@Override
 	protected int visit(IASTFunctionDeclarator node) {
 		nodeName = node.getName();
-		nodeBnd = /*FunctionBinding.getInstance( */resolver.getFunctionBinding(node, nodeName);
-
-		// bug in CDT when creating bindings, e.g. r_unref/0 has the same binding as r_unref/1
+		nodeBnd = resolver.getFunctionBinding(node, nodeName);
 
 		return PROCESS_CONTINUE;
 	}
@@ -208,8 +207,8 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 		nodeName = node.getDeclarator().getName();
 
 		if (isVoidDecl(node.getDeclSpecifier()) && ! isPointerDecl(node.getDeclarator())) {
-			// declaration is on type "void" but not a pointer (as in "void*")
 			// case of a "mth(void)" declaration, seen as a parameter with no name
+			// the declaration is of type "void" but not a pointer (as in "void*")
 			return PROCESS_SKIP;
 		}
 		
@@ -228,7 +227,7 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 	protected void visitParameters(IASTNode[] params, BehaviouralEntity fmx) {
 		contextPush(fmx);
 		
-		// iParams allow to keep track of which parameter we are processing in the behavioural list of parameters
+		// iParam allow to keep track of which parameter we are processing in the behavioural list of parameters
 		iParam = 0;
 		for (IASTNode param : params) {
 			param.accept(this);
@@ -291,8 +290,12 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 	protected void contextPush(NamedEntity entity) {
 		getContext().push(entity);
 	}
-	
+
 	protected NamedEntity contextPop() {
 		return getContext().pop();
+	}
+
+	protected NamedEntity contextTop() {
+		return getContext().top();
 	}
 }
