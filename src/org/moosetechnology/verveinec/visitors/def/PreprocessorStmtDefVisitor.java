@@ -24,9 +24,12 @@ public class PreprocessorStmtDefVisitor extends AbstractContextVisitor {
 		return "creating preprocessor statements";
 	}
 
+	/* "dispatches" preprocessor statements to different visit methods
+	 * Similar to what is done in AbstractDispatcherVisitor. We keep it here because it is very specific and useless for all other visitors 
+	 */
 	@Override
 	public int visit(IASTTranslationUnit node) {
-		if (isProjectFile(node.getFilePath())) {
+		if (fileInsideProject(node.getFilePath())) {
 			for (IASTPreprocessorStatement pstmt : node.getAllPreprocessorStatements()) {
 				if (pstmt instanceof IASTPreprocessorIfdefStatement) {
 					this.visit( (IASTPreprocessorIfdefStatement)pstmt);
@@ -35,7 +38,7 @@ public class PreprocessorStmtDefVisitor extends AbstractContextVisitor {
 					this.visit( (IASTPreprocessorIfndefStatement)pstmt);
 				}
 				else if (pstmt instanceof IASTPreprocessorMacroDefinition) {
-					// nothing for now
+					this.visit( (IASTPreprocessorMacroDefinition)pstmt);
 				}
 			}
 		}
@@ -60,9 +63,13 @@ public class PreprocessorStmtDefVisitor extends AbstractContextVisitor {
 		}
 	}
 
+	protected void visit(IASTPreprocessorMacroDefinition node) {
+		// nothing for now
+	}
+
 	
 
-	private boolean isProjectFile(String filePath) {
+	private boolean fileInsideProject(String filePath) {
 		return filePath.startsWith(rootFolder);
 	}
 

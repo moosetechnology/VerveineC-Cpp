@@ -139,7 +139,7 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 		// visit children (ICElementVisitor) ...
 		visitChildren(elt);
 		try {
-			// ... then visit AST (ASTVisitor)
+			// ... then switch to AST (visit(IASTTranslationUnit) in ASTVisitor)
 			elt.getAST(index, ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS).accept(this);
 		} catch (CoreException e) {
 			System.err.println("*** Got CoreException (\""+ e.getMessage() +"\") while getting AST of "+ elt.getElementName() );

@@ -167,8 +167,12 @@ There is more or less one "Def visitor" for each type of entity in Famix (packag
 This results in visitors that are much simpler because they deal with only one kind of entity.
 By using the visitors in the right order (see `VerveineCParser.runAllVisitors()` and in [archi.md](archi.md#visitors)), this also simplifies the process by ensuring that all used entities are known (created) before being referred to.
 
-The "Def visitors" are `PackageDefVisitor`, `NamespaceDefVisitor`, `TypeDefVisitor`, `BehaviouralDefVisitor`, `TemplateParameterDefVisitor`, `AttributeGlobalVarDefVisitor`, `CommentDefVisitor`, `PreprocessorStmtDefVisitor`, and `ClassMemberDefVisitor` (an abstract super class for `BehaviouralDefVisitor` and `AttributeGlobalVarDefVisitor`).
+The "Def visitors" are `PackageDefVisitor`, `NamespaceDefVisitor`, `TypeDefVisitor`, `BehaviouralDefVisitor`, `TemplateParameterDefVisitor`, `AttributeGlobalVarDefVisitor`, `CommentDefVisitor`, `PreprocessorStmtDefVisitor`, and `ClassMemberDefVisitor` (an abstract superclass for `BehaviouralDefVisitor` and `AttributeGlobalVarDefVisitor`).
 
+
+`ClassMemberDefVisitor` is an abstract superclass for `BehaviouralDefVisitor` and `AttributeGlobalVarDefVisitor`.
+Its main work is ensuring that the visited class is pushed on top of the context stack before visiting the attributes/methods (done by the subclasses).
+This is a bit similar to what `AbstractRefVisitor` does (see below) but only for classes.
 
 ## Ref visitors
 

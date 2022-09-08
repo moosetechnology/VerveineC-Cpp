@@ -1,8 +1,8 @@
 package org.moosetechnology.verveinec.visitors.def;
 
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
@@ -147,14 +147,13 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
-	/** Visiting a class definition
+	/** Visiting a class or struct definition
 	 */
 	@Override
-	protected int visit(ICPPASTCompositeTypeSpecifier node) {
+	protected int visit(IASTCompositeTypeSpecifier node) {
 		Class fmx;
 
-		// compute nodeName and binding
-		super.visit(node);
+		super.visit(node);		// compute nodeName and binding
 		fmx = createClass(node);
 		fmx.setIsStub(false);
 
@@ -164,31 +163,7 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 	}
 	
 	@Override
-	protected int leave(ICPPASTCompositeTypeSpecifier node) {
-		returnedEntity = contextPop();
-		
-		return PROCESS_CONTINUE;
-	}
-
-	/** Visiting a struct in C
-	 * similar to C++ but no template
-	 */
-	@Override
-	protected int visit(ICASTCompositeTypeSpecifier node) {
-		Class fmx;
-
-		// compute nodeName and binding
-		super.visit(node);
-		fmx = createClass(node);
-		fmx.setIsStub(false);
-
-		this.contextPush(fmx);
-
-		return PROCESS_CONTINUE;
-	}
-
-	@Override
-	protected int leave(ICASTCompositeTypeSpecifier node) {
+	protected int leave(IASTCompositeTypeSpecifier node) {
 		returnedEntity = contextPop();
 		
 		return PROCESS_CONTINUE;
@@ -197,10 +172,14 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 	@Override
 	protected int visit(ICPPASTTemplateDeclaration node) {
 		definitionOfATemplate = true;
-		node.getDeclaration().accept(this);
-		definitionOfATemplate = false;
+		
+		return PROCESS_CONTINUE;
+	}
 
-		return PROCESS_SKIP;
+	@Override
+	protected int leave(ICPPASTTemplateDeclaration node) {
+		definitionOfATemplate = false;
+		return PROCESS_CONTINUE;
 	}
 
 	/**
@@ -317,13 +296,13 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 		fmx.setParentPackage(currentPackage);
 		
 		/* We can be in a case where the class declaration being processed belongs to a file imported using an #includes statement
-		 In such a case, filename instance variable will be initialized with location of the file "including" the external file. 
+		 In such a case, filename instance variable will be initialized with location of the file including the external file. 
 		 We should not use filename to generate the source anchor entity, as this is not reliable.
-		 Instead, we should recompute a file location based on the current processed ast node.*/
+		 Instead, we should recompute a file location based on the current processed AST node.*/
 		tmpFilename = FileUtil.localized( node.getFileLocation().getFileName(), rootFolder);
+		
 		// dealing with template class/struct
 		if (isTemplate) {
-		
 			dico.addSourceAnchor(fmx, tmpFilename, ((ICPPASTTemplateDeclaration)node.getParent().getParent()).getFileLocation());
 		}
 		else {

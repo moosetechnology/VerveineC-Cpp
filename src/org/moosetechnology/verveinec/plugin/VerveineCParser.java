@@ -208,7 +208,6 @@ public class VerveineCParser  extends VerveineParser {
 		if (!cModel) {
 			cproject.accept(new InheritanceRefVisitor(dico, index, projectPrefix));
 		}
-		//cproject.accept(new TypeDefFromRefVisitor(dico, index, projectPrefix));
 
 		BehaviouralDefVisitor behavVisitor = new BehaviouralDefVisitor(dico, index, projectPrefix);		// must be after class definitions
 		behavVisitor.setHeaderFiles(true);
@@ -225,7 +224,7 @@ public class VerveineCParser  extends VerveineParser {
 		cproject.accept(new ReferenceRefVisitor(dico, index, projectPrefix));
 
 		cproject.accept(new CommentDefVisitor(dico, index, projectPrefix));
-		cproject.accept(new PreprocessorStmtDefVisitor(dico, index, projectPrefix));
+		//cproject.accept(new PreprocessorStmtDefVisitor(dico, index, projectPrefix));		// not creating preprocessor entities for now
 
 		if (errorlog) {
 			cproject.accept(issueVisitor);

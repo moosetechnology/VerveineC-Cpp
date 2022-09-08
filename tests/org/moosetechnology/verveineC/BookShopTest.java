@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import org.moosetechnology.verveineCore.gen.famix.Access;
 import org.moosetechnology.verveineCore.gen.famix.Attribute;
 import org.moosetechnology.verveineCore.gen.famix.BehaviouralEntity;

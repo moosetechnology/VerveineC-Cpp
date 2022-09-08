@@ -1,11 +1,12 @@
 package org.moosetechnology.verveineC;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import org.moosetechnology.verveineCore.gen.famix.Function;
 import org.moosetechnology.verveineCore.gen.famix.Namespace;
 
