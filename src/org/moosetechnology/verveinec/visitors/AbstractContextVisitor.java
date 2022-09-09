@@ -4,6 +4,8 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -12,7 +14,9 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.index.IIndex;
@@ -171,12 +175,68 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 		return this.visit((IASTCompositeTypeSpecifier)node);
 	}
 
+	/*
+	 * merging ICPPASTCompositeTypeSpecifier and ICASTCompositeTypeSpecifier
+	 */
+	@Override
 	protected int visit(IASTCompositeTypeSpecifier node) {
 		nodeName = node.getName();
 		nodeBnd = resolver.getBinding(nodeName);
 
 		if (nodeBnd == null) {
 			nodeBnd = resolver.mkStubKey(nodeName, Class.class);
+		}
+
+		return PROCESS_CONTINUE;
+	}
+
+	/*
+	 * merging ICASTElaboratedTypeSpecifier and ICPPASTElaboratedTypeSpecifier
+	 * to recover node_name and node_bnd
+	 */
+	@Override
+	protected int visit(IASTElaboratedTypeSpecifier node) {
+		nodeName = node.getName();
+		nodeBnd = resolver.getBinding(nodeName);
+		
+		if (nodeBnd == null) {
+			nodeBnd = resolver.mkStubKey(nodeName, Class.class);
+		}
+
+		return PROCESS_CONTINUE;
+	}
+
+	/*
+	 * merging ICASTElaboratedTypeSpecifier and ICPPASTElaboratedTypeSpecifier
+	 * to recover node_name and node_bnd
+	 */
+	@Override
+	protected int visit(ICASTElaboratedTypeSpecifier node) {
+		return this.visit((IASTElaboratedTypeSpecifier)node);
+	}
+
+	/*
+	 * merging ICASTElaboratedTypeSpecifier and ICPPASTElaboratedTypeSpecifier
+	 * to recover node_name and node_bnd
+	 */
+	@Override
+	protected int visit(ICPPASTElaboratedTypeSpecifier node) {
+		return this.visit((IASTElaboratedTypeSpecifier)node);
+	}
+
+	@Override
+	protected int visit(IASTEnumerationSpecifier node) {
+		nodeName = node.getName();
+		if (nodeName.equals("")) {
+			// case of anonymous enum: it is probably within a typedef and will never be used directly
+			// so the key is mostly irrelevant, only used to find back the type when creating its enumerated values 
+			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), org.moosetechnology.verveineCore.gen.famix.Enum.class);
+		}
+		else {
+			nodeBnd = resolver.getBinding(nodeName);
+			if (nodeBnd == null) {
+				nodeBnd = resolver.mkStubKey(nodeName, org.moosetechnology.verveineCore.gen.famix.Enum.class);
+			}
 		}
 
 		return PROCESS_CONTINUE;

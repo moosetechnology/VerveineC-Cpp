@@ -17,7 +17,7 @@ class StructsTest extends AbstractTest {
 	public static void setup() {
 		newParser();
 
-		parser.setUserProjectDir("./test_src/Structs");
+		parser.setUserProjectDir("./test_src/StructsEnums");
 		parser.parse();
 	}
 

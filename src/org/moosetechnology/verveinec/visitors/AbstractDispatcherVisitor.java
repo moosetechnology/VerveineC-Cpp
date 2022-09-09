@@ -248,6 +248,18 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 			// -> struct/union in C
 			return this.visit((ICASTCompositeTypeSpecifier)node);
 		}
+		else if (node instanceof ICASTElaboratedTypeSpecifier) {
+			/* could also test node.getKind() ???
+			 * - IASTElaboratedTypeSpecifier.k_enum:
+			 * - IASTElaboratedTypeSpecifier.k_struct:
+			 * - IASTElaboratedTypeSpecifier.k_union:
+			 * - ICPPASTElaboratedTypeSpecifier.k_class:
+			 */
+			return visit((ICASTElaboratedTypeSpecifier)node);
+		}
+		else if (node instanceof ICPPASTElaboratedTypeSpecifier) {
+			return visit((ICPPASTElaboratedTypeSpecifier)node);
+		}
 		else if (node instanceof IASTElaboratedTypeSpecifier) {
 			return this.visit((IASTElaboratedTypeSpecifier)node);
 		}
@@ -395,19 +407,7 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 	}
 
 	protected int visit(IASTElaboratedTypeSpecifier node) {
-		/* could also test node.getKind() ???
-		 * - IASTElaboratedTypeSpecifier.k_enum:
-		 * - IASTElaboratedTypeSpecifier.k_struct:
-		 * - IASTElaboratedTypeSpecifier.k_union:
-		 * - ICPPASTElaboratedTypeSpecifier.k_class:
-		 */
-		if (node instanceof ICASTElaboratedTypeSpecifier) {
-			return visit((ICASTElaboratedTypeSpecifier)node);
-		}
-		else if (node instanceof ICPPASTElaboratedTypeSpecifier) {
-			return visit((ICPPASTElaboratedTypeSpecifier)node);
-		}
-		return super.visit(node);
+		return PROCESS_CONTINUE;
 	}
 
 	protected int visit(ICASTElaboratedTypeSpecifier node) {

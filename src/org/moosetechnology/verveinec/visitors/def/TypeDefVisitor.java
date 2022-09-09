@@ -9,7 +9,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -46,6 +45,7 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 	 * to mark class definitions that are FAMIXParameterizableClass
 	 */
 	protected boolean definitionOfATemplate;
+	private NamedEntity popedFriendContext;
 
 	// CONSTRUCTOR ==========================================================================================================================
 
@@ -187,23 +187,20 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 	 */
 	@Override
 	protected int visit(IASTElaboratedTypeSpecifier node) {
-		NamedEntity ctxt = null;
+		popedFriendContext = null;
 
-		nodeName = node.getName();
-		nodeBnd = resolver.getBinding(nodeName);
-		if (nodeBnd == null) {
-			nodeBnd = resolver.mkStubKey(nodeName, Class.class);
-		}
+		super.visit(node);
 
 		if (isCppFriendDeclaration(node)) {
-			ctxt = contextPop();
+			/* bug if we have several friend declarations, each one will pop out a context */
+			popedFriendContext = contextPop();
 		}
 
 		switch (node.getKind()) {
 		case IASTElaboratedTypeSpecifier.k_struct:
 		case IASTElaboratedTypeSpecifier.k_union:
 		case ICPPASTElaboratedTypeSpecifier.k_class:
-			createClass(node);//ok
+			createClass(node);
 			break;
 		case IASTElaboratedTypeSpecifier.k_enum:
 			createEnum(node);
@@ -211,12 +208,16 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 		default:
 			// should not happen
 		}
-
-		if (ctxt != null) {
-			contextPush(ctxt);
+		return PROCESS_CONTINUE;
+	}
+	
+	@Override
+	protected int leave(IASTElaboratedTypeSpecifier node) {
+		if (popedFriendContext != null) {
+			contextPush(popedFriendContext);
 		}
 
-		return PROCESS_SKIP;
+		return PROCESS_CONTINUE;
 	}
 
 	@Override
@@ -234,23 +235,12 @@ public class TypeDefVisitor extends AbstractContextVisitor {
 	protected int visit(IASTEnumerationSpecifier node) {
 		org.moosetechnology.verveineCore.gen.famix.Enum fmx;
 
-		nodeName = node.getName();
-		if (nodeName.equals("")) {
-			// case of anonymous enum: it is probably within a typedef and will never be used directly
-			// so the key is mostly irrelevant, only used to find back the type when creating its enumerated values 
-			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), org.moosetechnology.verveineCore.gen.famix.Enum.class);
-		}
-		else {
-			nodeBnd = resolver.getBinding(nodeName);
-			if (nodeBnd == null) {
-				nodeBnd = resolver.mkStubKey(nodeName, org.moosetechnology.verveineCore.gen.famix.Enum.class);
-			}
-		}
+		super.visit(node);
 
 		fmx = createEnum(node);
 		fmx.setIsStub(false);
 
-		return PROCESS_SKIP;
+		return PROCESS_CONTINUE;
 	}
 
 	/**
