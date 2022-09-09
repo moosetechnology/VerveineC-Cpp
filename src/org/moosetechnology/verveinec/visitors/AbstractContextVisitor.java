@@ -6,6 +6,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -227,6 +228,7 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 	@Override
 	protected int visit(IASTEnumerationSpecifier node) {
 		nodeName = node.getName();
+		nodeBnd = null;
 		if (nodeName.equals("")) {
 			// case of anonymous enum: it is probably within a typedef and will never be used directly
 			// so the key is mostly irrelevant, only used to find back the type when creating its enumerated values 
@@ -238,6 +240,25 @@ public abstract class AbstractContextVisitor extends AbstractDispatcherVisitor {
 				nodeBnd = resolver.mkStubKey(nodeName, org.moosetechnology.verveineCore.gen.famix.Enum.class);
 			}
 		}
+
+		return PROCESS_CONTINUE;
+	}
+
+	@Override
+	public int visit(IASTEnumerator node) {
+		nodeBnd = null;
+		nodeName = node.getName();
+		nodeBnd = resolver.getBinding(nodeName);
+
+		return PROCESS_CONTINUE;
+	}
+
+	/*m
+	 * We typically get here in the case of a variable declaration: an attribute or a "global" variable
+	 */
+	protected int visitInternal(IASTDeclarator node) {
+		nodeName = node.getName();
+		nodeBnd = resolver.getBinding(nodeName);
 
 		return PROCESS_CONTINUE;
 	}

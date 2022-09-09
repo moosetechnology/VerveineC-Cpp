@@ -229,7 +229,7 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 		}
 	}
 
-	/* new visit method for "true IASTDeclarators" (e.g. attributes of struct in C)
+	/** new visit method for "true IASTDeclarators" (e.g. attributes of struct in C)
 	 * this avoids overriding visit(IASTDeclarator node) in the sub-classes of AbstractDispatcherVisitor
 	 * which would hide the dispatch done here
 	 */

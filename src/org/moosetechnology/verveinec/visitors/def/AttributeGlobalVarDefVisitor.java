@@ -115,15 +115,15 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 	}
 
 	/*
-	 * We mostly get here in the case of a variable declaration: an attribute or a "global" variable
+	 * We typically get here in the case of a variable declaration: an attribute or a "global" variable
 	 * Also reached in case of strange uses of macros :-(
 	 * For example in "void fct() THE_MACRO((MACRO_ARG));" the IASTDeclarator is "((MACRO_ARG))"
 	 */
 	@Override
 	public int visitInternal(IASTDeclarator node) {
-		nodeName = node.getName();
-		nodeBnd = resolver.getBinding(nodeName);
 		StructuralEntity fmx;
+		
+		super.visitInternal(node);
 
 		// In the case of the strange macro use, we found empty names
 		if (nodeName.toString().length() > 0) {
@@ -220,36 +220,26 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 
 	@Override
 	protected int visit(IASTEnumerationSpecifier node) {
-		nodeBnd = null;
-		nodeName = node.getName();
-
-		if (nodeName.equals("")) {
-			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), org.moosetechnology.verveineCore.gen.famix.Enum.class);
-		}
-		else {
-			nodeBnd = resolver.getBinding(nodeName);
-			if (nodeBnd == null) {
-				nodeBnd = resolver.mkStubKey(nodeName.toString(), org.moosetechnology.verveineCore.gen.famix.Enum.class);
-			}
-		}
+		super.visit(node);
 
 		this.contextPush(dico.getEntityByKey(nodeBnd));
-		for (IASTEnumerator decl : node.getEnumerators()) {
-			decl.accept(this);
-		}
-		returnedEntity = contextPop();
 
-		return PROCESS_SKIP;
+		return PROCESS_CONTINUE;
 	}
 
+	@Override
+	protected int leave(IASTEnumerationSpecifier node) {
+		returnedEntity = contextPop();
+
+		return PROCESS_CONTINUE;
+	}
+	
 	@Override
 	public int visit(IASTEnumerator node) {
 		EnumValue fmx;
 
-		nodeBnd = null;
-		nodeName = node.getName();
-		if (nodeBnd == null) {
-		}
+		super.visit(node);
+	
 		fmx = dico.ensureFamixEnumValue(nodeBnd, nodeName.toString(), (Enum)contextTop(), /*persistIt*/true);
 		fmx.setIsStub(false);
 		dico.addSourceAnchor(fmx, filename, node.getFileLocation());
