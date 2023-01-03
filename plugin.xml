@@ -2,10 +2,12 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="Main"
+         id="org.moosetechnology.verveineC"
+         name="verveineC"
          point="org.eclipse.core.runtime.applications">
-      <application cardinality="singleton-global" thread="main" visible="true"> 
-         <run class="fr.verveine.plugin.PluginApplication"/>
+      <application> 
+         <run class="org.moosetechnology.verveinec.plugin.PluginApplication">
+         </run> 
       </application> 
    </extension>
 

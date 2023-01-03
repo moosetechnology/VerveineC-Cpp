@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: VerveineC
 Bundle-SymbolicName: org.moosetechnology.verveineC;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.moosetechnology.verveinec.plugin.Activator
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.25.0",
  org.eclipse.core.resources;bundle-version="3.17.0",
  org.eclipse.cdt.core;bundle-version="7.4.200",
@@ -18,3 +17,4 @@ Bundle-ClassPath: .,
  lib/fame.jar,
  lib/famix.jar,
  lib/verveine.core.jar
+Bundle-Activator: fr.verveine.plugin.Activator

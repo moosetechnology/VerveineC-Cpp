@@ -485,8 +485,9 @@ public class CDictionary extends Dictionary<IBinding> {
 		return fmx;
 	}
 
-	public ImplicitVariable ensureFamixImplicitVariable(String name, Type type, BehaviouralEntity owner) {
-		return super.ensureFamixImplicitVariable( name, type, owner, /*persistIt*/true);
+	public ImplicitVariable ensureFamixImplicitVariable(String name, Type type, Method owner) {
+		IBinding bnd = StubBinding.getInstance(Type.class, mooseName(owner, name));
+		return super.ensureFamixImplicitVariable( bnd, name, type, owner, /*persistIt*/true);
 	}
 
 	/**

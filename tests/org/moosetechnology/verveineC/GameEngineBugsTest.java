@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import eu.synectique.verveine.core.gen.famix.NamedEntity;
+import eu.synectique.verveine.core.gen.famix.TypeAlias;
 
 class GameEngineBugsTest extends AbstractTest {
 
@@ -22,11 +23,17 @@ class GameEngineBugsTest extends AbstractTest {
 	}
 
 	@Test
-	void testDelectedfunction() {		
+	void testDeletedFunction() {		
 		eu.synectique.verveine.core.gen.famix.Class clazz = entityNamed(eu.synectique.verveine.core.gen.famix.Class.class, "Allocator");
 		assertNotNull(clazz);
 		assertEquals(4, clazz.getMethods().size());
 		repo.all(NamedEntity.class);
+	}
+
+	@Test
+	void testStructAlias() {		
+		TypeAlias typ = entityNamed(TypeAlias.class, "UBreakIterator");
+		assertNotNull(typ);
 	}
 
 }

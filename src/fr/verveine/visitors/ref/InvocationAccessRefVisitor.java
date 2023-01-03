@@ -316,10 +316,10 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 
 		if ( node.getKind() == ICPPASTLiteralExpression.lk_this ) {
 			if (getContext().topType() != null) {
-				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(Dictionary.SELF_NAME, /*type*/getContext().topType(), /*owner*/getContext().topBehaviouralEntity()));
+				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(Dictionary.SELF_NAME, /*type*/getContext().topType(), (Method) /*owner*/getContext().topBehaviouralEntity()));
 			}
 			else if (getContext().topMethod() != null) {
-				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(Dictionary.SELF_NAME, /*type*/getContext().topMethod().getParentType(), /*owner*/getContext().topBehaviouralEntity()));
+				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(Dictionary.SELF_NAME, /*type*/getContext().topMethod().getParentType(), (Method) /*owner*/getContext().topBehaviouralEntity()));
 			}
 			if (returnedEntity != null) {
 				dico.addSourceAnchor(returnedEntity, filename, node.getFileLocation());
@@ -433,7 +433,7 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 		else {
 			fmx = dico.ensureFamixFunction(/*key*/resolver.mkStubKey(name+"__"+nbArgs, Function.class), name, stubSig, /*container*/null);
 		}
-		fmx.setNumberOfParameters(nbArgs);
+		//fmx.setNumberOfParameters(nbArgs);
 		// there are 2 ways to get the number of parameters of a BehaviouralEntity: getNumberOfParameters() and numberOfParameters()
 		// the first returns the attribute numberOfParameters (set here), the second computes the size of parameters
 		return fmx;

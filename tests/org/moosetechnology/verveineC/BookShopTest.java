@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import eu.synectique.verveine.core.gen.famix.Access;
 import eu.synectique.verveine.core.gen.famix.Attribute;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
@@ -30,7 +29,7 @@ class BookShopTest extends AbstractTest {
 	}
 
 	@Test
-	public void testNumberOfEntities() {		
+	public void testNumberOfEntities() {	
 		assertEquals(
 				6,
 				entitiesOfType(GlobalVariable.class).size());		
@@ -51,6 +50,7 @@ class BookShopTest extends AbstractTest {
 				9,
 				entitiesOfType(Function.class).size());
 				// main_menu, book_menu, sup_menu, pur_menu, emp_menu, mem_menu, sal_menu, pass, main
+		
 /* not exporting local variables
 		assertEquals(
 				24,

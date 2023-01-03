@@ -359,14 +359,14 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 	protected void visitParameters(IASTNode[] params, BehaviouralEntity fmx) {
 		// if there is only one parameter and it is "void" then there is no parameter
 		if ( (params.length==1) && isVoidParam(params[0]) ) {
-			fmx.setNumberOfParameters(0);
+			//fmx.setNumberOfParameters(0);
 			return;
 		}
 
 		// note that there are 2 ways to get the number of parameters of a BehaviouralEntity in Famix: getNumberOfParameters() and numberOfParameters()
 		// the first returns the attribute numberOfParameters (set here),
 		// the second computes the size of parameter list so does not need to (and cannot) be set per se
-		fmx.setNumberOfParameters(params.length);
+		//fmx.setNumberOfParameters(params.length);
 
 		getParameterMaps(params.length, fmx); // there are 2 maps, so we are using global variables to store them instead of returning them
 		super.visitParameters(params, fmx);   // ... modifies the parameterMaps ...

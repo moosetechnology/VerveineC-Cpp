@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import ch.akuhn.fame.Repository;
 import eu.synectique.verveine.core.gen.famix.Entity;
 import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import fr.verveine.plugin.VerveineCParser;
+import ch.akuhn.fame.Repository;
 
 /**
  * Essentially implements utility methods used in all tests

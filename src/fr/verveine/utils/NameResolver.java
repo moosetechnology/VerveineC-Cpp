@@ -477,7 +477,8 @@ public class NameResolver {
 		}
 
 		if (recursive) {
-			return findInParent(name, context.getBelongsTo(), recursive);
+			NamedEntity belongsTo = context.getBelongsTo();
+			return findInParent(name, belongsTo, recursive);
 		}
 		else {
 			return null;
