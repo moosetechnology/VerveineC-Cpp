@@ -39,17 +39,14 @@ import org.moosetechnology.verveinec.visitors.def.BehaviouralDefVisitor;
 import org.moosetechnology.verveinec.visitors.def.CommentDefVisitor;
 import org.moosetechnology.verveinec.visitors.def.NamespaceDefVisitor;
 import org.moosetechnology.verveinec.visitors.def.PackageDefVisitor;
-import org.moosetechnology.verveinec.visitors.def.PreprocessorStmtDefVisitor;
 import org.moosetechnology.verveinec.visitors.def.TemplateParameterDefVisitor;
 import org.moosetechnology.verveinec.visitors.def.TypeDefVisitor;
 import org.moosetechnology.verveinec.visitors.ref.DeclaredTypeRefVisitor;
 import org.moosetechnology.verveinec.visitors.ref.InheritanceRefVisitor;
 import org.moosetechnology.verveinec.visitors.ref.InvocationAccessRefVisitor;
 import org.moosetechnology.verveinec.visitors.ref.ReferenceRefVisitor;
+import org.moosetechnology.model.famix.famixtraits.TSourceLanguage;
 import org.moosetechnology.verveineCore.VerveineParser;
-import org.moosetechnology.verveineCore.gen.famix.CSourceLanguage;
-import org.moosetechnology.verveineCore.gen.famix.CppSourceLanguage;
-import org.moosetechnology.verveineCore.gen.famix.SourceLanguage;
 
 
 public class VerveineCParser  extends VerveineParser {
@@ -405,12 +402,12 @@ public class VerveineCParser  extends VerveineParser {
 	}
 
 	@Override
-	protected SourceLanguage getMyLgge() {
+	protected TSourceLanguage getMyLgge() {
 		if (cModel) {
-			return new CSourceLanguage();
+			return new org.moosetechnology.model.famix.famixcentities.SourceLanguage();
 		}
 		else {
-			return new CppSourceLanguage();
+			return new org.moosetechnology.model.famix.famixcppentities.SourceLanguage();
 		}
 	}
 
