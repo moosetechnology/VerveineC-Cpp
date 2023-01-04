@@ -6,11 +6,11 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.moosetechnology.verveineC.utils.FileUtil;
-import org.moosetechnology.verveineC.utils.StubBinding;
 import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.Visibility;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
+import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
+import org.moosetechnology.verveineC.utils.resolution.StubBinding;
 
 import ch.akuhn.fame.Repository;
 import eu.synectique.verveine.core.Dictionary;

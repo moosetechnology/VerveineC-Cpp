@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.index.IIndex;
 import org.moosetechnology.verveineC.plugin.CDictionary;
-import org.moosetechnology.verveineC.utils.QualifiedName;
+import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 
 import eu.synectique.verveine.core.gen.famix.Attribute;
 import eu.synectique.verveine.core.gen.famix.ContainerEntity;

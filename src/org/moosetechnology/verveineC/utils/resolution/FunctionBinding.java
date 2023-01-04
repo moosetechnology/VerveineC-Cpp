@@ -1,4 +1,4 @@
-package org.moosetechnology.verveineC.utils;
+package org.moosetechnology.verveineC.utils.resolution;
 
 import java.util.Collection;
 import java.util.HashMap;

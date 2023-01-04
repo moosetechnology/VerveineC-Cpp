@@ -9,9 +9,9 @@ import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.plugin.VerveineCParser;
-import org.moosetechnology.verveineC.utils.FileUtil;
-import org.moosetechnology.verveineC.utils.NameResolver;
-import org.moosetechnology.verveineC.utils.StubBinding;
+import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
+import org.moosetechnology.verveineC.utils.resolution.NameResolver;
+import org.moosetechnology.verveineC.utils.resolution.StubBinding;
 
 import eu.synectique.verveine.core.gen.famix.CFile;
 

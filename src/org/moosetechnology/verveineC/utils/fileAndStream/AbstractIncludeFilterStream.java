@@ -1,4 +1,4 @@
-package org.moosetechnology.verveineC.utils;
+package org.moosetechnology.verveineC.utils.fileAndStream;
 
 import java.io.FilterInputStream;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package org.moosetechnology.verveineC.utils;
+package org.moosetechnology.verveineC.utils.resolution;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -12,6 +12,8 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.runtime.CoreException;
 import org.moosetechnology.verveineC.plugin.CDictionary;
+import org.moosetechnology.verveineC.utils.CppEntityStack;
+import org.moosetechnology.verveineC.utils.WrongClassGuessException;
 import org.moosetechnology.verveineC.visitors.SignatureBuilderVisitor;
 
 import eu.synectique.verveine.core.gen.famix.Attribute;

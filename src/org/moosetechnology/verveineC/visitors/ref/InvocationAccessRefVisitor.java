@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.moosetechnology.verveineC.plugin.CDictionary;
-import org.moosetechnology.verveineC.utils.QualifiedName;
+import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 import org.moosetechnology.verveineC.visitors.AbstractDispatcherVisitor;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 

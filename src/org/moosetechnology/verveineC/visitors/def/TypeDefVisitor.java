@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.moosetechnology.verveineC.plugin.CDictionary;
-import org.moosetechnology.verveineC.utils.FileUtil;
+import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 
 import eu.synectique.verveine.core.gen.famix.Class;
