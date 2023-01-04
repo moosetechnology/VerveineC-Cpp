@@ -1,6 +1,7 @@
 package org.moosetechnology.verveineC.utils;
 
-import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TSourceEntity;
 
 /**
  * An exception to flag entities wrongly typed during parsing (e.g. a Namespace that was expected as a Class.
@@ -15,7 +16,7 @@ public class WrongClassGuessException extends Exception {
 		super(message);
 	}
 
-	static public <T extends NamedEntity> void reportWrongClassGuess(Class<T> clazz, NamedEntity found) {
+	static public <T extends TNamedEntity> void reportWrongClassGuess(Class<T> clazz, TNamedEntity found) {
 		System.err.print("Exception: wrong guessed type '"
 				+ found.getClass().getSimpleName()
 				+ "' instead of expected type '"
@@ -23,21 +24,14 @@ public class WrongClassGuessException extends Exception {
 				+ "' for entity `"
 				+ found.getName()
 				+ "'");
-		if (found.getSourceAnchor() != null) {
-			System.err.println(" @" + found.getSourceAnchor().toString());
+		if ( (found instanceof TSourceEntity) && (((TSourceEntity)found).getSourceAnchor() != null) ) {
+			System.err.println(" @" + ((TSourceEntity)found).getSourceAnchor().toString());
 		}
 		else {
 			System.err.println();
 		}
 		
-		/*for (StackTraceElement stackEntry : new Throwable().getStackTrace()) {
-			if (! (stackEntry.getMethodName().equals("reportWrongClassGuess") || stackEntry.getMethodName().startsWith("getEntry")) ) {
-				System.err.println(" From parser code: " + stackEntry.toString());
-				break;
-			}
-		}*/
 		new Throwable().printStackTrace();
-		
 	}
  
 }

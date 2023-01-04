@@ -34,11 +34,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.moosetechnology.famix.cpp.CSourceLanguage;
-import org.moosetechnology.famix.cpp.CppSourceLanguage;
-import org.moosetechnology.famix.cpp.Entity;
-import org.moosetechnology.famix.cpp.FAMIXModel;
-import org.moosetechnology.famix.cpp.SourceLanguage;
+import org.moosetechnology.famix.famixcppentities.FamixCppEntitiesModel;
+import org.moosetechnology.famix.famixcppentities.FamixCppModel;
+import org.moosetechnology.famix.famixtraits.TSourceLanguage;
+import org.moosetechnology.famix.moose.Entity;
 import org.moosetechnology.verveineC.utils.Constants;
 import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
@@ -171,7 +170,7 @@ public class VerveineCParser {
 	
 	public VerveineCParser() {
 		setOutputFileName(OUTPUT_FILE);
-		setFamixRepo(new Repository(FAMIXModel.metamodel()));
+		setFamixRepo(new Repository(FamixCppEntitiesModel.metamodel()));
 		this.argIncludes = new ArrayList<String>();
 		this.argDefined = new HashMap<String,String>();
 		this.forceIncludeH = false;
@@ -208,7 +207,7 @@ public class VerveineCParser {
 
 	public void emitMSE(OutputStream output) {
 		// Adds default SourceLanguage for the repository
-		if ( (listAll(SourceLanguage.class).size() == 0) && (getMyLgge() != null) ) {
+		if ( (getFamixRepo().all(TSourceLanguage.class).size() == 0) && (getMyLgge() != null) ) {
 			getFamixRepo().add( getMyLgge());
 		}
 
@@ -219,13 +218,6 @@ public class VerveineCParser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Returns a Collection of all FAMIXEntities in the repository of the given fmxClass
-	 */
-	public <T extends Entity> Collection<T> listAll(Class<T> fmxClass) {
-		return getFamixRepo().all(fmxClass);
 	}
 
 	public Repository getFamixRepo() {
@@ -485,12 +477,12 @@ Trace.off();
 		}
 	}
 
-	protected SourceLanguage getMyLgge() {
+	protected TSourceLanguage getMyLgge() {
 		if (cModel) {
-			return new CSourceLanguage();
+			return new org.moosetechnology.famix.famixcentities.SourceLanguage();
 		}
 		else {
-			return new CppSourceLanguage();
+			return new org.moosetechnology.famix.famixcppentities.SourceLanguage();
 		}
 	}
 
