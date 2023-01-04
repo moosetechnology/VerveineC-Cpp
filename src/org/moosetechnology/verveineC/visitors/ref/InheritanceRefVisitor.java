@@ -6,12 +6,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.index.IIndex;
+import org.moosetechnology.famix.cpp.Class;
+import org.moosetechnology.famix.cpp.Inheritance;
+import org.moosetechnology.famix.cpp.Type;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
-
-import eu.synectique.verveine.core.gen.famix.Class;
-import eu.synectique.verveine.core.gen.famix.Inheritance;
-import eu.synectique.verveine.core.gen.famix.Type;
 
 public class InheritanceRefVisitor extends AbstractVisitor {
 

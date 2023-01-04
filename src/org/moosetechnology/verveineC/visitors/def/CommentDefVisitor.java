@@ -6,11 +6,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
+import org.moosetechnology.famix.cpp.Comment;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
-
-import eu.synectique.verveine.core.gen.famix.Comment;
 
 public class CommentDefVisitor extends AbstractVisitor {
 

@@ -2,15 +2,15 @@ package org.moosetechnology.verveineC.utils;
 
 import java.util.Stack;
 
-import eu.synectique.verveine.core.gen.famix.Access;
-import eu.synectique.verveine.core.gen.famix.AnnotationTypeAttribute;
-import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.ContainerEntity;
-import eu.synectique.verveine.core.gen.famix.Invocation;
-import eu.synectique.verveine.core.gen.famix.Method;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
-import eu.synectique.verveine.core.gen.famix.Namespace;
-import eu.synectique.verveine.core.gen.famix.Reference;
+import org.moosetechnology.famix.cpp.Access;
+import org.moosetechnology.famix.cpp.AnnotationTypeAttribute;
+import org.moosetechnology.famix.cpp.BehaviouralEntity;
+import org.moosetechnology.famix.cpp.ContainerEntity;
+import org.moosetechnology.famix.cpp.Invocation;
+import org.moosetechnology.famix.cpp.Method;
+import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.cpp.Namespace;
+import org.moosetechnology.famix.cpp.Reference;
 
 public class CppEntityStack {
 	
@@ -109,7 +109,7 @@ public class CppEntityStack {
 	 * Sets the Famix Package on top of the "context stack"
 	 * @param e -- the Famix Package
 	 */
-	public void pushPckg(eu.synectique.verveine.core.gen.famix.Package e) {
+	public void pushPckg(org.moosetechnology.famix.cpp.Package e) {
 		push(e);
 	}
 
@@ -125,7 +125,7 @@ public class CppEntityStack {
 	 * Pushes a Famix Type on top of the "context type stack"
 	 * @param t -- the FamixType
 	 */
-	public void pushType(eu.synectique.verveine.core.gen.famix.Type t) {
+	public void pushType(org.moosetechnology.famix.cpp.Type t) {
 		push(t);
 	}
 
@@ -165,7 +165,7 @@ public class CppEntityStack {
 	 */
 	public void clearTypes() {
 		while (! (this.top() instanceof Namespace)) {
-			this.popUpto(eu.synectique.verveine.core.gen.famix.Type.class);			
+			this.popUpto(org.moosetechnology.famix.cpp.Type.class);			
 		}
 	}
 
@@ -223,8 +223,8 @@ public class CppEntityStack {
 	 * Note: does not check that there is such a namespace
 	 * @return the Famix method
 	 */
-	public eu.synectique.verveine.core.gen.famix.Package popPckg() {
-		return this.popUpto(eu.synectique.verveine.core.gen.famix.Package.class);
+	public org.moosetechnology.famix.cpp.Package popPckg() {
+		return this.popUpto(org.moosetechnology.famix.cpp.Package.class);
 	}
 
 	/**
@@ -232,8 +232,8 @@ public class CppEntityStack {
 	 * Note: does not check that there is such a type, so could possibly throw an EmptyStackException
 	 * @return the Famix class
 	 */
-	public eu.synectique.verveine.core.gen.famix.Type popType() {
-		return this.popUpto(eu.synectique.verveine.core.gen.famix.Type.class);
+	public org.moosetechnology.famix.cpp.Type popType() {
+		return this.popUpto(org.moosetechnology.famix.cpp.Type.class);
 	}
 
 	/**
@@ -283,8 +283,8 @@ public class CppEntityStack {
 	 * Note: does not check that there is such a package
 	 * @return the Famix namespace
 	 */
-	public eu.synectique.verveine.core.gen.famix.Package topPckg() {
-		return this.lookUpto(eu.synectique.verveine.core.gen.famix.Package.class);
+	public org.moosetechnology.famix.cpp.Package topPckg() {
+		return this.lookUpto(org.moosetechnology.famix.cpp.Package.class);
 	}
 
 	/**
@@ -292,8 +292,8 @@ public class CppEntityStack {
 	 * Note: does not check that there is such a class, so could possibly throw an EmptyStackException
 	 * @return the Famix class
 	 */
-	public eu.synectique.verveine.core.gen.famix.Type topType() {
-		return this.lookUpto(eu.synectique.verveine.core.gen.famix.Type.class);
+	public org.moosetechnology.famix.cpp.Type topType() {
+		return this.lookUpto(org.moosetechnology.famix.cpp.Type.class);
 	}
 
 	/**
@@ -340,7 +340,7 @@ public class CppEntityStack {
 		tmp.push(top);
 		while ( ! ((top == null) ||
 				   (top instanceof Method) ||
-				   (top instanceof eu.synectique.verveine.core.gen.famix.Class) ||
+				   (top instanceof org.moosetechnology.famix.cpp.Class) ||
 				   (top instanceof Namespace) )) {
 			top = pop();
 			tmp.push(top);

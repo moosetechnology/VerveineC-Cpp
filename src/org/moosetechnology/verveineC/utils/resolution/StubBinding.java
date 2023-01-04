@@ -7,9 +7,8 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-
-import eu.synectique.verveine.core.gen.famix.Entity;
-import eu.synectique.verveine.core.gen.famix.Package;
+import org.moosetechnology.famix.cpp.Entity;
+import org.moosetechnology.famix.cpp.Package;
 
 /**
  * This is a CDT {@link IBinding} implementor to serve as key for unresolved entities

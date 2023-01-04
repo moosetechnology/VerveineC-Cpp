@@ -6,9 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
-import eu.synectique.verveine.core.gen.famix.TypeAlias;
+import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.cpp.TypeAlias;
 
 class GameEngineBugsTest extends AbstractTest {
 
@@ -24,7 +23,7 @@ class GameEngineBugsTest extends AbstractTest {
 
 	@Test
 	void testDeletedFunction() {		
-		eu.synectique.verveine.core.gen.famix.Class clazz = entityNamed(eu.synectique.verveine.core.gen.famix.Class.class, "Allocator");
+		org.moosetechnology.famix.cpp.Class clazz = entityNamed(org.moosetechnology.famix.cpp.Class.class, "Allocator");
 		assertNotNull(clazz);
 		assertEquals(4, clazz.getMethods().size());
 		repo.all(NamedEntity.class);

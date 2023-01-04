@@ -24,26 +24,25 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
+import org.moosetechnology.famix.cpp.Access;
+import org.moosetechnology.famix.cpp.Association;
+import org.moosetechnology.famix.cpp.BehaviouralEntity;
+import org.moosetechnology.famix.cpp.BehaviouralReference;
+import org.moosetechnology.famix.cpp.Class;
+import org.moosetechnology.famix.cpp.ContainerEntity;
+import org.moosetechnology.famix.cpp.DereferencedInvocation;
+import org.moosetechnology.famix.cpp.Invocation;
+import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.cpp.ParameterizableClass;
+import org.moosetechnology.famix.cpp.ParameterizedType;
+import org.moosetechnology.famix.cpp.SourcedEntity;
+import org.moosetechnology.famix.cpp.StructuralEntity;
+import org.moosetechnology.famix.cpp.Type;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 import org.moosetechnology.verveineC.utils.resolution.StubBinding;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
-
-import eu.synectique.verveine.core.gen.famix.Access;
-import eu.synectique.verveine.core.gen.famix.Association;
-import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.BehaviouralReference;
-import eu.synectique.verveine.core.gen.famix.Class;
-import eu.synectique.verveine.core.gen.famix.ContainerEntity;
-import eu.synectique.verveine.core.gen.famix.DereferencedInvocation;
-import eu.synectique.verveine.core.gen.famix.Invocation;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
-import eu.synectique.verveine.core.gen.famix.ParameterizableClass;
-import eu.synectique.verveine.core.gen.famix.ParameterizedType;
-import eu.synectique.verveine.core.gen.famix.SourcedEntity;
-import eu.synectique.verveine.core.gen.famix.StructuralEntity;
-import eu.synectique.verveine.core.gen.famix.Type;
 
 /**
  * Abstract superclass for Reference visitors.<BR>

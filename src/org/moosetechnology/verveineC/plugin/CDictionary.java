@@ -8,60 +8,59 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.moosetechnology.famix.cpp.AbstractFileAnchor;
+import org.moosetechnology.famix.cpp.Access;
+import org.moosetechnology.famix.cpp.AnnotationInstance;
+import org.moosetechnology.famix.cpp.AnnotationInstanceAttribute;
+import org.moosetechnology.famix.cpp.AnnotationType;
+import org.moosetechnology.famix.cpp.AnnotationTypeAttribute;
+import org.moosetechnology.famix.cpp.Association;
+import org.moosetechnology.famix.cpp.Attribute;
+import org.moosetechnology.famix.cpp.BehaviouralEntity;
+import org.moosetechnology.famix.cpp.BehaviouralReference;
+import org.moosetechnology.famix.cpp.CFile;
+import org.moosetechnology.famix.cpp.Comment;
+import org.moosetechnology.famix.cpp.CompilationUnit;
+import org.moosetechnology.famix.cpp.ContainerEntity;
+import org.moosetechnology.famix.cpp.DereferencedInvocation;
+import org.moosetechnology.famix.cpp.Entity;
+import org.moosetechnology.famix.cpp.Enum;
+import org.moosetechnology.famix.cpp.EnumValue;
+import org.moosetechnology.famix.cpp.Function;
+import org.moosetechnology.famix.cpp.GlobalVariable;
+import org.moosetechnology.famix.cpp.Header;
+import org.moosetechnology.famix.cpp.ImplicitVariable;
+import org.moosetechnology.famix.cpp.Include;
+import org.moosetechnology.famix.cpp.IndexedFileAnchor;
+import org.moosetechnology.famix.cpp.Inheritance;
+import org.moosetechnology.famix.cpp.Invocation;
+import org.moosetechnology.famix.cpp.LocalVariable;
+import org.moosetechnology.famix.cpp.Method;
+import org.moosetechnology.famix.cpp.Module;
+import org.moosetechnology.famix.cpp.MultipleFileAnchor;
+import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.cpp.Namespace;
+import org.moosetechnology.famix.cpp.Package;
+import org.moosetechnology.famix.cpp.Parameter;
+import org.moosetechnology.famix.cpp.ParameterType;
+import org.moosetechnology.famix.cpp.ParameterizableClass;
+import org.moosetechnology.famix.cpp.ParameterizedType;
+import org.moosetechnology.famix.cpp.PreprocessorIfdef;
+import org.moosetechnology.famix.cpp.PrimitiveType;
+import org.moosetechnology.famix.cpp.Reference;
+import org.moosetechnology.famix.cpp.ScopingEntity;
+import org.moosetechnology.famix.cpp.SourceAnchor;
+import org.moosetechnology.famix.cpp.SourcedEntity;
+import org.moosetechnology.famix.cpp.StructuralEntity;
+import org.moosetechnology.famix.cpp.Type;
+import org.moosetechnology.famix.cpp.TypeAlias;
+import org.moosetechnology.famix.cpp.UnknownVariable;
 import org.moosetechnology.verveineC.utils.Visibility;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.utils.resolution.StubBinding;
 
 import ch.akuhn.fame.Repository;
-
-import eu.synectique.verveine.core.gen.famix.AbstractFileAnchor;
-import eu.synectique.verveine.core.gen.famix.Access;
-import eu.synectique.verveine.core.gen.famix.AnnotationInstance;
-import eu.synectique.verveine.core.gen.famix.AnnotationInstanceAttribute;
-import eu.synectique.verveine.core.gen.famix.AnnotationType;
-import eu.synectique.verveine.core.gen.famix.AnnotationTypeAttribute;
-import eu.synectique.verveine.core.gen.famix.Association;
-import eu.synectique.verveine.core.gen.famix.Attribute;
-import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.BehaviouralReference;
-import eu.synectique.verveine.core.gen.famix.CFile;
-import eu.synectique.verveine.core.gen.famix.Comment;
-import eu.synectique.verveine.core.gen.famix.CompilationUnit;
-import eu.synectique.verveine.core.gen.famix.ContainerEntity;
-import eu.synectique.verveine.core.gen.famix.DereferencedInvocation;
-import eu.synectique.verveine.core.gen.famix.Entity;
-import eu.synectique.verveine.core.gen.famix.Enum;
-import eu.synectique.verveine.core.gen.famix.EnumValue;
-import eu.synectique.verveine.core.gen.famix.Function;
-import eu.synectique.verveine.core.gen.famix.GlobalVariable;
-import eu.synectique.verveine.core.gen.famix.Header;
-import eu.synectique.verveine.core.gen.famix.ImplicitVariable;
-import eu.synectique.verveine.core.gen.famix.Include;
-import eu.synectique.verveine.core.gen.famix.IndexedFileAnchor;
-import eu.synectique.verveine.core.gen.famix.Inheritance;
-import eu.synectique.verveine.core.gen.famix.Invocation;
-import eu.synectique.verveine.core.gen.famix.LocalVariable;
-import eu.synectique.verveine.core.gen.famix.Method;
-import eu.synectique.verveine.core.gen.famix.Module;
-import eu.synectique.verveine.core.gen.famix.MultipleFileAnchor;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
-import eu.synectique.verveine.core.gen.famix.Namespace;
-import eu.synectique.verveine.core.gen.famix.Package;
-import eu.synectique.verveine.core.gen.famix.Parameter;
-import eu.synectique.verveine.core.gen.famix.ParameterType;
-import eu.synectique.verveine.core.gen.famix.ParameterizableClass;
-import eu.synectique.verveine.core.gen.famix.ParameterizedType;
-import eu.synectique.verveine.core.gen.famix.PreprocessorIfdef;
-import eu.synectique.verveine.core.gen.famix.PrimitiveType;
-import eu.synectique.verveine.core.gen.famix.Reference;
-import eu.synectique.verveine.core.gen.famix.ScopingEntity;
-import eu.synectique.verveine.core.gen.famix.SourceAnchor;
-import eu.synectique.verveine.core.gen.famix.SourcedEntity;
-import eu.synectique.verveine.core.gen.famix.StructuralEntity;
-import eu.synectique.verveine.core.gen.famix.Type;
-import eu.synectique.verveine.core.gen.famix.TypeAlias;
-import eu.synectique.verveine.core.gen.famix.UnknownVariable;
 
 /**
  * A dictionnary of Famix entities to help create them and find them back
@@ -447,7 +446,7 @@ public class CDictionary {
 	 */
 	@Deprecated
 	public ImplicitVariable getImplicitVariableByBinding(IBinding bnd, String iv_name) {
-		return getImplicitVariableByType((eu.synectique.verveine.core.gen.famix.Class)getEntityByKey(bnd), iv_name);
+		return getImplicitVariableByType((org.moosetechnology.famix.cpp.Class)getEntityByKey(bnd), iv_name);
 	}
 	
 	/**
@@ -733,8 +732,8 @@ public class CDictionary {
 	 * @param persistIt -- whether the Class should be persisted in the Famix repository
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
-	public eu.synectique.verveine.core.gen.famix.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
-		eu.synectique.verveine.core.gen.famix.Class fmx = ensureFamixEntity(eu.synectique.verveine.core.gen.famix.Class.class, key, name, persistIt);
+	public org.moosetechnology.famix.cpp.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
+		org.moosetechnology.famix.cpp.Class fmx = ensureFamixEntity(org.moosetechnology.famix.cpp.Class.class, key, name, persistIt);
 		fmx.setContainer(owner);
 		return fmx;
 	}
@@ -1027,8 +1026,8 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public eu.synectique.verveine.core.gen.famix.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner) {
-		eu.synectique.verveine.core.gen.famix.Class fmx = getEntityIfNotNull(eu.synectique.verveine.core.gen.famix.Class.class, key);
+	public org.moosetechnology.famix.cpp.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner) {
+		org.moosetechnology.famix.cpp.Class fmx = getEntityIfNotNull(org.moosetechnology.famix.cpp.Class.class, key);
 
 		if (fmx == null) {
 			fmx = ensureFamixClass(key, name, owner, /*persistIt*/true);
@@ -1073,7 +1072,7 @@ public class CDictionary {
 	 * <li> If it is a Method (e.g. "<code>template &lt;class T&gt; void fct(T)</code> ..."), we create a Type
 	 * </ul>
 	 */
-	public eu.synectique.verveine.core.gen.famix.Type createParameterType(String name, ContainerEntity owner) {
+	public org.moosetechnology.famix.cpp.Type createParameterType(String name, ContainerEntity owner) {
 		// apparently CDT gives a binding to the parameterType at its declaration ("template <class T> ...")
 		// but not when used ("... mth(T)") so we ignore CDT binding and always use our custom build one
     	IBinding bnd;
@@ -1131,7 +1130,7 @@ public class CDictionary {
 	/**
 	 * Returns a Famix Parameter associated with the IBinding.
 	 * The Entity is created if it does not exist.<br>
-	 * Params: see {@link Dictionary#ensureFamixParameter(Object, String, Type, eu.synectique.verveine.core.gen.famix.BehaviouralEntity, boolean)}.
+	 * Params: see {@link Dictionary#ensureFamixParameter(Object, String, Type, org.moosetechnology.famix.cpp.BehaviouralEntity, boolean)}.
 	 * @param persistIt -- whether to persist or not the entity eventually created
 	 * @return the Famix Entity found or created. May return null if "bnd" is null or in case of a Famix error
 	 */

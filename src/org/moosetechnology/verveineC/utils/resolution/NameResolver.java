@@ -11,24 +11,23 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.runtime.CoreException;
+import org.moosetechnology.famix.cpp.Attribute;
+import org.moosetechnology.famix.cpp.BehaviouralEntity;
+import org.moosetechnology.famix.cpp.ContainerEntity;
+import org.moosetechnology.famix.cpp.Function;
+import org.moosetechnology.famix.cpp.Method;
+import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.cpp.Namespace;
+import org.moosetechnology.famix.cpp.ParameterizableClass;
+import org.moosetechnology.famix.cpp.ParameterizedType;
+import org.moosetechnology.famix.cpp.ScopingEntity;
+import org.moosetechnology.famix.cpp.StructuralEntity;
+import org.moosetechnology.famix.cpp.Type;
+import org.moosetechnology.famix.cpp.UnknownContainerEntity;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.CppEntityStack;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
 import org.moosetechnology.verveineC.visitors.SignatureBuilderVisitor;
-
-import eu.synectique.verveine.core.gen.famix.Attribute;
-import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.ContainerEntity;
-import eu.synectique.verveine.core.gen.famix.Function;
-import eu.synectique.verveine.core.gen.famix.Method;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
-import eu.synectique.verveine.core.gen.famix.Namespace;
-import eu.synectique.verveine.core.gen.famix.ParameterizableClass;
-import eu.synectique.verveine.core.gen.famix.ParameterizedType;
-import eu.synectique.verveine.core.gen.famix.ScopingEntity;
-import eu.synectique.verveine.core.gen.famix.StructuralEntity;
-import eu.synectique.verveine.core.gen.famix.Type;
-import eu.synectique.verveine.core.gen.famix.UnknownContainerEntity;
 
 /**
  * A library class with several utility methods useful for name resolution.
@@ -90,7 +89,7 @@ public class NameResolver {
 
 		if (qualName.isFullyQualified()) {
 			if ( (entityType == Attribute.class) || (entityType == Method.class) ) {
-				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, eu.synectique.verveine.core.gen.famix.Class.class);
+				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.cpp.Class.class);
 			}
 			else {
 				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, UnknownContainerEntity.class);
@@ -250,13 +249,13 @@ public class NameResolver {
 			QualifiedName qualName = new QualifiedName(name);
 			if (qualName.isFullyQualified()) {
 				// assume that a fully qualified BehaviouralEntity name is a method by default 
-				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, eu.synectique.verveine.core.gen.famix.Class.class);
+				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.cpp.Class.class);
 			}
 			else {
 				parent = context.getTopCppNamespace();
 			}
 
-			if (parent instanceof eu.synectique.verveine.core.gen.famix.Class) {
+			if (parent instanceof org.moosetechnology.famix.cpp.Class) {
 				bnd = mkStubKey( behavName, parent, Method.class);
 			}
 			else {
@@ -367,7 +366,7 @@ public class NameResolver {
 	 * @return NamedEntity found or null if none match
 	 */
 	public NamedEntity findInLocals(String name, ContainerEntity context) {
-		for (eu.synectique.verveine.core.gen.famix.Type child : context.getTypes()) {
+		for (org.moosetechnology.famix.cpp.Type child : context.getTypes()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
@@ -561,7 +560,7 @@ public class NameResolver {
 			if (parent == null) {
 				// happened once in a badly coded case
 				if (QualifiedName.isFullyQualified(name)) {
-					parent = (ContainerEntity) resolveOrCreate( QualifiedName.parentNameFromEntityFullname(name.toString()), /*mayBeNull*/false, eu.synectique.verveine.core.gen.famix.Class.class );
+					parent = (ContainerEntity) resolveOrCreate( QualifiedName.parentNameFromEntityFullname(name.toString()), /*mayBeNull*/false, org.moosetechnology.famix.cpp.Class.class );
 				}
 				else {
 					parent = (ContainerEntity) context.top();
@@ -583,7 +582,7 @@ public class NameResolver {
 		ContainerEntity parent;
 		QualifiedName qualName = new QualifiedName(name);
 		if (qualName.isFullyQualified()) {
-			parent = (ContainerEntity) resolveOrCreate( qualName.nameQualifiers(), /*mayBeNull*/false, eu.synectique.verveine.core.gen.famix.Class.class);
+			parent = (ContainerEntity) resolveOrCreate( qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.cpp.Class.class);
 		}
 		else {
 			parent = (ContainerEntity) context.top();

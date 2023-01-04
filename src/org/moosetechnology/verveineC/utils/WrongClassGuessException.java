@@ -1,6 +1,6 @@
 package org.moosetechnology.verveineC.utils;
 
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
+import org.moosetechnology.famix.cpp.NamedEntity;
 
 /**
  * An exception to flag entities wrongly typed during parsing (e.g. a Namespace that was expected as a Class.

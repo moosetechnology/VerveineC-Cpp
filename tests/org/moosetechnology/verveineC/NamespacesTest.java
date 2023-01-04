@@ -6,9 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import eu.synectique.verveine.core.gen.famix.Function;
-import eu.synectique.verveine.core.gen.famix.Namespace;
+import org.moosetechnology.famix.cpp.Function;
+import org.moosetechnology.famix.cpp.Namespace;
 
 class NamespacesTest extends AbstractTest {
 

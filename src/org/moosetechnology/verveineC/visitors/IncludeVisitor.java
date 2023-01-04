@@ -7,13 +7,12 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.moosetechnology.famix.cpp.CFile;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.plugin.VerveineCParser;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.utils.resolution.NameResolver;
 import org.moosetechnology.verveineC.utils.resolution.StubBinding;
-
-import eu.synectique.verveine.core.gen.famix.CFile;
 
 public class IncludeVisitor extends AbstractIssueReporterVisitor {
 

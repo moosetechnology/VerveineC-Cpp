@@ -15,16 +15,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
+import org.moosetechnology.famix.cpp.Class;
+import org.moosetechnology.famix.cpp.ContainerEntity;
+import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.cpp.Package;
+import org.moosetechnology.famix.cpp.Type;
+import org.moosetechnology.famix.cpp.TypeAlias;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
-
-import eu.synectique.verveine.core.gen.famix.Class;
-import eu.synectique.verveine.core.gen.famix.ContainerEntity;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
-import eu.synectique.verveine.core.gen.famix.Package;
-import eu.synectique.verveine.core.gen.famix.Type;
-import eu.synectique.verveine.core.gen.famix.TypeAlias;
 
 public class TypeDefVisitor extends AbstractVisitor {
 
@@ -233,18 +232,18 @@ public class TypeDefVisitor extends AbstractVisitor {
 
 	@Override
 	protected int visit(IASTEnumerationSpecifier node) {
-		eu.synectique.verveine.core.gen.famix.Enum fmx;
+		org.moosetechnology.famix.cpp.Enum fmx;
 
 		nodeName = node.getName();
 		if (nodeName.equals("")) {
 			// case of anonymous enum: it is probably within a typedef and will never be used directly
 			// so the key is mostly irrelevant, only used to find back the type when creating its enumerated values 
-			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), eu.synectique.verveine.core.gen.famix.Enum.class);
+			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), org.moosetechnology.famix.cpp.Enum.class);
 		}
 		else {
 			nodeBnd = resolver.getBinding(nodeName);
 			if (nodeBnd == null) {
-				nodeBnd = resolver.mkStubKey(nodeName, eu.synectique.verveine.core.gen.famix.Enum.class);
+				nodeBnd = resolver.mkStubKey(nodeName, org.moosetechnology.famix.cpp.Enum.class);
 			}
 		}
 
@@ -306,8 +305,8 @@ public class TypeDefVisitor extends AbstractVisitor {
 	 * Common code to create an enumeratedType.
 	 * Used for IASTEnumerationSpecifier, IASTElaboratedTypeSpecifier
 	 */
-	protected eu.synectique.verveine.core.gen.famix.Enum createEnum(IASTDeclSpecifier node) {
-		eu.synectique.verveine.core.gen.famix.Enum fmx;
+	protected org.moosetechnology.famix.cpp.Enum createEnum(IASTDeclSpecifier node) {
+		org.moosetechnology.famix.cpp.Enum fmx;
 
 		fmx = dico.ensureFamixEnum(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top(), /*persistIt*/true);
 		dico.addSourceAnchor(fmx, filename, node.getFileLocation());

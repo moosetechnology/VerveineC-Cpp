@@ -17,13 +17,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
+import org.moosetechnology.famix.cpp.Attribute;
+import org.moosetechnology.famix.cpp.BehaviouralEntity;
+import org.moosetechnology.famix.cpp.Parameter;
+import org.moosetechnology.famix.cpp.StructuralEntity;
+import org.moosetechnology.famix.cpp.Type;
 import org.moosetechnology.verveineC.plugin.CDictionary;
-
-import eu.synectique.verveine.core.gen.famix.Attribute;
-import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.Parameter;
-import eu.synectique.verveine.core.gen.famix.StructuralEntity;
-import eu.synectique.verveine.core.gen.famix.Type;
 
 public class DeclaredTypeRefVisitor extends AbstractRefVisitor {
 

@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import eu.synectique.verveine.core.gen.famix.Enum;
-import eu.synectique.verveine.core.gen.famix.EnumValue;
+import org.moosetechnology.famix.cpp.Enum;
+import org.moosetechnology.famix.cpp.EnumValue;
 
 class EnumsTest extends AbstractTest {
 

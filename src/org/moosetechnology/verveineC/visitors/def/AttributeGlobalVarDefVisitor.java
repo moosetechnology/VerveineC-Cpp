@@ -15,21 +15,20 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.index.IIndex;
+import org.moosetechnology.famix.cpp.Attribute;
+import org.moosetechnology.famix.cpp.ContainerEntity;
+import org.moosetechnology.famix.cpp.Enum;
+import org.moosetechnology.famix.cpp.EnumValue;
+import org.moosetechnology.famix.cpp.GlobalVariable;
+import org.moosetechnology.famix.cpp.Namespace;
+import org.moosetechnology.famix.cpp.Package;
+import org.moosetechnology.famix.cpp.ScopingEntity;
+import org.moosetechnology.famix.cpp.StructuralEntity;
+import org.moosetechnology.famix.cpp.Type;
+import org.moosetechnology.famix.cpp.UnknownContainerEntity;
+import org.moosetechnology.famix.cpp.UnknownVariable;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
-
-import eu.synectique.verveine.core.gen.famix.Attribute;
-import eu.synectique.verveine.core.gen.famix.ContainerEntity;
-import eu.synectique.verveine.core.gen.famix.Enum;
-import eu.synectique.verveine.core.gen.famix.EnumValue;
-import eu.synectique.verveine.core.gen.famix.GlobalVariable;
-import eu.synectique.verveine.core.gen.famix.Namespace;
-import eu.synectique.verveine.core.gen.famix.Package;
-import eu.synectique.verveine.core.gen.famix.ScopingEntity;
-import eu.synectique.verveine.core.gen.famix.StructuralEntity;
-import eu.synectique.verveine.core.gen.famix.Type;
-import eu.synectique.verveine.core.gen.famix.UnknownContainerEntity;
-import eu.synectique.verveine.core.gen.famix.UnknownVariable;
 
 public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 
@@ -220,12 +219,12 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 		nodeName = node.getName();
 
 		if (nodeName.equals("")) {
-			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), eu.synectique.verveine.core.gen.famix.Enum.class);
+			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), org.moosetechnology.famix.cpp.Enum.class);
 		}
 		else {
 			nodeBnd = resolver.getBinding(nodeName);
 			if (nodeBnd == null) {
-				nodeBnd = resolver.mkStubKey(nodeName.toString(), eu.synectique.verveine.core.gen.famix.Enum.class);
+				nodeBnd = resolver.mkStubKey(nodeName.toString(), org.moosetechnology.famix.cpp.Enum.class);
 			}
 		}
 

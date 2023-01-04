@@ -12,10 +12,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.moosetechnology.famix.cpp.Reference;
+import org.moosetechnology.famix.cpp.Type;
 import org.moosetechnology.verveineC.plugin.CDictionary;
-
-import eu.synectique.verveine.core.gen.famix.Reference;
-import eu.synectique.verveine.core.gen.famix.Type;
 
 public class ReferenceRefVisitor extends AbstractRefVisitor {
 

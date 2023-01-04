@@ -34,6 +34,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.moosetechnology.famix.cpp.CSourceLanguage;
+import org.moosetechnology.famix.cpp.CppSourceLanguage;
+import org.moosetechnology.famix.cpp.Entity;
+import org.moosetechnology.famix.cpp.FAMIXModel;
+import org.moosetechnology.famix.cpp.SourceLanguage;
 import org.moosetechnology.verveineC.utils.Constants;
 import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
@@ -54,12 +59,6 @@ import org.moosetechnology.verveineC.visitors.ref.InvocationAccessRefVisitor;
 import org.moosetechnology.verveineC.visitors.ref.ReferenceRefVisitor;
 
 import ch.akuhn.fame.Repository;
-
-import eu.synectique.verveine.core.gen.famix.CSourceLanguage;
-import eu.synectique.verveine.core.gen.famix.CppSourceLanguage;
-import eu.synectique.verveine.core.gen.famix.Entity;
-import eu.synectique.verveine.core.gen.famix.FAMIXModel;
-import eu.synectique.verveine.core.gen.famix.SourceLanguage;
 
 
 public class VerveineCParser {

@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.moosetechnology.famix.cpp.Entity;
+import org.moosetechnology.famix.cpp.NamedEntity;
 import org.moosetechnology.verveineC.plugin.VerveineCParser;
 
-import eu.synectique.verveine.core.gen.famix.Entity;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import ch.akuhn.fame.Repository;
 
 /**

@@ -6,8 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import eu.synectique.verveine.core.gen.famix.Attribute;
+import org.moosetechnology.famix.cpp.Attribute;
 
 class StructsTest extends AbstractTest {
 
@@ -23,13 +22,13 @@ class StructsTest extends AbstractTest {
 
 	@Test
 	public void testNumberOfEntities() {	
-		assertEquals( 2, entitiesOfType(eu.synectique.verveine.core.gen.famix.Class.class).size());
+		assertEquals( 2, entitiesOfType(org.moosetechnology.famix.cpp.Class.class).size());
 		assertEquals( 6, entitiesOfType(Attribute.class).size());
 	}
 
 	@Test
 	public void testOutterStruct() {
-		eu.synectique.verveine.core.gen.famix.Class clazz = entityNamed(eu.synectique.verveine.core.gen.famix.Class.class, "College");
+		org.moosetechnology.famix.cpp.Class clazz = entityNamed(org.moosetechnology.famix.cpp.Class.class, "College");
 		assertNotNull(clazz);
 
 		assertEquals(3, clazz.numberOfAttributes());
@@ -41,7 +40,7 @@ class StructsTest extends AbstractTest {
 
 	@Test
 	public void testInnerStruct() {
-		eu.synectique.verveine.core.gen.famix.Class clazz = entityNamed(eu.synectique.verveine.core.gen.famix.Class.class, "Student");
+		org.moosetechnology.famix.cpp.Class clazz = entityNamed(org.moosetechnology.famix.cpp.Class.class, "Student");
 		assertNotNull(clazz);
 
 		assertEquals(3, clazz.numberOfAttributes());

@@ -21,24 +21,23 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.moosetechnology.famix.cpp.Access;
+import org.moosetechnology.famix.cpp.Association;
+import org.moosetechnology.famix.cpp.Attribute;
+import org.moosetechnology.famix.cpp.BehaviouralEntity;
+import org.moosetechnology.famix.cpp.DereferencedInvocation;
+import org.moosetechnology.famix.cpp.Function;
+import org.moosetechnology.famix.cpp.Invocation;
+import org.moosetechnology.famix.cpp.Method;
+import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.cpp.StructuralEntity;
+import org.moosetechnology.famix.cpp.Type;
+import org.moosetechnology.famix.cpp.UnknownBehaviouralEntity;
+import org.moosetechnology.famix.cpp.UnknownVariable;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 import org.moosetechnology.verveineC.visitors.AbstractDispatcherVisitor;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
-
-import eu.synectique.verveine.core.gen.famix.Access;
-import eu.synectique.verveine.core.gen.famix.Association;
-import eu.synectique.verveine.core.gen.famix.Attribute;
-import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.DereferencedInvocation;
-import eu.synectique.verveine.core.gen.famix.Function;
-import eu.synectique.verveine.core.gen.famix.Invocation;
-import eu.synectique.verveine.core.gen.famix.Method;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
-import eu.synectique.verveine.core.gen.famix.StructuralEntity;
-import eu.synectique.verveine.core.gen.famix.Type;
-import eu.synectique.verveine.core.gen.famix.UnknownBehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.UnknownVariable;
 
 public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 
@@ -187,7 +186,7 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 			fmx = resolver.resolveOrCreate(nodeName.toString(), /*mayBeNull*/false, UnknownBehaviouralEntity.class);
 		}
 
-		if (fmx instanceof eu.synectique.verveine.core.gen.famix.Class) {
+		if (fmx instanceof org.moosetechnology.famix.cpp.Class) {
 			// found a class instead of a behavioral. May happen, for example in the case of a "throw ClassName(...)"
 			fmx = makeStubBehavioural(fmx.getName(), node.getArguments().length, /*isMethod*/true);
 		}

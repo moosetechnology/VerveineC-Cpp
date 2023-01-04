@@ -4,17 +4,16 @@ package org.moosetechnology.verveineC.visitors.def;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.moosetechnology.famix.cpp.Package;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
-
-import eu.synectique.verveine.core.gen.famix.Package;
 
 public class PackageDefVisitor extends AbstractVisitor {
 
 	/**
 	 * The file directory being visited at any given time
 	 */
-	protected eu.synectique.verveine.core.gen.famix.Package currentPackage;
+	protected org.moosetechnology.famix.cpp.Package currentPackage;
 
 	public PackageDefVisitor(CDictionary dico, IIndex index, String rootFolder) {
 		super(dico, index, rootFolder);

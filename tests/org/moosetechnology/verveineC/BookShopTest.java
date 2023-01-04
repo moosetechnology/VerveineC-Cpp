@@ -7,14 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import eu.synectique.verveine.core.gen.famix.Access;
-import eu.synectique.verveine.core.gen.famix.Attribute;
-import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.Function;
-import eu.synectique.verveine.core.gen.famix.GlobalVariable;
-import eu.synectique.verveine.core.gen.famix.Invocation;
-import eu.synectique.verveine.core.gen.famix.Method;
-import eu.synectique.verveine.core.gen.famix.UnknownBehaviouralEntity;
+import org.moosetechnology.famix.cpp.Access;
+import org.moosetechnology.famix.cpp.Attribute;
+import org.moosetechnology.famix.cpp.BehaviouralEntity;
+import org.moosetechnology.famix.cpp.Function;
+import org.moosetechnology.famix.cpp.GlobalVariable;
+import org.moosetechnology.famix.cpp.Invocation;
+import org.moosetechnology.famix.cpp.Method;
+import org.moosetechnology.famix.cpp.UnknownBehaviouralEntity;
 
 class BookShopTest extends AbstractTest {
 
@@ -36,7 +36,7 @@ class BookShopTest extends AbstractTest {
 				// conn, rest_set, row, stmt, q, query
 		assertEquals(
 				7,
-				entitiesOfType(eu.synectique.verveine.core.gen.famix.Class.class).size());
+				entitiesOfType(org.moosetechnology.famix.cpp.Class.class).size());
 				// struct date, books, suppliers, purchases, employees, members, sales
 		assertEquals(
 				49,
