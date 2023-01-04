@@ -1,11 +1,16 @@
 package org.moosetechnology.verveineC.plugin;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,13 +53,35 @@ import org.moosetechnology.verveineC.visitors.ref.InheritanceRefVisitor;
 import org.moosetechnology.verveineC.visitors.ref.InvocationAccessRefVisitor;
 import org.moosetechnology.verveineC.visitors.ref.ReferenceRefVisitor;
 
+import ch.akuhn.fame.Repository;
 import eu.synectique.verveine.core.VerveineParser;
 import eu.synectique.verveine.core.gen.famix.CSourceLanguage;
 import eu.synectique.verveine.core.gen.famix.CppSourceLanguage;
+import eu.synectique.verveine.core.gen.famix.Entity;
+import eu.synectique.verveine.core.gen.famix.FAMIXModel;
 import eu.synectique.verveine.core.gen.famix.SourceLanguage;
 
 
-public class VerveineCParser extends VerveineParser {
+public class VerveineCParser {
+
+	/**
+	 * Name of the default file where to put the MSE model
+	 */
+	public final static String OUTPUT_FILE = "output.mse";
+	
+	/**
+	 * Name of the file where to put the MSE model.
+	 * Defaults to {@link VerveineParser#OUTPUT_FILE}
+	 */
+	private String outputFileName;   // name of the MSE file to output the model
+	private boolean incrementalParsing = false;   // if true we add the model to an existing one (found in 'outputFileName')
+
+
+	/**
+	 * Famix repository where the entities are stored
+	 */
+	private Repository famixRepo;
+
 	public static final String WORKSPACE_NAME = "tempWS";
 
 	public static final String DEFAULT_PROJECT_NAME = "tempProj";
@@ -144,7 +171,8 @@ public class VerveineCParser extends VerveineParser {
 	}
 	
 	public VerveineCParser() {
-		super();
+		setOutputFileName(OUTPUT_FILE);
+		setFamixRepo(new Repository(FAMIXModel.metamodel()));
 		this.argIncludes = new ArrayList<String>();
 		this.argDefined = new HashMap<String,String>();
 		this.forceIncludeH = false;
@@ -156,6 +184,61 @@ public class VerveineCParser extends VerveineParser {
 		this.userProjectDir = null;
 
 		dico = new CDictionary(getFamixRepo());
+	}
+
+	public void setOutputFileName(String outputFileName) {
+		this.outputFileName = outputFileName;
+	}
+
+	/**
+	 * "closes" the repository, by adding to it a SourceLanguage entity if their is none.
+	 * The SourceLanguage entity is the one returned by getMyLgge().
+	 * Also outputs repository to a MSE file
+	 */
+	public void emitMSE() {
+		this.emitMSE(this.outputFileName);
+	}
+
+	public void emitMSE(String outputFile) {
+		try {
+			emitMSE(new FileOutputStream(outputFile));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void emitMSE(OutputStream output) {
+		// Adds default SourceLanguage for the repository
+		if ( (listAll(SourceLanguage.class).size() == 0) && (getMyLgge() != null) ) {
+			getFamixRepo().add( getMyLgge());
+		}
+
+		// Outputting to a file
+		try {
+			//famixRepo.exportMSE(new FileWriter(OUTPUT_FILE));
+			famixRepo.exportMSE(new BufferedWriter(new OutputStreamWriter(output,"UTF8")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Returns a Collection of all FAMIXEntities in the repository of the given fmxClass
+	 */
+	public <T extends Entity> Collection<T> listAll(Class<T> fmxClass) {
+		return getFamixRepo().all(fmxClass);
+	}
+
+	public Repository getFamixRepo() {
+		return famixRepo;
+	}
+
+	public void setFamixRepo(Repository famixRepo) {
+		this.famixRepo = famixRepo;
+	}
+
+	public String getOutputFileName() {
+		return outputFileName;
 	}
 
 	public boolean parse() {
@@ -171,12 +254,7 @@ public class VerveineCParser extends VerveineParser {
 		computeIndex(cproject);
 
         try {
-    		if (linkToExisting()) {
-    			// incremental parsing ...
-    		}
-
     		runAllVisitors(dico, cproject);
-
 		} catch (CoreException e) {
 			e.printStackTrace();
 			return false;
@@ -408,7 +486,6 @@ Trace.off();
 		}
 	}
 
-	@Override
 	protected SourceLanguage getMyLgge() {
 		if (cModel) {
 			return new CSourceLanguage();
@@ -453,16 +530,17 @@ Trace.off();
 			else if (arg.equals("-windows")) {
 				windows = true;
 			}
+			else if (arg.equals("-o")) {
+				if (i < args.length) {
+					outputFileName = args[i+1];
+					i += 2;
+				} else {
+					System.err.println("-o requires a filename");
+				}
+			}
 			else {
-				int j = super.setOption(i - 1, args);
-				if (j > 0) {     // j is the number of args consumed by super.setOption()
-					i += j;      // advance by that number of args
-					i--;         // 1 will be added at the beginning of the loop ("args[i++]")
-				}
-				else {
-					System.err.println("** Unrecognized option: " + arg);
-					usage();
-				}
+				System.err.println("** Unrecognized option: " + arg);
+				usage();
 			}
 		}
 
