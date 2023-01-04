@@ -1,71 +1,43 @@
 // Automagically generated code, please do not change
 package org.moosetechnology.famix.moose;
 
-import ch.akuhn.fame.FameProperty;
-
-import org.moosetechnology.famix.cpp.SourceLanguage;
-
 import ch.akuhn.fame.FameDescription;
 import ch.akuhn.fame.FamePackage;
+import ch.akuhn.fame.FameProperty;
+import org.moosetechnology.famix.famixtraits.TSourceLanguage;
 
 
 @FamePackage("Moose")
 @FameDescription("Model")
-public class Model extends AbstractGroup {
+public class Model extends AbstractGroup  {
 
-
-
+    private Number numberOfClasses;
+    
     private Number numberOfClassesPerPackage;
     
-    @FameProperty(name = "numberOfClassesPerPackage")
-    public Number getNumberOfClassesPerPackage() {
-        return numberOfClassesPerPackage;
-    }
-
-    public void setNumberOfClassesPerPackage(Number numberOfClassesPerPackage) {
-        this.numberOfClassesPerPackage = numberOfClassesPerPackage;
-    }
+    private Number numberOfLinesOfCode;
     
-    private Number numberOfModelMethods;
+    private Number numberOfLinesOfCodePerClass;
     
-    @FameProperty(name = "numberOfModelMethods")
-    public Number getNumberOfModelMethods() {
-        return numberOfModelMethods;
-    }
-
-    public void setNumberOfModelMethods(Number numberOfModelMethods) {
-        this.numberOfModelMethods = numberOfModelMethods;
-    }
+    private Number numberOfLinesOfCodePerMethod;
+    
+    private Number numberOfLinesOfCodePerPackage;
     
     private Number numberOfMethods;
     
-    @FameProperty(name = "numberOfMethods")
-    public Number getNumberOfMethods() {
-        return numberOfMethods;
-    }
-
-    public void setNumberOfMethods(Number numberOfMethods) {
-        this.numberOfMethods = numberOfMethods;
-    }
+    private Number numberOfModelClasses;
     
+    private Number numberOfModelMethods;
+    
+    private TSourceLanguage sourceLanguage;
+    
+
+
     @FameProperty(name = "averageCyclomaticComplexity", derived = true)
     public Number getAverageCyclomaticComplexity() {
         // TODO: this is a derived property, implement this method manually.
         throw new UnsupportedOperationException("Not yet implemented!");  
     }
-    
-    private Number numberOfLinesOfCode;
-    
-    @FameProperty(name = "numberOfLinesOfCode")
-    public Number getNumberOfLinesOfCode() {
-        return numberOfLinesOfCode;
-    }
-
-    public void setNumberOfLinesOfCode(Number numberOfLinesOfCode) {
-        this.numberOfLinesOfCode = numberOfLinesOfCode;
-    }
-    
-    private Number numberOfClasses;
     
     @FameProperty(name = "numberOfClasses")
     public Number getNumberOfClasses() {
@@ -76,29 +48,32 @@ public class Model extends AbstractGroup {
         this.numberOfClasses = numberOfClasses;
     }
     
-    private Number numberOfModelClasses;
-    
-    @FameProperty(name = "numberOfModelClasses")
-    public Number getNumberOfModelClasses() {
-        return numberOfModelClasses;
+    @FameProperty(name = "numberOfClassesPerPackage")
+    public Number getNumberOfClassesPerPackage() {
+        return numberOfClassesPerPackage;
     }
 
-    public void setNumberOfModelClasses(Number numberOfModelClasses) {
-        this.numberOfModelClasses = numberOfModelClasses;
+    public void setNumberOfClassesPerPackage(Number numberOfClassesPerPackage) {
+        this.numberOfClassesPerPackage = numberOfClassesPerPackage;
     }
     
-    private Number numberOfLinesOfCodePerPackage;
-    
-    @FameProperty(name = "numberOfLinesOfCodePerPackage")
-    public Number getNumberOfLinesOfCodePerPackage() {
-        return numberOfLinesOfCodePerPackage;
+    @FameProperty(name = "numberOfLinesOfCode")
+    public Number getNumberOfLinesOfCode() {
+        return numberOfLinesOfCode;
     }
 
-    public void setNumberOfLinesOfCodePerPackage(Number numberOfLinesOfCodePerPackage) {
-        this.numberOfLinesOfCodePerPackage = numberOfLinesOfCodePerPackage;
+    public void setNumberOfLinesOfCode(Number numberOfLinesOfCode) {
+        this.numberOfLinesOfCode = numberOfLinesOfCode;
     }
     
-    private Number numberOfLinesOfCodePerMethod;
+    @FameProperty(name = "numberOfLinesOfCodePerClass")
+    public Number getNumberOfLinesOfCodePerClass() {
+        return numberOfLinesOfCodePerClass;
+    }
+
+    public void setNumberOfLinesOfCodePerClass(Number numberOfLinesOfCodePerClass) {
+        this.numberOfLinesOfCodePerClass = numberOfLinesOfCodePerClass;
+    }
     
     @FameProperty(name = "numberOfLinesOfCodePerMethod")
     public Number getNumberOfLinesOfCodePerMethod() {
@@ -109,26 +84,49 @@ public class Model extends AbstractGroup {
         this.numberOfLinesOfCodePerMethod = numberOfLinesOfCodePerMethod;
     }
     
-    private SourceLanguage sourceLanguage;
+    @FameProperty(name = "numberOfLinesOfCodePerPackage")
+    public Number getNumberOfLinesOfCodePerPackage() {
+        return numberOfLinesOfCodePerPackage;
+    }
+
+    public void setNumberOfLinesOfCodePerPackage(Number numberOfLinesOfCodePerPackage) {
+        this.numberOfLinesOfCodePerPackage = numberOfLinesOfCodePerPackage;
+    }
+    
+    @FameProperty(name = "numberOfMethods")
+    public Number getNumberOfMethods() {
+        return numberOfMethods;
+    }
+
+    public void setNumberOfMethods(Number numberOfMethods) {
+        this.numberOfMethods = numberOfMethods;
+    }
+    
+    @FameProperty(name = "numberOfModelClasses")
+    public Number getNumberOfModelClasses() {
+        return numberOfModelClasses;
+    }
+
+    public void setNumberOfModelClasses(Number numberOfModelClasses) {
+        this.numberOfModelClasses = numberOfModelClasses;
+    }
+    
+    @FameProperty(name = "numberOfModelMethods")
+    public Number getNumberOfModelMethods() {
+        return numberOfModelMethods;
+    }
+
+    public void setNumberOfModelMethods(Number numberOfModelMethods) {
+        this.numberOfModelMethods = numberOfModelMethods;
+    }
     
     @FameProperty(name = "sourceLanguage")
-    public SourceLanguage getSourceLanguage() {
+    public TSourceLanguage getSourceLanguage() {
         return sourceLanguage;
     }
 
-    public void setSourceLanguage(SourceLanguage sourceLanguage) {
+    public void setSourceLanguage(TSourceLanguage sourceLanguage) {
         this.sourceLanguage = sourceLanguage;
-    }
-    
-    private Number numberOfLinesOfCodePerClass;
-    
-    @FameProperty(name = "numberOfLinesOfCodePerClass")
-    public Number getNumberOfLinesOfCodePerClass() {
-        return numberOfLinesOfCodePerClass;
-    }
-
-    public void setNumberOfLinesOfCodePerClass(Number numberOfLinesOfCodePerClass) {
-        this.numberOfLinesOfCodePerClass = numberOfLinesOfCodePerClass;
     }
     
 

@@ -12,11 +12,13 @@ public class MooseModel {
     }
     
     public static void importInto(MetaRepository metamodel) {
-		metamodel.with(org.moosetechnology.famix.moose.PropertyGroup.class);
-		metamodel.with(org.moosetechnology.famix.moose.Entity.class);
-		metamodel.with(org.moosetechnology.famix.moose.Model.class);
 		metamodel.with(org.moosetechnology.famix.moose.AbstractGroup.class);
+		metamodel.with(org.moosetechnology.famix.moose.Entity.class);
 		metamodel.with(org.moosetechnology.famix.moose.Group.class);
+		metamodel.with(org.moosetechnology.famix.moose.Model.class);
+		metamodel.with(org.moosetechnology.famix.moose.Object.class);
+		metamodel.with(org.moosetechnology.famix.moose.PropertyGroup.class);
+		metamodel.with(org.moosetechnology.famix.moose.SpecializedGroup.class);
 
     }
 

@@ -1,41 +1,29 @@
 // Automagically generated code, please do not change
 package org.moosetechnology.famix.moose;
 
-import ch.akuhn.fame.FameProperty;
 import ch.akuhn.fame.FameDescription;
 import ch.akuhn.fame.FamePackage;
+import ch.akuhn.fame.FameProperty;
 
 
 @FamePackage("Moose")
 @FameDescription("PropertyGroup")
-public class PropertyGroup extends Group {
+public class PropertyGroup extends Group  {
 
-
-
-    private Number sizeOriginal;
+    private String property;
     
-    @FameProperty(name = "sizeOriginal")
-    public Number getSizeOriginal() {
-        return sizeOriginal;
-    }
-
-    public void setSizeOriginal(Number sizeOriginal) {
-        this.sizeOriginal = sizeOriginal;
-    }
+    private Number propertyRatio;
+    
+    private Number propertyTotal;
+    
+    private Number propertyTotalOriginal;
+    
+    private Number sizeOriginal;
     
     private Number sizeRatio;
     
-    @FameProperty(name = "sizeRatio")
-    public Number getSizeRatio() {
-        return sizeRatio;
-    }
 
-    public void setSizeRatio(Number sizeRatio) {
-        this.sizeRatio = sizeRatio;
-    }
-    
-    private String property;
-    
+
     @FameProperty(name = "property")
     public String getProperty() {
         return property;
@@ -44,8 +32,6 @@ public class PropertyGroup extends Group {
     public void setProperty(String property) {
         this.property = property;
     }
-    
-    private Number propertyRatio;
     
     @FameProperty(name = "propertyRatio")
     public Number getPropertyRatio() {
@@ -56,8 +42,6 @@ public class PropertyGroup extends Group {
         this.propertyRatio = propertyRatio;
     }
     
-    private Number propertyTotal;
-    
     @FameProperty(name = "propertyTotal")
     public Number getPropertyTotal() {
         return propertyTotal;
@@ -67,8 +51,6 @@ public class PropertyGroup extends Group {
         this.propertyTotal = propertyTotal;
     }
     
-    private Number propertyTotalOriginal;
-    
     @FameProperty(name = "propertyTotalOriginal")
     public Number getPropertyTotalOriginal() {
         return propertyTotalOriginal;
@@ -76,6 +58,24 @@ public class PropertyGroup extends Group {
 
     public void setPropertyTotalOriginal(Number propertyTotalOriginal) {
         this.propertyTotalOriginal = propertyTotalOriginal;
+    }
+    
+    @FameProperty(name = "sizeOriginal")
+    public Number getSizeOriginal() {
+        return sizeOriginal;
+    }
+
+    public void setSizeOriginal(Number sizeOriginal) {
+        this.sizeOriginal = sizeOriginal;
+    }
+    
+    @FameProperty(name = "sizeRatio")
+    public Number getSizeRatio() {
+        return sizeRatio;
+    }
+
+    public void setSizeRatio(Number sizeRatio) {
+        this.sizeRatio = sizeRatio;
     }
     
 
