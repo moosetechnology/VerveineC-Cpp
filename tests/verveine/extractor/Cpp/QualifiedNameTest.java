@@ -1,6 +1,6 @@
 package verveine.extractor.Cpp;
 
-import fr.verveine.utils.QualifiedName;
+import org.moosetechnology.verveineC.utils.QualifiedName;
 
 /*
  * NOT A JUNIT TEST -- run as a normal application

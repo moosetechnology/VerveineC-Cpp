@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
 
-import fr.verveine.utils.IncludeToLowerFilterStream;
-import fr.verveine.utils.IncludeWithHExtensionFilterStream;
+import org.moosetechnology.verveineC.utils.IncludeToLowerFilterStream;
+import org.moosetechnology.verveineC.utils.IncludeWithHExtensionFilterStream;
 
 @SuppressWarnings("deprecation")
 public class IncludeFilterTest {

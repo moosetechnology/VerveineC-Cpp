@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="lib/fame.jar" sourcepath="/Fame"/>
 	<classpathentry kind="lib" path="lib/akuhn-util-r28011.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="lib/famix.jar"/>
 	<classpathentry kind="lib" path="lib/verveine.core.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

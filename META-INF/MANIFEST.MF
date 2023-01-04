@@ -17,4 +17,4 @@ Bundle-ClassPath: .,
  lib/fame.jar,
  lib/famix.jar,
  lib/verveine.core.jar
-Bundle-Activator: fr.verveine.plugin.Activator
+Bundle-Activator: org.moosetechnology.verveineC.plugin.Activator

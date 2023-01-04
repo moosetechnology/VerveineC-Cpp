@@ -7,12 +7,15 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import eu.synectique.verveine.core.gen.famix.Attribute;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.Method;
 import eu.synectique.verveine.core.gen.famix.Parameter;
 import eu.synectique.verveine.core.gen.famix.ParameterType;
 import eu.synectique.verveine.core.gen.famix.ParameterizableClass;
+import eu.synectique.verveine.core.gen.famix.ParameterizedType;
+
 
 class TemplatesTest extends AbstractTest {
 
@@ -39,8 +42,8 @@ class TemplatesTest extends AbstractTest {
 		ParameterizableClass generic = first(entitiesOfType(ParameterizableClass.class));
 		assertEquals( "mypair",	generic.getName());
 
-		assertEquals(1, generic.getParameters().size());
-		ParameterType tparam = first( generic.getParameters());
+		assertEquals(1, generic.getParameterizedTypes().size());
+		ParameterizedType tparam = first( generic.getParameterizedTypes());
 		assertEquals("T", tparam.getName());
 
 		assertEquals(1, generic.getAttributes().size());
