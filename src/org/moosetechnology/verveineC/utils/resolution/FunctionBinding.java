@@ -14,8 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.moosetechnology.famix.cpp.Entity;
-import org.moosetechnology.famix.cpp.Package;
+import org.moosetechnology.famix.moose.Entity;
 
 /**
  * This is a CDT {@link IBinding} implementor to serve as key for unresolved entities

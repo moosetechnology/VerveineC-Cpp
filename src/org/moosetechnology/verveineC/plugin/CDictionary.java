@@ -34,7 +34,7 @@ import org.moosetechnology.famix.cpp.LocalVariable;
 import org.moosetechnology.famix.cpp.Method;
 import org.moosetechnology.famix.cpp.Module;
 import org.moosetechnology.famix.cpp.MultipleFileAnchor;
-import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.cpp.TNamedEntity;
 import org.moosetechnology.famix.cpp.Namespace;
 import org.moosetechnology.famix.cpp.Package;
 import org.moosetechnology.famix.cpp.Parameter;
@@ -104,16 +104,16 @@ public class CDictionary {
 	/**
 	 * A dictionary to map a key (provided by the user) to FAMIX Entity
 	 */
-	protected Map<IBinding,NamedEntity> keyToEntity;
+	protected Map<IBinding,TNamedEntity> keyToEntity;
 	/**
 	 * A reverse dictionary (see {@link Dictionary#keyToEntity}) to find the key of an entity.
 	 */
-	protected Map<NamedEntity,IBinding> entityToKey;
+	protected Map<TNamedEntity,IBinding> entityToKey;
 
 	/**
 	 * Another dictionary to map a name to FAMIX Entities with this name
 	 */
-	protected Map<String,Collection<NamedEntity>> nameToEntity;
+	protected Map<String,Collection<TNamedEntity>> nameToEntity;
 
 	/**
 	 * Yet another dictionary for implicit variables ('self' and 'super')
@@ -136,9 +136,9 @@ public class CDictionary {
  	public CDictionary(Repository famixRepo) {
 		this.famixRepo = famixRepo;
 		
-		this.keyToEntity = new Hashtable<IBinding,NamedEntity>();
-		this.entityToKey = new Hashtable<NamedEntity,IBinding>();
-		this.nameToEntity = new Hashtable<String,Collection<NamedEntity>>();
+		this.keyToEntity = new Hashtable<IBinding,TNamedEntity>();
+		this.entityToKey = new Hashtable<TNamedEntity,IBinding>();
+		this.nameToEntity = new Hashtable<String,Collection<TNamedEntity>>();
 		this.typeToImpVar = new Hashtable<Type,ImplicitVars>();
 		this.nameToFile = new Hashtable<IBinding,CFile>();
 	}
@@ -151,29 +151,29 @@ public class CDictionary {
  		return famixRepo.size();
  	}
 
-	protected void mapEntityToName(String name, NamedEntity ent) {
-		Collection<NamedEntity> l_ent = nameToEntity.get(name);
+	protected void mapEntityToName(String name, TNamedEntity ent) {
+		Collection<TNamedEntity> l_ent = nameToEntity.get(name);
 		if (l_ent == null) {
-			l_ent = new LinkedList<NamedEntity>();
+			l_ent = new LinkedList<TNamedEntity>();
 		}
 		l_ent.add(ent);
 		nameToEntity.put(name, l_ent);
 	}
 
-	public void removeEntity( NamedEntity ent) {
+	public void removeEntity( TNamedEntity ent) {
 		IBinding key;
 		key = entityToKey.get(ent);
 		entityToKey.remove(ent);
 		keyToEntity.remove(key);
 
-		Collection<NamedEntity> l_ent = nameToEntity.get(ent.getName());
+		Collection<TNamedEntity> l_ent = nameToEntity.get(ent.getName());
 		l_ent.remove(ent);
 
 		famixRepo.getElements().remove(ent);
 	}
 	
-	protected void mapEntityToKey(IBinding key, NamedEntity ent) {
-		NamedEntity old = keyToEntity.get(key);
+	protected void mapEntityToKey(IBinding key, TNamedEntity ent) {
+		TNamedEntity old = keyToEntity.get(key);
 		if (old != null) {
 			entityToKey.remove(old);
 		}
@@ -188,12 +188,12 @@ public class CDictionary {
 	 * @return the Collection of Famix Entities with the given name and class (possibly empty)
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends NamedEntity> Collection<T> getEntityByName(Class<T> fmxClass, String name) {
+	public <T extends TNamedEntity> Collection<T> getEntityByName(Class<T> fmxClass, String name) {
 		Collection<T> ret = new LinkedList<T>();
-		Collection<NamedEntity> l_name = nameToEntity.get(name);
+		Collection<TNamedEntity> l_name = nameToEntity.get(name);
 		
 		if (l_name != null ) {
-			for (NamedEntity obj : l_name) {
+			for (TNamedEntity obj : l_name) {
 				if (fmxClass.isInstance(obj)) {
 					ret.add((T) obj);
 				}
@@ -211,7 +211,7 @@ public class CDictionary {
 	 * @param key -- the key
 	 * @return the Famix Entity associated to the binding or null if not found
 	 */
-	public NamedEntity getEntityByKey(IBinding key) {
+	public TNamedEntity getEntityByKey(IBinding key) {
 		if (key == null) {
 			return null;
 		}
@@ -225,13 +225,13 @@ public class CDictionary {
 	 * @param e -- the Named entity
 	 * @return the key associated to this entity or null if none
 	 */
-	public IBinding getEntityKey(NamedEntity e) {
+	public IBinding getEntityKey(TNamedEntity e) {
 		return entityToKey.get(e);
 	}
 
 	@SuppressWarnings("unchecked")
- 	public <T extends NamedEntity> T getEntityByKey(Class<T> clazz, IBinding key) {
- 		NamedEntity found = getEntityByKey(key); 
+ 	public <T extends TNamedEntity> T getEntityByKey(Class<T> clazz, IBinding key) {
+ 		TNamedEntity found = getEntityByKey(key); 
 		if ((found != null) && ! clazz.isInstance(found)) {
 			WrongClassGuessException.reportWrongClassGuess(clazz, found);
 			return null;
@@ -242,12 +242,12 @@ public class CDictionary {
  	}
 
 	@SuppressWarnings("unchecked")
-	protected <T extends NamedEntity> T getEntityIfNotNull(Class<T> clazz, IBinding key) {
+	protected <T extends TNamedEntity> T getEntityIfNotNull(Class<T> clazz, IBinding key) {
 		if (key == null) {
 			return null;
 		}
 		else {
-			NamedEntity found = keyToEntity.get(key);
+			TNamedEntity found = keyToEntity.get(key);
 			if ((found != null) && ! clazz.isInstance(found)) {
 				WrongClassGuessException.reportWrongClassGuess(clazz, found);
 				return null;
@@ -356,7 +356,7 @@ public class CDictionary {
 
 	/**
 	 * Adds an already created Entity to the FAMIX repository
-	 * Used mainly for non-NamedEntity, for example relationships
+	 * Used mainly for non-TNamedEntity, for example relationships
 	 * @param e -- the FAMIX entity to add to the repository
 	 */
 	public void famixRepoAdd(Entity e) {
@@ -371,7 +371,7 @@ public class CDictionary {
 	 * @param persistIt -- whether the Entity should be persisted in the Famix repository
 	 * @return the FAMIX Entity or null in case of a FAMIX error
 	 */
-	protected <T extends NamedEntity> T createFamixEntity(Class<T> fmxClass, String name, boolean persistIt) {
+	protected <T extends TNamedEntity> T createFamixEntity(Class<T> fmxClass, String name, boolean persistIt) {
 		T fmx = null;
 
 		if (name == null) {
@@ -410,7 +410,7 @@ public class CDictionary {
 	 * @return the FAMIX Entity or null if <b>bnd</b> was null or in case of a FAMIX error
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T extends NamedEntity> T ensureFamixEntity(Class<T> fmxClass, IBinding bnd, String name, boolean persistIt) {
+	protected <T extends TNamedEntity> T ensureFamixEntity(Class<T> fmxClass, IBinding bnd, String name, boolean persistIt) {
 		T fmx = null;
 		if (bnd != null) {
 			fmx = (T) getEntityByKey(bnd);
@@ -558,7 +558,7 @@ public class CDictionary {
 	 * @param prev -- previous invocation relationship in the same context
 	 * @return the FamixInvocation
 	 */
-	public Invocation addFamixInvocation(BehaviouralEntity sender, BehaviouralEntity invoked, NamedEntity receiver, String signature, Association prev) {
+	public Invocation addFamixInvocation(BehaviouralEntity sender, BehaviouralEntity invoked, TNamedEntity receiver, String signature, Association prev) {
 		if ( (sender == null) || (invoked == null) ) {
 			return null;
 		}
@@ -674,7 +674,7 @@ public class CDictionary {
 	 * @return the uniq Famix Entity for this binding and/or name
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends NamedEntity> T ensureFamixUniqEntity(Class<T> fmxClass, IBinding key, String name) {
+	public <T extends TNamedEntity> T ensureFamixUniqEntity(Class<T> fmxClass, IBinding key, String name) {
 		T fmx = null;
 		
 		if (name == null) {
@@ -931,7 +931,7 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public <T extends NamedEntity> T ensureFamixEntity(Class<T> fmxClass, IBinding key, String name) {
+	public <T extends TNamedEntity> T ensureFamixEntity(Class<T> fmxClass, IBinding key, String name) {
 		return ensureFamixEntity(fmxClass, key, name, /*persistIt*/true);
 	}
 
@@ -1117,10 +1117,10 @@ public class CDictionary {
 	}
 
 	/**
-	 * Sets the visibility of a FamixNamedEntity.
+	 * Sets the visibility of a FamixTNamedEntity.
 	 * <code>null</code> visibility (e.g. in the case of a function) is silently ignored.
 	 */
-	public void setVisibility(NamedEntity fmx, Visibility visi) {
+	public void setVisibility(TNamedEntity fmx, Visibility visi) {
 		if (visi != null) {
 			fmx.addModifiers(visi.toString());
 		}

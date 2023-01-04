@@ -11,19 +11,18 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.runtime.CoreException;
-import org.moosetechnology.famix.cpp.Attribute;
-import org.moosetechnology.famix.cpp.BehaviouralEntity;
-import org.moosetechnology.famix.cpp.ContainerEntity;
-import org.moosetechnology.famix.cpp.Function;
-import org.moosetechnology.famix.cpp.Method;
-import org.moosetechnology.famix.cpp.NamedEntity;
-import org.moosetechnology.famix.cpp.Namespace;
-import org.moosetechnology.famix.cpp.ParameterizableClass;
-import org.moosetechnology.famix.cpp.ParameterizedType;
-import org.moosetechnology.famix.cpp.ScopingEntity;
-import org.moosetechnology.famix.cpp.StructuralEntity;
-import org.moosetechnology.famix.cpp.Type;
-import org.moosetechnology.famix.cpp.UnknownContainerEntity;
+
+import org.moosetechnology.famix.famixcentities.Attribute;
+import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.ContainerEntity;
+import org.moosetechnology.famix.famixcentities.Function;
+import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcppentities.Method;
+import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TParameterizedType;
+import org.moosetechnology.famix.famixtraits.TStructuralEntity;
+import org.moosetechnology.famix.famixtraits.TWithParameterizedTypes;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.CppEntityStack;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
@@ -67,11 +66,11 @@ public class NameResolver {
 	/**
 	 * Creates a StubBinding for <code>name</code>. If <code>name</code> is unqualified, defaults to considering it in the current context
 	 */
-	public <T extends NamedEntity> IBinding mkStubKey(IASTName name, java.lang.Class<T> entityType) {
+	public <T extends TNamedEntity> IBinding mkStubKey(IASTName name, java.lang.Class<T> entityType) {
 		return mkStubKey( name.toString(), entityType);
 	}
 
-	public <T extends NamedEntity> IBinding mkStubKey(String name, java.lang.Class<T> entityType) {
+	public <T extends TNamedEntity> IBinding mkStubKey(String name, java.lang.Class<T> entityType) {
 		return mkStubKey( name, (ContainerEntity)context.top(), entityType);
 	}
 
@@ -79,20 +78,20 @@ public class NameResolver {
 	 * Creates a StubBinding for <code>name</code>. If <code>name</code> is unqualified, considers it is a child of <code>parent</code>.
 	 * If  <code>name</code> is (fully)qualified, ignores <code>parent</code>.
 	 */
-	protected <T extends NamedEntity> IBinding mkStubKey(IASTName name, ContainerEntity parent, java.lang.Class<T> entityType) {
+	protected <T extends TNamedEntity> IBinding mkStubKey(IASTName name, ContainerEntity parent, java.lang.Class<T> entityType) {
 		return mkStubKey(name.toString(), parent, entityType);
 	}
 
-	public <T extends NamedEntity> IBinding mkStubKey(String name, ContainerEntity parent, java.lang.Class<T> entityType) {
+	public <T extends TNamedEntity> IBinding mkStubKey(String name, ContainerEntity parent, java.lang.Class<T> entityType) {
 		String simpleName = null;
 		QualifiedName qualName = new QualifiedName(name);
 
 		if (qualName.isFullyQualified()) {
 			if ( (entityType == Attribute.class) || (entityType == Method.class) ) {
-				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.cpp.Class.class);
+				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.famixcppentities.Class.class);
 			}
 			else {
-				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, UnknownContainerEntity.class);
+				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, Namespace.class);
 			}
 			simpleName = qualName.unqualifiedName();
 		}
@@ -249,13 +248,13 @@ public class NameResolver {
 			QualifiedName qualName = new QualifiedName(name);
 			if (qualName.isFullyQualified()) {
 				// assume that a fully qualified BehaviouralEntity name is a method by default 
-				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.cpp.Class.class);
+				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.famixcppentities.Class.class);
 			}
 			else {
 				parent = context.getTopCppNamespace();
 			}
 
-			if (parent instanceof org.moosetechnology.famix.cpp.Class) {
+			if (parent instanceof org.moosetechnology.famix.famixcppentities.Class) {
 				bnd = mkStubKey( behavName, parent, Method.class);
 			}
 			else {
@@ -345,7 +344,7 @@ public class NameResolver {
 
 	/**
 	 * Search for a Class or Namespace  or Function (in that order) at top level with unqualified name
-	 * @return NamedEntity found or null if none match
+	 * @return TNamedEntity found or null if none match
 	 */
 	private ContainerEntity findAtTopLevel(String name) {
 		for (Type cl : dico.getEntityByName(Type.class, name)) {
@@ -363,10 +362,10 @@ public class NameResolver {
 	/**
 	 * Search for a unqualified name within the scope of a ContainerEntity.
 	 * In the case of looking for a function, name is actually a signature.
-	 * @return NamedEntity found or null if none match
+	 * @return TNamedEntity found or null if none match
 	 */
-	public NamedEntity findInLocals(String name, ContainerEntity context) {
-		for (org.moosetechnology.famix.cpp.Type child : context.getTypes()) {
+	public TNamedEntity findInLocals(String name, ContainerEntity context) {
+		for (org.moosetechnology.famix.famixcentities.Type child : context.getTypes()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
@@ -383,16 +382,16 @@ public class NameResolver {
 
 	/**
 	 * Search for a unqualified name within the scope of a BehaviouralEntity.
-	 * @return NamedEntity found or null if none match
+	 * @return TNamedEntity found or null if none match
 	 */
-	public NamedEntity findInLocals(String name, BehaviouralEntity context) {		
-		for (StructuralEntity child : context.getLocalVariables()) {
+	public TNamedEntity findInLocals(String name, BehaviouralEntity context) {		
+		for (TStructuralEntity child : context.getLocalVariables()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
 		}
 
-		for (StructuralEntity child : context.getParameters()) {
+		for (TStructuralEntity child : context.getParameters()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
@@ -405,9 +404,9 @@ public class NameResolver {
 	/**
 	 * Search for a unqualified name within the scope of a Type.
 	 * In the case of looking for a method, name is actually a signature.
-	 * @return NamedEntity found or null if none match
+	 * @return TNamedEntity found or null if none match
 	 */
-	public NamedEntity findInLocals(String name, Type context) {		
+	public TNamedEntity findInLocals(String name, Type context) {		
 
 		for (Attribute child : context.getAttributes()) {
 			if (child.getName().equals(name)) {
@@ -427,10 +426,10 @@ public class NameResolver {
 
 	/**
 	 * Search for a unqualified name within the scope of a context.
-	 * @return NamedEntity found or null if none match
+	 * @return TNamedEntity found or null if none match
 	 */
-	public NamedEntity findInLocals(String name, ScopingEntity context) {		
-		for (StructuralEntity child : context.getGlobalVariables()) {
+	public TNamedEntity findInLocals(String name, ScopingEntity context) {		
+		for (TStructuralEntity child : context.getGlobalVariables()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
@@ -451,10 +450,10 @@ public class NameResolver {
 	 * In the case of looking for a behavioural, name is actually a signature.
 	 * If cannot find it and recursive is <code>true</code>, looks in the scope of parent context.
 	 * This is a dispatcher method that calls the correct methods from the type of the second parameter
-	 * @return NamedEntity found or null if none match
+	 * @return TNamedEntity found or null if none match
 	 */
-	public NamedEntity findInParent(String name, NamedEntity context, boolean recursive) {
-		NamedEntity found = null;
+	public TNamedEntity findInParent(String name, TNamedEntity context, boolean recursive) {
+		TNamedEntity found = null;
 
 		if (context == null) {
 			return findAtTopLevel(name);
@@ -478,7 +477,7 @@ public class NameResolver {
 		}
 
 		if (recursive) {
-			NamedEntity belongsTo = context.getBelongsTo();
+			TNamedEntity belongsTo = context.getBelongsTo();
 			return findInParent(name, belongsTo, recursive);
 		}
 		else {
@@ -491,7 +490,7 @@ public class NameResolver {
 	 * If not found, may return null or create an entity of type asEntityType
 	 * @param mayBeNull -- if not found, return null or enforce creating an entity
 	 */
-	public <T extends ContainerEntity> NamedEntity resolveOrCreate( String name, boolean mayBeNull, Class<T> asEntityType) {
+	public <T extends ContainerEntity> TNamedEntity resolveOrCreate( String name, boolean mayBeNull, Class<T> asEntityType) {
 		return resolveOrCreate(new QualifiedName(name), mayBeNull, asEntityType);
 	}
 
@@ -500,8 +499,8 @@ public class NameResolver {
 	 * If not found, may return null or create an entity of type asEntityType
 	 * @param mayBeNull -- if not found, return null or enforce creating an entity
 	 */
-	public <T extends ContainerEntity> NamedEntity resolveOrCreate( QualifiedName name, boolean mayBeNull, Class<T> asEntityType) {
-		NamedEntity tmp;
+	public <T extends ContainerEntity> TNamedEntity resolveOrCreate( QualifiedName name, boolean mayBeNull, Class<T> asEntityType) {
+		TNamedEntity tmp;
 		String simpleName;
 		ContainerEntity parent = null;
 		boolean recursive;
@@ -606,10 +605,10 @@ public class NameResolver {
 		fmx = dico.getEntityByKey(Type.class, bnd);
 
 		if (fmx == null) {	// try to find it in the current context despite the fact that we don't have a IBinding
-			NamedEntity found = findInParent(name.toString(), getContext().top(), /*recursive*/true);
+			TNamedEntity found = findInParent(name.toString(), getContext().top(), /*recursive*/true);
 			
 			// in the case of a sizeof(xyz), we can have a variable instead of a type
-			if (found instanceof StructuralEntity) {
+			if (found instanceof TStructuralEntity) {
 				return null;
 			}
 			else if (found instanceof Type) {
@@ -649,10 +648,10 @@ public class NameResolver {
 		int i = strName.indexOf('<');
 		String typName = new QualifiedName(strName.substring(0, i)).unqualifiedName();
 
-		ParameterizedType fmx = null;
-		ParameterizableClass generic = null;
+		TParameterizedType fmx = null;
+		TWithParameterizedTypes generic = null;
 		try {
-			generic = (ParameterizableClass) findInParent(typName, getContext().top(), /*recursive*/true);
+			generic = (TWithParameterizedTypes) findInParent(typName, getContext().top(), /*recursive*/true);
 		}
 		catch (ClassCastException e) {
 			// create a ParameterizedType for an unknown generic

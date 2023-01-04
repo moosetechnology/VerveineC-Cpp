@@ -2,15 +2,15 @@ package org.moosetechnology.verveineC.utils;
 
 import java.util.Stack;
 
+import org.moosetechnology.famix.famixcentities.Access;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
-import org.moosetechnology.famix.famixtraits.TAccess;
-import org.moosetechnology.famix.famixtraits.TInvocation;
-import org.moosetechnology.famix.famixtraits.TMethod;
+import org.moosetechnology.famix.famixcentities.ContainerEntity;
+import org.moosetechnology.famix.famixcentities.Invocation;
+import org.moosetechnology.famix.famixcentities.Reference;
+import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcppentities.Method;
+import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
-import org.moosetechnology.famix.famixtraits.TNamespace;
-import org.moosetechnology.famix.famixtraits.TPackage;
-import org.moosetechnology.famix.famixtraits.TReference;
-import org.moosetechnology.famix.famixtraits.TType;
 
 public class CppEntityStack {
 	
@@ -55,44 +55,44 @@ public class CppEntityStack {
 	/**
 	 * last Invocation registered to set the previous/next
 	 */
-	TInvocation lastInvocation = null;
+	Invocation lastInvocation = null;
 	
 	/**
 	 * last Access registered to set the previous/next
 	 */
-	TAccess lastAccess = null;
+	Access lastAccess = null;
 	
 	/**
 	 * last Reference registered to set the previous/next
 	 */
-	TReference lastReference = null;
+	Reference lastReference = null;
 	
-	public TAccess getLastAccess() {
+	public Access getLastAccess() {
 		return lastAccess;
 	}
 
-	public void setLastAccess(TAccess lastAccess) {
+	public void setLastAccess(Access lastAccess) {
 		this.lastAccess = lastAccess;
 	}
 
-	public TReference getLastReference() {
+	public Reference getLastReference() {
 		return lastReference;
 	}
 
-	public void setLastReference(TReference lastReference) {
+	public void setLastReference(Reference lastReference) {
 		this.lastReference = lastReference;
 	}
 
-	public TInvocation getLastInvocation() {
+	public Invocation getLastInvocation() {
 		return lastInvocation;
 	}
 
-	public void setLastInvocation(TInvocation lastInvocation) {
+	public void setLastInvocation(Invocation lastInvocation) {
 		this.lastInvocation = lastInvocation;
 	}
 
 	public CppEntityStack() {
-		clearPckg();  // initializes (to empty) Pckgs, classes and methods
+		clearStack();  // initializes (to empty) Pckgs, classes and methods
 	}
 
 	// WRITE ON THE STACK
@@ -106,18 +106,10 @@ public class CppEntityStack {
 	}
 
 	/**
-	 * Sets the Famix Package on top of the "context stack"
-	 * @param e -- the Famix Package
-	 */
-	public void pushPckg(TPackage e) {
-		push(e);
-	}
-
-	/**
 	 * Sets the Famix namespace on top of the "context stack"
 	 * @param e -- the Famix namespace
 	 */
-	public void pushPckg(TNamespace e) {
+	public void pushPckg(Namespace e) {
 		push(e);
 	}
 
@@ -125,7 +117,7 @@ public class CppEntityStack {
 	 * Pushes a Famix Type on top of the "context type stack"
 	 * @param t -- the FamixType
 	 */
-	public void pushType(TType t) {
+	public void pushType(Type t) {
 		push(t);
 	}
 
@@ -134,7 +126,7 @@ public class CppEntityStack {
 	 * Adds also a special entity to hold the metrics for the method
 	 * @param e -- the Famix method
 	 */
-	public void pushMethod(TMethod e) {
+	public void pushMethod(Method e) {
 		push(e);
 		push( new MetricHolder((BehaviouralEntity) e) );
 	}
@@ -150,19 +142,10 @@ public class CppEntityStack {
 	}
 
 	/**
-	 * Empties the context stack of package and associated classes
+	 * Empties the context stack
 	 */
-	public void clearPckg() {
+	public void clearStack() {
 		stack = new Stack<TNamedEntity>();
-	}
-
-	/**
-	 * Empties the context stack of Famix classes
-	 */
-	public void clearTypes() {
-		while (! (this.top() instanceof TNamespace)) {
-			this.popUpto(TType.class);			
-		}
 	}
 
 	// READ FROM THE STACK
@@ -214,22 +197,12 @@ public class CppEntityStack {
 	}
 
 	/**
-	 * Removes and returns the Famix package from the "context stack"
-	 * Also empties the class stack (which was presumably associated to this package)
-	 * Note: does not check that there is such a namespace
-	 * @return the Famix method
-	 */
-	public TPackage popPckg() {
-		return this.popUpto(TPackage.class);
-	}
-
-	/**
 	 * Pops the top Famix type from the "context stack"<BR>
 	 * Note: does not check that there is such a type, so could possibly throw an EmptyStackException
 	 * @return the Famix class
 	 */
-	public TType popType() {
-		return this.popUpto(TType.class);
+	public Type popType() {
+		return this.popUpto(Type.class);
 	}
 
 	/**
@@ -237,8 +210,8 @@ public class CppEntityStack {
 	 * Note: does not check that there is such a namesapce, so could possibly throw an EmptyStackException
 	 * @return the Famix Namespace
 	 */
-	public TNamespace popNamespace() {
-		return this.popUpto(TNamespace.class);
+	public Namespace popNamespace() {
+		return this.popUpto(Namespace.class);
 	}
 
 	/**
@@ -247,8 +220,8 @@ public class CppEntityStack {
 	 * Note: does not check that there is such a class or method, so could possibly throw an Exception
 	 * @return the Famix method
 	 */
-	public TMethod popMethod() {
-		return this.popUpto(TMethod.class);
+	public Method popMethod() {
+		return this.popUpto(Method.class);
 	}
 	
 	/**
@@ -272,21 +245,12 @@ public class CppEntityStack {
 	}
 
 	/**
-	 * Returns the Famix package on top of the "context stack"
-	 * Note: does not check that there is such a package
-	 * @return the Famix namespace
-	 */
-	public TPackage topPckg() {
-		return this.lookUpto(TPackage.class);
-	}
-
-	/**
 	 * Returns the Famix type on top of the "context stack"
 	 * Note: does not check that there is such a class, so could possibly throw an EmptyStackException
 	 * @return the Famix class
 	 */
-	public TType topType() {
-		return this.lookUpto(TType.class);
+	public Type topType() {
+		return this.lookUpto(Type.class);
 	}
 
 	/**
@@ -294,8 +258,8 @@ public class CppEntityStack {
 	 * Note: does not check that there is such a Namespace, so could possibly throw an EmptyStackException
 	 * @return the Famix Namespace
 	 */
-	public TNamespace topNamespace() {
-		return this.lookUpto(TNamespace.class);
+	public Namespace topNamespace() {
+		return this.lookUpto(Namespace.class);
 	}
 
 	/**
@@ -313,8 +277,8 @@ public class CppEntityStack {
 	 * Note: does not check that there is such a class or method, so could possibly throw an EmptyStackException
 	 * @return the Famix method
 	 */
-	public TMethod topMethod() {
-		return this.lookUpto(TMethod.class);
+	public Method topMethod() {
+		return this.lookUpto(Method.class);
 	}
 
 	/**
@@ -322,8 +286,8 @@ public class CppEntityStack {
 	 * C++ namespaces we are interested in are: methods, classes, namespaces
 	 * @return null if could not find a C++ namespace
 	 */
-	public TNamespace getTopCppNamespace() {
-		return this.lookUpto(TNamespace.class);
+	public Namespace getTopCppNamespace() {
+		return this.lookUpto(Namespace.class);
 /*		Stack<TNamedEntity> tmp = new Stack<TNamedEntity>();
 		TNamedEntity top;
 		
