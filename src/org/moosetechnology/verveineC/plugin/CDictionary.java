@@ -10,10 +10,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.moosetechnology.famix.cpp.AbstractFileAnchor;
 import org.moosetechnology.famix.cpp.Access;
-import org.moosetechnology.famix.cpp.AnnotationInstance;
-import org.moosetechnology.famix.cpp.AnnotationInstanceAttribute;
-import org.moosetechnology.famix.cpp.AnnotationType;
-import org.moosetechnology.famix.cpp.AnnotationTypeAttribute;
 import org.moosetechnology.famix.cpp.Association;
 import org.moosetechnology.famix.cpp.Attribute;
 import org.moosetechnology.famix.cpp.BehaviouralEntity;
@@ -787,41 +783,6 @@ public class CDictionary {
 		EnumValue fmx = ensureFamixEntity(EnumValue.class, key, name, persistIt);
 		fmx.setParentEnum(owner);
 		return fmx;
-	}
-
-	public AnnotationType ensureFamixAnnotationType(IBinding key, String name,	ContainerEntity owner, boolean persistIt) {
-		AnnotationType fmx = ensureFamixEntity(AnnotationType.class, key, name, persistIt);
-		fmx.setContainer(owner);
-		return fmx;
-	}
-
-	public AnnotationTypeAttribute ensureFamixAnnotationTypeAttribute(IBinding key, String name, AnnotationType owner, boolean persistIt) {
-		AnnotationTypeAttribute fmx = ensureFamixEntity(AnnotationTypeAttribute.class, key, name, persistIt);
-		fmx.setParentType(owner);
-		return fmx;
-	}
-
-	public AnnotationInstanceAttribute createFamixAnnotationInstanceAttribute(AnnotationTypeAttribute att, String value) {
-		AnnotationInstanceAttribute fmx = null;
-		if ( (att != null) && (value != null) ) {
-			fmx = new AnnotationInstanceAttribute();
-			fmx.setAnnotationTypeAttribute(att);
-			fmx.setValue(value);
-			this.famixRepo.add(fmx);
-		}
-		return fmx;
-	}
-
-	public AnnotationInstance addFamixAnnotationInstance(NamedEntity fmx, AnnotationType annType, Collection<AnnotationInstanceAttribute> annAtts) {
-		AnnotationInstance inst = null;
-		if ( (fmx != null) && (annType != null) ) {
-			inst = new AnnotationInstance();
-			inst.setAnnotatedEntity(fmx);
-			inst.setAnnotationType(annType);
-			inst.addAttributes(annAtts);
-			this.famixRepo.add(inst);
-		}
-		return inst;
 	}
 
 	/**
