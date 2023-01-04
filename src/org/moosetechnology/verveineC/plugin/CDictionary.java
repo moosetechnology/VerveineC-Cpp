@@ -1,12 +1,13 @@
 package org.moosetechnology.verveineC.plugin;
 
+import java.util.Collection;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.Visibility;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
@@ -15,20 +16,32 @@ import org.moosetechnology.verveineC.utils.resolution.StubBinding;
 import ch.akuhn.fame.Repository;
 import eu.synectique.verveine.core.Dictionary;
 import eu.synectique.verveine.core.gen.famix.AbstractFileAnchor;
+import eu.synectique.verveine.core.gen.famix.Access;
+import eu.synectique.verveine.core.gen.famix.AnnotationInstance;
+import eu.synectique.verveine.core.gen.famix.AnnotationInstanceAttribute;
+import eu.synectique.verveine.core.gen.famix.AnnotationType;
+import eu.synectique.verveine.core.gen.famix.AnnotationTypeAttribute;
 import eu.synectique.verveine.core.gen.famix.Association;
 import eu.synectique.verveine.core.gen.famix.Attribute;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
 import eu.synectique.verveine.core.gen.famix.BehaviouralReference;
 import eu.synectique.verveine.core.gen.famix.CFile;
+import eu.synectique.verveine.core.gen.famix.Comment;
 import eu.synectique.verveine.core.gen.famix.CompilationUnit;
 import eu.synectique.verveine.core.gen.famix.ContainerEntity;
 import eu.synectique.verveine.core.gen.famix.DereferencedInvocation;
+import eu.synectique.verveine.core.gen.famix.Entity;
+import eu.synectique.verveine.core.gen.famix.Enum;
+import eu.synectique.verveine.core.gen.famix.EnumValue;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
 import eu.synectique.verveine.core.gen.famix.Header;
 import eu.synectique.verveine.core.gen.famix.ImplicitVariable;
 import eu.synectique.verveine.core.gen.famix.Include;
 import eu.synectique.verveine.core.gen.famix.IndexedFileAnchor;
+import eu.synectique.verveine.core.gen.famix.Inheritance;
+import eu.synectique.verveine.core.gen.famix.Invocation;
+import eu.synectique.verveine.core.gen.famix.LocalVariable;
 import eu.synectique.verveine.core.gen.famix.Method;
 import eu.synectique.verveine.core.gen.famix.Module;
 import eu.synectique.verveine.core.gen.famix.MultipleFileAnchor;
@@ -40,6 +53,8 @@ import eu.synectique.verveine.core.gen.famix.ParameterType;
 import eu.synectique.verveine.core.gen.famix.ParameterizableClass;
 import eu.synectique.verveine.core.gen.famix.ParameterizedType;
 import eu.synectique.verveine.core.gen.famix.PreprocessorIfdef;
+import eu.synectique.verveine.core.gen.famix.PrimitiveType;
+import eu.synectique.verveine.core.gen.famix.Reference;
 import eu.synectique.verveine.core.gen.famix.ScopingEntity;
 import eu.synectique.verveine.core.gen.famix.SourceAnchor;
 import eu.synectique.verveine.core.gen.famix.SourcedEntity;
@@ -48,8 +63,20 @@ import eu.synectique.verveine.core.gen.famix.Type;
 import eu.synectique.verveine.core.gen.famix.TypeAlias;
 import eu.synectique.verveine.core.gen.famix.UnknownVariable;
 
-public class CDictionary extends Dictionary<IBinding> {
+/**
+ * A dictionnary of Famix entities to help create them and find them back
+ * @author anquetil
+ *
+ * Entities are mapped to keys that are the <code>IBinding</code> provided by the
+ * CTD parser
+ */
+public class CDictionary {
 
+	public static final String DEFAULT_PCKG_NAME = "<Default Package>";
+	public static final String STUB_METHOD_CONTAINER_NAME = "<StubMethodContainer>";
+	public static final String SELF_NAME = "self";
+	public static final String SUPER_NAME = "super";
+	
 	/**
 	 * Separator in fully qualified package name
 	 */
@@ -67,11 +94,58 @@ public class CDictionary extends Dictionary<IBinding> {
 
 	protected Map<IBinding,CFile> nameToFile;
 
-	public final static String DESTRUCTOR_KIND_MARKER = "destructor";
+
+	/*
+	 * Famix markers for methods
+	 */
+	public static final String CONSTRUCTOR_KIND_MARKER = "constructor";
+	public static final String DESTRUCTOR_KIND_MARKER = "destructor";
+
+	/**
+	 * The FAMIX repository where all FAMIX entities are created and stored
+	 */
+	protected Repository famixRepo;
+
+	/**
+	 * A dictionary to map a key (provided by the user) to FAMIX Entity
+	 */
+	protected Map<IBinding,NamedEntity> keyToEntity;
+	/**
+	 * A reverse dictionary (see {@link Dictionary#keyToEntity}) to find the key of an entity.
+	 */
+	protected Map<NamedEntity,IBinding> entityToKey;
+
+	/**
+	 * Another dictionary to map a name to FAMIX Entities with this name
+	 */
+	protected Map<String,Collection<NamedEntity>> nameToEntity;
+
+	/**
+	 * Yet another dictionary for implicit variables ('self' and 'super')
+	 * Because they are implicit, they may not have a binding provided by the parser,
+	 * or may have the same binding than their associated type so they can't be kept easily in {@link Dictionary#keyToEntity}
+	 */
+	@Deprecated
+	protected Map<Type,ImplicitVars> typeToImpVar;
+
+	/**
+	 * Used to keep the two possible ImplicitVariable for a given Class binding
+	 * @author anquetil
+	 */
+	@Deprecated
+	protected class ImplicitVars {
+		public ImplicitVariable self_iv;
+		public ImplicitVariable super_iv;
+	}
 	
  	public CDictionary(Repository famixRepo) {
-		super(famixRepo);
-		nameToFile = new Hashtable<IBinding,CFile>();
+		this.famixRepo = famixRepo;
+		
+		this.keyToEntity = new Hashtable<IBinding,NamedEntity>();
+		this.entityToKey = new Hashtable<NamedEntity,IBinding>();
+		this.nameToEntity = new Hashtable<String,Collection<NamedEntity>>();
+		this.typeToImpVar = new Hashtable<Type,ImplicitVars>();
+		this.nameToFile = new Hashtable<IBinding,CFile>();
 	}
 
  	/**
@@ -82,21 +156,87 @@ public class CDictionary extends Dictionary<IBinding> {
  		return famixRepo.size();
  	}
 
- 	public void mapEntityToKey(IBinding key, NamedEntity arg1) {
- 		/*here for debug purpose*/
- 		super.mapEntityToKey( key,  arg1);
- 		
- 	}
- 	
- 	public void mapEntityToName(String arg0, NamedEntity arg1) {
- 		/*here for debug purpose*/
- 		super.mapEntityToName( arg0,  arg1);
- 		
- 	}
- 	
+	protected void mapEntityToName(String name, NamedEntity ent) {
+		Collection<NamedEntity> l_ent = nameToEntity.get(name);
+		if (l_ent == null) {
+			l_ent = new LinkedList<NamedEntity>();
+		}
+		l_ent.add(ent);
+		nameToEntity.put(name, l_ent);
+	}
+
+	public void removeEntity( NamedEntity ent) {
+		IBinding key;
+		key = entityToKey.get(ent);
+		entityToKey.remove(ent);
+		keyToEntity.remove(key);
+
+		Collection<NamedEntity> l_ent = nameToEntity.get(ent.getName());
+		l_ent.remove(ent);
+
+		famixRepo.getElements().remove(ent);
+	}
+	
+	protected void mapEntityToKey(IBinding key, NamedEntity ent) {
+		NamedEntity old = keyToEntity.get(key);
+		if (old != null) {
+			entityToKey.remove(old);
+		}
+		keyToEntity.put(key, ent);
+		entityToKey.put(ent, key);
+	}
+	
+	/**
+	 * Returns all the Famix Entity with the given name and class 
+	 * @param fmxClass -- the subtype of Famix Entity we are looking for
+	 * @param name -- the name of the entity
+	 * @return the Collection of Famix Entities with the given name and class (possibly empty)
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends NamedEntity> Collection<T> getEntityByName(Class<T> fmxClass, String name) {
+		Collection<T> ret = new LinkedList<T>();
+		Collection<NamedEntity> l_name = nameToEntity.get(name);
+		
+		if (l_name != null ) {
+			for (NamedEntity obj : l_name) {
+				if (fmxClass.isInstance(obj)) {
+					ret.add((T) obj);
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Returns the Famix Entity associated to the given key.
+	 * <b>Note</b>: Be careful than ImplicitVariables share the same binding than their associated Class and cannot be retrieved with this method.
+	 * In such a case, this method will always retrieve the Class associated to the key.
+	 * To get an ImplicitVariable from the key, use {@link Dictionary#getImplicitVariableByBinding(Object, String)}
+	 * @param key -- the key
+	 * @return the Famix Entity associated to the binding or null if not found
+	 */
+	public NamedEntity getEntityByKey(IBinding key) {
+		if (key == null) {
+			return null;
+		}
+		else {
+			return keyToEntity.get(key);
+		}
+	}
+
+	/**
+	 * Returns the key associated to a Famix Entity.
+	 * @param e -- the Named entity
+	 * @return the key associated to this entity or null if none
+	 */
+	public IBinding getEntityKey(NamedEntity e) {
+		return entityToKey.get(e);
+	}
+
 	@SuppressWarnings("unchecked")
  	public <T extends NamedEntity> T getEntityByKey(Class<T> clazz, IBinding key) {
- 		NamedEntity found = super.getEntityByKey(key); 
+ 		NamedEntity found = getEntityByKey(key); 
 		if ((found != null) && ! clazz.isInstance(found)) {
 			WrongClassGuessException.reportWrongClassGuess(clazz, found);
 			return null;
@@ -213,14 +353,251 @@ public class CDictionary extends Dictionary<IBinding> {
 				return mfa;
 			}
 		}
-
-
-		
-		
 		
 		mfa.addAllFiles( createIndexedSourceAnchor(filename, start, end) );
 
 		return mfa;
+	}
+
+	/**
+	 * Adds an already created Entity to the FAMIX repository
+	 * Used mainly for non-NamedEntity, for example relationships
+	 * @param e -- the FAMIX entity to add to the repository
+	 */
+	public void famixRepoAdd(Entity e) {
+		this.famixRepo.add(e);
+	}
+
+	/**
+	 * Creates and returns a FAMIX Entity of the type <b>fmxClass</b>.
+	 * The Entity is always created (see {@link Dictionary#ensureFamixEntity(Class, Object, String, boolean)}).
+	 * @param fmxClass -- the FAMIX class of the instance to create
+	 * @param name -- the name of the new instance must not be null (and this is not tested)
+	 * @param persistIt -- whether the Entity should be persisted in the Famix repository
+	 * @return the FAMIX Entity or null in case of a FAMIX error
+	 */
+	protected <T extends NamedEntity> T createFamixEntity(Class<T> fmxClass, String name, boolean persistIt) {
+		T fmx = null;
+
+		if (name == null) {
+			return null;
+		}
+		
+		try {
+			fmx = fmxClass.newInstance();
+		} catch (Exception e) {
+			System.err.println("Unexpected error, could not create a FAMIX entity: "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		if (fmx != null) {
+			fmx.setName(name);
+			fmx.setIsStub(Boolean.TRUE);
+
+			mapEntityToName(name, fmx);
+			
+			if (persistIt) {
+				// put new entity in Famix repository
+				this.famixRepo.add(fmx);
+			}
+		}
+
+		return fmx;
+	}
+	
+	/**
+	 * Returns a FAMIX Entity of the type <b>fmxClass</b> and maps it to its binding <b>bnd</b> (if not null).
+	 * The Entity is created if it did not exist.
+	 * @param fmxClass -- the FAMIX class of the instance to create
+	 * @param bnd -- the binding to map to the new instance
+	 * @param name -- the name of the new instance (used if <tt>bnd == null</tt>)
+	 * @param persistIt -- whether the Entity should be persisted in the Famix repository
+	 * @return the FAMIX Entity or null if <b>bnd</b> was null or in case of a FAMIX error
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T extends NamedEntity> T ensureFamixEntity(Class<T> fmxClass, IBinding bnd, String name, boolean persistIt) {
+		T fmx = null;
+		if (bnd != null) {
+			fmx = (T) getEntityByKey(bnd);
+			if (fmx != null) {
+				return fmx;
+			}
+		}
+		// else
+		// Unfortunately different entities with the same name and same type may exist
+		// e.g. 2 parameters of 2 different methods but having the same name
+		// so we cannot recover just from the name
+
+		fmx = createFamixEntity(fmxClass, name, persistIt);
+		if ( (bnd != null) && (fmx != null) ) {
+			keyToEntity.put(bnd, fmx);
+			entityToKey.put(fmx, bnd);
+		}
+		
+		return fmx;
+	}
+
+	///// Special Case: ImplicitVariables /////
+
+	/**
+	 * Returns the Famix ImplicitVariable associated to the given binding and name (self or super).
+	 * See also {@link Dictionary#getEntityByKey(Object)}
+	 * @param bnd -- the binding
+	 * @return the Famix Entity associated to the binding or null if not found
+	 */
+	@Deprecated
+	public ImplicitVariable getImplicitVariableByBinding(IBinding bnd, String iv_name) {
+		return getImplicitVariableByType((eu.synectique.verveine.core.gen.famix.Class)getEntityByKey(bnd), iv_name);
+	}
+	
+	/**
+	 * Returns the Famix ImplicitVariable associated to the given FamixType.
+	 * @param type -- the FamixType
+	 * @param name -- name of the ImplicitVariable (should be Dictionary.SELF_NAME or Dictionary.SUPER_NAME)
+	 * @return the Famix ImplicitVariable associated to the Type or null if not found
+	 */
+	@Deprecated
+	public ImplicitVariable getImplicitVariableByType(Type type, String name) {
+		ImplicitVars iv = typeToImpVar.get(type);
+		ImplicitVariable ret = null;
+		
+		if (iv == null) {
+			iv = new ImplicitVars();
+		}
+		
+		if (name.equals(SELF_NAME)) {
+			ret = iv.self_iv;
+		}
+		else if (name.equals(SUPER_NAME)) {
+			ret = iv.super_iv;
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Returns a FAMIX ImplicitVariable with the given <b>name</b> ("self" or "super") and corresponding to the <b>type</b>.
+	 * If this ImplicitVariable does not exist yet, it is created
+	 * @param name -- the name of the FAMIX ImplicitVariable (should be Dictionary.SELF_NAME or Dictionary.SUPER_NAME)
+	 * @param type -- the Famix Type for this ImplicitVariable (should not be null)
+	 * @param owner -- the ContainerEntity where the implicit variable appears (should be a method inside <b>type</b>)
+	 * @param persistIt -- whether the ImplicitVariable should be persisted in the Famix repository
+	 * @return the FAMIX ImplicitVariable or null in case of a FAMIX error
+	 */
+	public ImplicitVariable ensureFamixImplicitVariable(IBinding key, String name, Type type, Method owner, boolean persistIt) {
+		ImplicitVariable fmx;
+		fmx = ensureFamixEntity(ImplicitVariable.class, key, name, persistIt);
+		fmx.setParentBehaviouralEntity(owner);
+		return fmx;
+	}
+
+	///// ensure Famix Relationships /////
+
+	protected void chainPrevNext(Association prev, Association next) {
+		if (prev != null) {
+			next.setPrevious(prev);  // not yet implemented in importer
+		}
+	}
+	
+	/**
+	 * Returns a Famix Inheritance relationship between two Famix Classes creating it if needed
+	 * @param sup -- the super class
+	 * @param sub -- the sub class
+	 * @param prev -- previous inheritance relationship in the same context
+	 * @return the Inheritance relationship
+	 */
+	public Inheritance ensureFamixInheritance(Type sup, Type sub, Association prev) {
+		if ( (sup == null) || (sub == null) ) {
+			return null;
+		}
+			
+		for (Inheritance i : sup.getSubInheritances()) {
+			if (i.getSubclass() == sub) {
+				return i;
+			}
+		}
+		Inheritance inh = new Inheritance();
+		inh.setSuperclass(sup);
+		inh.setSubclass(sub);
+		chainPrevNext(prev,inh);
+		famixRepoAdd(inh);
+		return inh;
+	}
+
+	/**
+	 * Returns a Famix Reference between two Famix Entities creating it if needed.<br>
+	 * If <code>prev == null</code> and a similar reference already exist (same <code>src</code>, same <code>tgt</code>), does not create a new one
+	 * @param src -- source of the reference
+	 * @param tgt -- target of the reference
+	 * @param prev -- previous reference relationship in the same context
+	 * @return the FamixReference
+	 */
+	public Reference addFamixReference(BehaviouralEntity src, Type tgt, Association prev) {
+		if ( (src == null) || (tgt == null) ) {
+			return null;
+		}
+
+		if (prev == null) {
+			for (Reference ref : src.getOutgoingReferences()) {
+				if (ref.getTarget() == tgt) {
+					return ref;
+				}
+			}
+		}
+
+		Reference ref = new Reference();
+		ref.setTarget(tgt);
+		ref.setSource(src);
+		chainPrevNext(prev,ref);
+		famixRepoAdd(ref);
+
+		return ref;
+	}
+
+	/**
+	 * Returns a Famix Invocation between two Famix Entities creating it if needed
+	 * @param sender of the invocation
+	 * @param invoked -- method invoked
+	 * @param receiver of the invocation
+	 * @param signature -- i.e. actual invocation code
+	 * @param prev -- previous invocation relationship in the same context
+	 * @return the FamixInvocation
+	 */
+	public Invocation addFamixInvocation(BehaviouralEntity sender, BehaviouralEntity invoked, NamedEntity receiver, String signature, Association prev) {
+		if ( (sender == null) || (invoked == null) ) {
+			return null;
+		}
+		Invocation invok = new Invocation();
+		invok.setReceiver(receiver);
+		invok.setSender(sender);
+		invok.setSignature((signature== null) ? invoked.getSignature() : signature);
+		invok.addCandidates(invoked);
+		chainPrevNext(prev,invok);
+		famixRepoAdd(invok);
+		
+		return invok;
+	}
+
+	/**
+	 * Returns a Famix Access between two Famix Entities creating it if needed
+	 * @param accessor -- the entity (presumably a method) accessing the attribute
+	 * @param var -- the variable accessed
+	 * @param isWrite -- whether this is an access for reading or writing in the variable
+	 * @param prev -- previous access relationship in the same context
+	 * @return the FamixAccess
+	 */
+	public Access addFamixAccess(BehaviouralEntity accessor, StructuralEntity var, boolean isWrite, Association prev) {
+		if ( (accessor == null) || (var == null) ) {
+			return null;
+		}
+		Access acc = new Access();
+		acc.setAccessor(accessor);
+		acc.setVariable(var);
+		acc.setIsWrite(new Boolean(isWrite));
+		chainPrevNext(prev, acc);
+		famixRepoAdd(acc);
+		
+		return acc;
 	}
 
 	public DereferencedInvocation addFamixDereferencedInvocation(BehaviouralEntity sender, StructuralEntity referencer, String signature, Association prev) {
@@ -292,6 +669,285 @@ public class CDictionary extends Dictionary<IBinding> {
 		return fmx;
 	}
 
+	/**
+	 * Creates or recovers a Famix Named Entity uniq for the given name.
+	 * For some specific entities we don't allow two of them with the same name.
+	 * This is the case e.g. for the default package, or the Java class "Object" and its package "java.lang".
+	 * @param fmxClass -- the FAMIX class of the instance to create
+	 * @param key -- a potential binding for the entity
+	 * @param name -- the name of the new instance (used if <tt>bnd == null</tt>)
+	 * @return the uniq Famix Entity for this binding and/or name
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends NamedEntity> T ensureFamixUniqEntity(Class<T> fmxClass, IBinding key, String name) {
+		T fmx = null;
+		
+		if (name == null) {
+			return null;
+		}
+		
+		if (key != null) {
+			fmx = (T) getEntityByKey(key);
+		}
+		
+		if (fmx == null) {
+			Collection<T> l = getEntityByName( fmxClass, name);
+			if (l.size() > 0) {
+				fmx = l.iterator().next();
+			}
+			else {
+				// may be we should be careful not to persist all these special entities?
+				fmx = createFamixEntity(fmxClass, name, /*persistIt*/true);
+			}
+			
+			if (key != null) {
+				// may happen for example if the entity was first created without binding
+				// and we find a binding for it later
+				keyToEntity.put(key, fmx);
+			}
+		}
+
+		return fmx;
+	}
+
+	///// ensure Famix Entities /////
+
+	/**
+	 * Returns a FAMIX Type with the given <b>name</b>, creating it if it does not exist yet.
+	 * In the second case, sets some default properties: not Abstract, not Final, not Private, not Protected, not Public, not Interface
+	 * @param name -- the name of the FAMIX Class
+	 * @param persistIt -- whether the Type should be persisted in the Famix repository
+	 * @return the FAMIX Class or null in case of a FAMIX error
+	 */
+	public Type ensureFamixType(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
+		Type fmx = ensureFamixEntity(Type.class, key, name, persistIt);
+		fmx.setContainer(owner);
+		return fmx;
+	}
+
+	/**
+	 * Returns a FAMIX Class with the given <b>name</b>, creating it if it does not exist yet.
+	 * @param key to which the entity will be mapped (may be null, but then it will be difficult to recover the entity)
+	 * @param name -- the name of the FAMIX Method (MUST NOT be null, but this is not checked)
+	 * @param owner -- type defining the method (should not be null, but it will work if it is) 
+	 * @param persistIt -- whether the Class should be persisted in the Famix repository
+	 * @return the FAMIX Class or null in case of a FAMIX error
+	 */
+	public eu.synectique.verveine.core.gen.famix.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
+		eu.synectique.verveine.core.gen.famix.Class fmx = ensureFamixEntity(eu.synectique.verveine.core.gen.famix.Class.class, key, name, persistIt);
+		fmx.setContainer(owner);
+		return fmx;
+	}
+
+	/**
+	 * Returns a FAMIX ParameterizableClass with the given <b>name</b>, creating it if it does not exist yet
+	 * In the second case, sets some default properties: not Abstract, not Final, not Private, not Protected, not Public, not Interface
+	 * @param name -- the name of the FAMIX Class
+	 * @param persistIt -- whether the ParameterizableClass should be persisted in the Famix repository
+	 * @return the FAMIX Class or null in case of a FAMIX error
+	 */
+	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
+		ParameterizableClass fmx = ensureFamixEntity(ParameterizableClass.class, key, name, persistIt);
+		fmx.setContainer(owner);
+		return fmx;
+	}
+
+	/**
+	 * Returns a FAMIX ParameterizableType with the given <b>name</b>, creating it if it does not exist yet
+	 * @param name -- the name of the FAMIX Type
+	 * @param persistIt -- whether the ParameterizableClass should be persisted in the Famix repository
+	 * @return the FAMIX ParameterizableType or null in case of a FAMIX error
+	 */
+	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, ContainerEntity owner, boolean persistIt) {
+		ParameterizedType fmx = ensureFamixEntity(ParameterizedType.class, key, name, persistIt);
+		fmx.setContainer(owner);
+		fmx.setParameterizableClass(generic);
+		return fmx;
+	}
+
+	/**
+	 * Returns a FAMIX ParameterType (created by a FAMIX ParameterizableClass) with the given <b>name</b>, creating it if it does not exist yet
+	 * In the second case, sets some default properties: not Abstract, not Final, not Private, not Protected, not Public
+	 * @param name -- the name of the FAMIX ParameterType
+	 * @param persistIt -- whether the ParameterType should be persisted in the Famix repository
+	 * @return the FAMIX ParameterType or null in case of a FAMIX error
+	 */
+	public ParameterType ensureFamixParameterType(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
+		ParameterType fmx = ensureFamixEntity(ParameterType.class, key, name, persistIt);
+		fmx.setContainer(owner);
+		return fmx;
+	}
+
+	public Enum ensureFamixEnum(IBinding key, String name,	ContainerEntity owner, boolean persistIt) {
+		Enum fmx = ensureFamixEntity(Enum.class, key, name, persistIt);
+		fmx.setContainer(owner);
+		return fmx;
+	}
+
+	public EnumValue ensureFamixEnumValue(IBinding key, String name, Enum owner, boolean persistIt) {
+		EnumValue fmx = ensureFamixEntity(EnumValue.class, key, name, persistIt);
+		fmx.setParentEnum(owner);
+		return fmx;
+	}
+
+	public AnnotationType ensureFamixAnnotationType(IBinding key, String name,	ContainerEntity owner, boolean persistIt) {
+		AnnotationType fmx = ensureFamixEntity(AnnotationType.class, key, name, persistIt);
+		fmx.setContainer(owner);
+		return fmx;
+	}
+
+	public AnnotationTypeAttribute ensureFamixAnnotationTypeAttribute(IBinding key, String name, AnnotationType owner, boolean persistIt) {
+		AnnotationTypeAttribute fmx = ensureFamixEntity(AnnotationTypeAttribute.class, key, name, persistIt);
+		fmx.setParentType(owner);
+		return fmx;
+	}
+
+	public AnnotationInstanceAttribute createFamixAnnotationInstanceAttribute(AnnotationTypeAttribute att, String value) {
+		AnnotationInstanceAttribute fmx = null;
+		if ( (att != null) && (value != null) ) {
+			fmx = new AnnotationInstanceAttribute();
+			fmx.setAnnotationTypeAttribute(att);
+			fmx.setValue(value);
+			this.famixRepo.add(fmx);
+		}
+		return fmx;
+	}
+
+	public AnnotationInstance addFamixAnnotationInstance(NamedEntity fmx, AnnotationType annType, Collection<AnnotationInstanceAttribute> annAtts) {
+		AnnotationInstance inst = null;
+		if ( (fmx != null) && (annType != null) ) {
+			inst = new AnnotationInstance();
+			inst.setAnnotatedEntity(fmx);
+			inst.setAnnotationType(annType);
+			inst.addAttributes(annAtts);
+			this.famixRepo.add(inst);
+		}
+		return inst;
+	}
+
+	/**
+	 * Returns a FAMIX PrimitiveType with the given <b>name</b>, creating it if it does not exist yet
+	 * We assume that PrimitiveType must be uniq for a given name
+	 * @param name -- the name of the FAMIX PrimitiveType
+	 * @return the FAMIX PrimitiveType or null in case of a FAMIX error
+	 */
+	public PrimitiveType ensureFamixPrimitiveType(IBinding key, String name) {
+		return  ensureFamixUniqEntity(PrimitiveType.class, key, name);
+	}
+	
+	/**
+	 * Returns a FAMIX Method with the given <b>name</b>, creating it if it does not exist yet
+	 * @param key to which the entity will be mapped (may be null, but then it will be difficult to recover the entity)
+	 * @param name -- the name of the FAMIX Method (MUST NOT be null, but this is not checked)
+	 * @param sig -- method's signature, including type of parameters and return type (should not be null, but it will work if it is)
+	 * @param ret -- Famix Type returned by the method (ideally should only be null in case of a constructor, but will accept it in any case)
+	 * @param owner -- type defining the method (should not be null, but it will work if it is)
+	 * @param persistIt -- whether the Method should be persisted in the Famix repository
+	 * @return the FAMIX Method or null in case of a FAMIX error
+	 */
+	public Method ensureFamixMethod(IBinding key, String name, String sig, Type ret, Type owner, boolean persistIt) {
+		Method fmx = (Method) ensureFamixEntity(Method.class, key, name, persistIt);
+		fmx.setSignature(sig);
+		fmx.setDeclaredType(ret);
+		fmx.setParentType(owner);
+		return fmx;
+	}
+	
+	/**
+	 * Returns a FAMIX Function with the given <b>name</b>, creating it if it does not exist yet
+	 * @param key to which the entity will be mapped (may be null, but then it will be difficult to recover the entity)
+	 * @param name -- the name of the FAMIX Function (MUST NOT be null, but this is not checked)
+	 * @param sig -- method's signature, including type of parameters and return type (should not be null, but it will work if it is)
+	 * @param ret -- Famix Type returned by the method (ideally should only be null in case of a constructor, but will accept it in any case)
+	 * @param owner -- container defining the method (should not be null, but it will work if it is)
+	 * @param persistIt -- whether the Function should be persisted in the Famix repository
+	 * @return the FAMIX Method or null in case of a FAMIX error
+	 */
+	public Function ensureFamixFunction(IBinding key, String name, String sig, Type ret, ContainerEntity owner, boolean persistIt) {
+		Function fmx = (Function) ensureFamixEntity(Function.class, key, name, persistIt);
+		fmx.setSignature(sig);
+		fmx.setDeclaredType(ret);
+		fmx.setContainer(owner);;
+		return fmx;
+	}
+
+	/**
+	 * Returns a FAMIX Attribute with the given <b>name</b>, creating it if it does not exist yet
+	 * @param key to which the entity will be mapped (may be null, but then it will be difficult to recover the entity)
+	 * @param name -- the name of the FAMIX Attribute (MUST NOT be null, but this is not checked)
+	 * @param type -- Famix Type of the Attribute (should not be null, but it will work if it is)
+	 * @param owner -- type defining the Attribute (should not be null, but it will work if it is)
+	 * @param persistIt -- whether the Attribute should be persisted in the Famix repository
+	 * @return the FAMIX Attribute or null in case of a FAMIX error
+	 */
+	public Attribute ensureFamixAttribute(IBinding key, String name, Type type, Type owner, boolean persistIt) {
+		Attribute fmx = ensureFamixEntity(Attribute.class, key, name, persistIt);
+		fmx.setParentType(owner);
+		fmx.setDeclaredType(type);
+		return fmx;
+	}
+
+	/**
+	 * Returns a FAMIX LocalVariable with the given <b>name</b>, creating it if it does not exist yet
+	 * @param name -- the name of the FAMIX LocalVariable
+	 * @param persistIt -- whether the LocalVariable should be persisted in the Famix repository
+	 * @return the FAMIX LocalVariable or null in case of a FAMIX error
+	 */
+	public LocalVariable ensureFamixLocalVariable(IBinding key, String name, Type type, BehaviouralEntity owner, boolean persistIt) {
+		LocalVariable fmx = ensureFamixEntity(LocalVariable.class, key, name, persistIt);
+		fmx.setParentBehaviouralEntity(owner);
+		fmx.setDeclaredType(type);
+		return fmx;
+	}
+
+	/**
+	 * Creates and returns a FAMIX Comment not associated to any Entity
+	 * @param cmt -- the content (String) of the comment 
+	 * @return the FAMIX Comment
+	 */
+	public Comment createFamixComment(String cmt) {
+		Comment fmx = null;
+		
+		if (cmt != null) {
+			fmx = new Comment();
+			fmx.setContent(cmt);
+			this.famixRepo.add(fmx);
+		}
+		return fmx;
+	}
+
+	/**
+	 * Creates and returns a FAMIX Comment and associates it with an Entity (ex: for Javadocs)
+	 * @param cmt -- the content (String) of the comment 
+	 * @param owner -- the entity concerned by this comment
+	 * @return the FAMIX Comment
+	 */
+	public Comment createFamixComment(String cmt, SourcedEntity owner) {
+		Comment fmx = null;
+		
+		if ( (cmt != null) && (owner != null) ) {
+			fmx = createFamixComment(cmt);
+			fmx.setContainer(owner);
+		}
+		return fmx;
+	}
+	
+	/**
+	 * Creates and returns a FAMIX Parameter and associates it with a BehaviouralEntity
+	 * @param name -- the name of the parameter
+	 * @param type -- the type of the parameter
+	 * @param owner -- the entity concerned by this parameter
+	 * @param persistIt -- whether the Parameter should be persisted in the Famix repository
+	 * @return the FAMIX parameter
+	 */
+	public Parameter createFamixParameter(IBinding key, String name, Type type, BehaviouralEntity owner, boolean persistIt) {
+		Parameter fmx = ensureFamixEntity(Parameter.class, key, name, persistIt);
+		fmx.setParentBehaviouralEntity(owner);
+		fmx.setDeclaredType(type);
+		
+		return fmx;
+	}
+	
 	public UnknownVariable ensureFamixUnknownVariable(IBinding key, String name, Package parent) {
 		UnknownVariable fmx = null;
 		
@@ -300,7 +956,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		}
 
 		if (fmx == null) {
-			fmx = super.ensureFamixEntity(UnknownVariable.class, key, name, /*persistIt*/true);
+			fmx = ensureFamixEntity(UnknownVariable.class, key, name, /*persistIt*/true);
 			fmx.setParentPackage(parent);
 		}
 		
@@ -316,11 +972,11 @@ public class CDictionary extends Dictionary<IBinding> {
 	}
 
 	public <T extends NamedEntity> T ensureFamixEntity(Class<T> fmxClass, IBinding key, String name) {
-		return super.ensureFamixEntity(fmxClass, key, name, /*persistIt*/true);
+		return ensureFamixEntity(fmxClass, key, name, /*persistIt*/true);
 	}
 
 	public Namespace ensureFamixNamespace(IBinding key, String name, ScopingEntity parent) {
-		Namespace fmx = super.ensureFamixNamespace(key, name);
+		Namespace fmx = ensureFamixNamespace(key, name);
 		/*System.out.println(this.getEntityByKey(key));
 		if ((parent != null) && (fmx.getParentScope() !=null)) {
 			if (parent != fmx.getParentScope()) {
@@ -333,8 +989,18 @@ public class CDictionary extends Dictionary<IBinding> {
 		return fmx;
 	}
 
+	/**
+	 * Returns a FAMIX Namespace with the given <b>name</b>, creating it if it does not exist yet
+	 * We assume that Namespaces must be uniq for a given name
+	 * @param name -- the name of the FAMIX Namespace
+	 * @return the FAMIX Namespace or null in case of a FAMIX error
+	 */
+	public Namespace ensureFamixNamespace(IBinding key, String name) {
+		return ensureFamixUniqEntity(Namespace.class, key, name);
+	}
+
 	public Package ensureFamixPackage(IBinding key, String name, Package parent) {
-		Package fmx = super.ensureFamixEntity(Package.class, key, name, /*persitIt*/true);
+		Package fmx = ensureFamixEntity(Package.class, key, name, /*persitIt*/true);
 		fmx.setIsStub(false);
 		if (parent != null) {
 			fmx.setParentPackage(parent);
@@ -345,7 +1011,7 @@ public class CDictionary extends Dictionary<IBinding> {
 	public TypeAlias ensureFamixTypeAlias(IBinding key, String name, ContainerEntity owner) {
 		TypeAlias fmx;
 
-		fmx = super.ensureFamixEntity(TypeAlias.class, key, name, /*persistIt*/true);
+		fmx = ensureFamixEntity(TypeAlias.class, key, name, /*persistIt*/true);
 		fmx.setContainer(owner);
 
 		return fmx;
@@ -355,7 +1021,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		Type fmx = getEntityIfNotNull(Type.class, key);
 
 		if (fmx == null) {
-			fmx = super.ensureFamixType(key, name, owner, /*persistIt*/true);
+			fmx = ensureFamixType(key, name, owner, /*persistIt*/true);
 		}
 		
 		return fmx;
@@ -365,7 +1031,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		eu.synectique.verveine.core.gen.famix.Class fmx = getEntityIfNotNull(eu.synectique.verveine.core.gen.famix.Class.class, key);
 
 		if (fmx == null) {
-			fmx = super.ensureFamixClass(key, name, owner, /*persistIt*/true);
+			fmx = ensureFamixClass(key, name, owner, /*persistIt*/true);
 		}
 		
 		return fmx;
@@ -375,7 +1041,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		ParameterizableClass fmx = getEntityIfNotNull(ParameterizableClass.class, key);
 
 		if (fmx == null) {
-			fmx = super.ensureFamixParameterizableClass(key, name, owner, /*persistIt*/true);
+			fmx = ensureFamixParameterizableClass(key, name, owner, /*persistIt*/true);
 		}
 		
 		return fmx;
@@ -385,7 +1051,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		ParameterType fmx = getEntityIfNotNull(ParameterType.class, key);
 
 		if (fmx == null) {
-			fmx = super.ensureFamixParameterType(key, name, owner, /*persistIt*/true);
+			fmx = ensureFamixParameterType(key, name, owner, /*persistIt*/true);
 		}
 		return fmx;
 	}
@@ -394,7 +1060,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		ParameterizedType fmx = getEntityIfNotNull(ParameterizedType.class, key);
 
 		if (fmx == null) {
-			fmx = super.ensureFamixParameterizedType(key, name, generic, owner, /*persistIt*/true);
+			fmx = ensureFamixParameterizedType(key, name, generic, owner, /*persistIt*/true);
 		}
 
 		return fmx;
@@ -433,7 +1099,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		Function fmx = getEntityIfNotNull(Function.class, key);
 
 		if (fmx == null) {
-			fmx = super.ensureFamixFunction(key, name, sig, /*returnType*/null, parent, /*persistIt*/true);
+			fmx = ensureFamixFunction(key, name, sig, /*returnType*/null, parent, /*persistIt*/true);
 			fmx.setCyclomaticComplexity(1);
 			fmx.setNumberOfStatements(0);
 		}
@@ -444,7 +1110,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		Method fmx = getEntityIfNotNull(Method.class, key);
 
 		if (fmx == null) {
-			fmx = super.ensureFamixMethod(key, name, signature, /*returnType*/null, parent, /*persistIt*/true);
+			fmx = ensureFamixMethod(key, name, signature, /*returnType*/null, parent, /*persistIt*/true);
 			fmx.setCyclomaticComplexity(1);
 			fmx.setNumberOfStatements(0);
 		}
@@ -456,7 +1122,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		Attribute fmx = getEntityIfNotNull(Attribute.class, key);
 
 		if (fmx == null) {
-			fmx = super.ensureFamixAttribute(key, name, /*type*/null, parent, /*persistIt*/true);
+			fmx = ensureFamixAttribute(key, name, /*type*/null, parent, /*persistIt*/true);
 		}
 
 		return fmx;
@@ -479,7 +1145,7 @@ public class CDictionary extends Dictionary<IBinding> {
 		}
 
 		if (fmx == null) {
-			fmx = super.createFamixParameter(bnd, name, /*type*/null, owner, /*persistIt*/true);
+			fmx = createFamixParameter(bnd, name, /*type*/null, owner, /*persistIt*/true);
 		}
 
 		return fmx;
@@ -487,7 +1153,7 @@ public class CDictionary extends Dictionary<IBinding> {
 
 	public ImplicitVariable ensureFamixImplicitVariable(String name, Type type, Method owner) {
 		IBinding bnd = StubBinding.getInstance(Type.class, mooseName(owner, name));
-		return super.ensureFamixImplicitVariable( bnd, name, type, owner, /*persistIt*/true);
+		return ensureFamixImplicitVariable( bnd, name, type, owner, /*persistIt*/true);
 	}
 
 	/**
@@ -643,7 +1309,7 @@ public class CDictionary extends Dictionary<IBinding> {
 	 */
 	public void removeParameter(Parameter param) {
 		param.setParentBehaviouralEntity(null);
-		super.removeEntity(param);
+		removeEntity(param);
 	}
 
 }
