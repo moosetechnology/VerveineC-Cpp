@@ -2,7 +2,6 @@ package org.moosetechnology.verveineC.utils;
 
 import java.util.Stack;
 
-import eu.synectique.verveine.core.EntityStack;
 import eu.synectique.verveine.core.gen.famix.Access;
 import eu.synectique.verveine.core.gen.famix.AnnotationTypeAttribute;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;

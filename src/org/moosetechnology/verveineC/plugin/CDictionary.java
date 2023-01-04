@@ -14,7 +14,7 @@ import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.utils.resolution.StubBinding;
 
 import ch.akuhn.fame.Repository;
-import eu.synectique.verveine.core.Dictionary;
+
 import eu.synectique.verveine.core.gen.famix.AbstractFileAnchor;
 import eu.synectique.verveine.core.gen.famix.Access;
 import eu.synectique.verveine.core.gen.famix.AnnotationInstance;

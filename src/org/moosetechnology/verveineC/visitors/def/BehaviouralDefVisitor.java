@@ -36,7 +36,6 @@ import org.moosetechnology.verveineC.utils.WrongClassGuessException;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 
-import eu.synectique.verveine.core.Dictionary;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
 import eu.synectique.verveine.core.gen.famix.Method;
 import eu.synectique.verveine.core.gen.famix.Parameter;
@@ -335,7 +334,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 				((Method)fmx).setKind(CDictionary.DESTRUCTOR_KIND_MARKER);
 			}
 			if (resolver.isConstructorBinding(nodeBnd)) {
-				((Method)fmx).setKind(Dictionary.CONSTRUCTOR_KIND_MARKER);
+				((Method)fmx).setKind(CDictionary.CONSTRUCTOR_KIND_MARKER);
 			}
 		}
 		catch (ClassCastException e) {

@@ -30,7 +30,6 @@ import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 import org.moosetechnology.verveineC.utils.resolution.StubBinding;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 
-import eu.synectique.verveine.core.EntityStack;
 import eu.synectique.verveine.core.gen.famix.Access;
 import eu.synectique.verveine.core.gen.famix.Association;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;

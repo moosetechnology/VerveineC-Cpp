@@ -26,7 +26,6 @@ import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 import org.moosetechnology.verveineC.visitors.AbstractDispatcherVisitor;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 
-import eu.synectique.verveine.core.Dictionary;
 import eu.synectique.verveine.core.gen.famix.Access;
 import eu.synectique.verveine.core.gen.famix.Association;
 import eu.synectique.verveine.core.gen.famix.Attribute;
@@ -316,10 +315,10 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 
 		if ( node.getKind() == ICPPASTLiteralExpression.lk_this ) {
 			if (getContext().topType() != null) {
-				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(Dictionary.SELF_NAME, /*type*/getContext().topType(), (Method) /*owner*/getContext().topBehaviouralEntity()));
+				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(CDictionary.SELF_NAME, /*type*/getContext().topType(), (Method) /*owner*/getContext().topBehaviouralEntity()));
 			}
 			else if (getContext().topMethod() != null) {
-				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(Dictionary.SELF_NAME, /*type*/getContext().topMethod().getParentType(), (Method) /*owner*/getContext().topBehaviouralEntity()));
+				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(CDictionary.SELF_NAME, /*type*/getContext().topMethod().getParentType(), (Method) /*owner*/getContext().topBehaviouralEntity()));
 			}
 			if (returnedEntity != null) {
 				dico.addSourceAnchor(returnedEntity, filename, node.getFileLocation());

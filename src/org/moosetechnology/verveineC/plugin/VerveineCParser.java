@@ -54,7 +54,7 @@ import org.moosetechnology.verveineC.visitors.ref.InvocationAccessRefVisitor;
 import org.moosetechnology.verveineC.visitors.ref.ReferenceRefVisitor;
 
 import ch.akuhn.fame.Repository;
-import eu.synectique.verveine.core.VerveineParser;
+
 import eu.synectique.verveine.core.gen.famix.CSourceLanguage;
 import eu.synectique.verveine.core.gen.famix.CppSourceLanguage;
 import eu.synectique.verveine.core.gen.famix.Entity;
