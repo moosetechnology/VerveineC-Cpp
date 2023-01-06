@@ -6,8 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.moosetechnology.famix.cpp.Function;
-import org.moosetechnology.famix.cpp.Namespace;
+import org.moosetechnology.famix.famixcentities.Function;
+import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixtraits.TWithFunctions;
 
 class NamespacesTest extends AbstractTest {
 
@@ -32,11 +33,11 @@ class NamespacesTest extends AbstractTest {
 		Namespace nspace = entityNamed(Namespace.class, "first_space");
 		assertNotNull(nspace);
 
-		assertEquals(1, nspace.numberOfFunctions());
+		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
 		assertEquals(0, nspace.numberOfChildScopes());
 		assertNull(nspace.getParentScope());
 
-		assertEquals("func", first(nspace.getFunctions()).getName());
+		assertEquals("func", first( ((TWithFunctions)nspace).getFunctions()).getName());
 	}
 
 	@Test
@@ -44,11 +45,11 @@ class NamespacesTest extends AbstractTest {
 		Namespace nspace = entityNamed(Namespace.class, "second_space");
 		assertNotNull(nspace);
 
-		assertEquals(1, nspace.numberOfFunctions());
+		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
 		assertEquals(1, nspace.numberOfChildScopes());
 		assertNull(nspace.getParentScope());
 
-		assertEquals("func", first(nspace.getFunctions()).getName());
+		assertEquals("func", first( ((TWithFunctions)nspace).getFunctions()).getName());
 	}
 
 	@Test
@@ -56,13 +57,13 @@ class NamespacesTest extends AbstractTest {
 		Namespace nspace = entityNamed(Namespace.class, "third_space");
 		assertNotNull(nspace);
 
-		assertEquals(1, nspace.numberOfFunctions());
+		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
 		assertEquals(0, nspace.numberOfChildScopes());
 
 		assertNotNull(nspace.getParentScope());
 		assertEquals("second_space", nspace.getParentScope().getName());
 
-		assertEquals("func", first(nspace.getFunctions()).getName());
+		assertEquals("func", first( ((TWithFunctions)nspace).getFunctions()).getName());
 	}
 
 }

@@ -19,10 +19,21 @@ import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixtraits.TAttribute;
+import org.moosetechnology.famix.famixtraits.TFunction;
+import org.moosetechnology.famix.famixtraits.TMethod;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
 import org.moosetechnology.famix.famixtraits.TParameterizedType;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
+import org.moosetechnology.famix.famixtraits.TType;
+import org.moosetechnology.famix.famixtraits.TWithAttributes;
+import org.moosetechnology.famix.famixtraits.TWithFunctions;
+import org.moosetechnology.famix.famixtraits.TWithLocalVariables;
+import org.moosetechnology.famix.famixtraits.TWithMethods;
 import org.moosetechnology.famix.famixtraits.TWithParameterizedTypes;
+import org.moosetechnology.famix.famixtraits.TWithParameters;
+import org.moosetechnology.famix.famixtraits.TWithTypes;
+import org.moosetechnology.famix.moose.Entity;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.CppEntityStack;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
@@ -66,11 +77,11 @@ public class NameResolver {
 	/**
 	 * Creates a StubBinding for <code>name</code>. If <code>name</code> is unqualified, defaults to considering it in the current context
 	 */
-	public <T extends TNamedEntity> IBinding mkStubKey(IASTName name, java.lang.Class<T> entityType) {
+	public <T extends Entity> IBinding mkStubKey(IASTName name, java.lang.Class<T> entityType) {
 		return mkStubKey( name.toString(), entityType);
 	}
 
-	public <T extends TNamedEntity> IBinding mkStubKey(String name, java.lang.Class<T> entityType) {
+	public <T extends Entity> IBinding mkStubKey(String name, java.lang.Class<T> entityType) {
 		return mkStubKey( name, (ContainerEntity)context.top(), entityType);
 	}
 
@@ -78,11 +89,11 @@ public class NameResolver {
 	 * Creates a StubBinding for <code>name</code>. If <code>name</code> is unqualified, considers it is a child of <code>parent</code>.
 	 * If  <code>name</code> is (fully)qualified, ignores <code>parent</code>.
 	 */
-	protected <T extends TNamedEntity> IBinding mkStubKey(IASTName name, ContainerEntity parent, java.lang.Class<T> entityType) {
+	protected <T extends Entity> IBinding mkStubKey(IASTName name, ContainerEntity parent, java.lang.Class<T> entityType) {
 		return mkStubKey(name.toString(), parent, entityType);
 	}
 
-	public <T extends TNamedEntity> IBinding mkStubKey(String name, ContainerEntity parent, java.lang.Class<T> entityType) {
+	public <T extends Entity> IBinding mkStubKey(String name, ContainerEntity parent, java.lang.Class<T> entityType) {
 		String simpleName = null;
 		QualifiedName qualName = new QualifiedName(name);
 
@@ -332,7 +343,7 @@ public class NameResolver {
 		// ... create it if failed
 		if (fmx == null) {
 			if (isMethodBinding(bnd)) {
-				fmx = dico.ensureFamixMethod(bnd, new QualifiedName(name).unqualifiedName(), sig, /*owner*/(Type)parent);
+				fmx = dico.ensureFamixMethod(bnd, new QualifiedName(name).unqualifiedName(), sig, /*owner*/(TWithMethods)parent);
 			}
 			else {                    //   C function or may be a stub ?
 				fmx = dico.ensureFamixFunction(bnd, new QualifiedName(name).unqualifiedName(), SignatureBuilderVisitor.signatureFromAST(node), (ContainerEntity)context.top());
@@ -365,13 +376,13 @@ public class NameResolver {
 	 * @return TNamedEntity found or null if none match
 	 */
 	public TNamedEntity findInLocals(String name, ContainerEntity context) {
-		for (org.moosetechnology.famix.famixcentities.Type child : context.getTypes()) {
+		for (TType child : ((TWithTypes)context).getTypes()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
 		}
 
-		for (Function child : context.getFunctions()) {
+		for (TFunction child : ((TWithFunctions)context).getFunctions()) {
 			if ( child.getName().equals(name) || child.getSignature().equals(name)) {
 				return child;
 			}
@@ -385,13 +396,13 @@ public class NameResolver {
 	 * @return TNamedEntity found or null if none match
 	 */
 	public TNamedEntity findInLocals(String name, BehaviouralEntity context) {		
-		for (TStructuralEntity child : context.getLocalVariables()) {
+		for (TStructuralEntity child : ((TWithLocalVariables)context).getLocalVariables()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
 		}
 
-		for (TStructuralEntity child : context.getParameters()) {
+		for (TStructuralEntity child : ((TWithParameters)context).getParameters()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
@@ -408,13 +419,13 @@ public class NameResolver {
 	 */
 	public TNamedEntity findInLocals(String name, Type context) {		
 
-		for (Attribute child : context.getAttributes()) {
+		for (TAttribute child : ((TWithAttributes)context).getAttributes()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
 		}
 
-		for (Method child : context.getMethods()) {
+		for (TMethod child : ((TWithMethods)context).getMethods()) {
 			if (child.getSignature().equals(name)) {
 				return child;
 			}
@@ -559,7 +570,7 @@ public class NameResolver {
 			if (parent == null) {
 				// happened once in a badly coded case
 				if (QualifiedName.isFullyQualified(name)) {
-					parent = (ContainerEntity) resolveOrCreate( QualifiedName.parentNameFromEntityFullname(name.toString()), /*mayBeNull*/false, org.moosetechnology.famix.cpp.Class.class );
+					parent = (ContainerEntity) resolveOrCreate( QualifiedName.parentNameFromEntityFullname(name.toString()), /*mayBeNull*/false, org.moosetechnology.famix.famixcppentities.Class.class );
 				}
 				else {
 					parent = (ContainerEntity) context.top();

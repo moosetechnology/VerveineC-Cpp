@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.moosetechnology.famix.cpp.Entity;
-import org.moosetechnology.famix.cpp.NamedEntity;
+import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.moose.Entity;
 import org.moosetechnology.verveineC.plugin.VerveineCParser;
 
 import ch.akuhn.fame.Repository;
@@ -27,17 +27,17 @@ public class AbstractTest {
 
 	/** All NamedEntity with the right name
 	 */
-	protected Collection<NamedEntity> entitiesNamed( String name) {
-        return entitiesNamed( NamedEntity.class, name);
+	protected Collection<Entity> entitiesNamed( String name) {
+        return entitiesNamed( Entity.class, name);
     }
 
 	/** All NamedEntity of class <code>clazz</code> with the right name
 	 */
-    protected <T extends NamedEntity> Collection<T> entitiesNamed( Class<T> clazz, String name) {
+    protected <T extends Entity> Collection<T> entitiesNamed( Class<T> clazz, String name) {
         List<T> ret = new LinkedList<>();
 
         for (T fmx : entitiesOfType(clazz)) {
-            if (fmx.getName().equals(name)) {
+            if ( ((TNamedEntity)fmx).getName().equals(name)) {
                 ret.add(fmx);
             }
         }
@@ -47,9 +47,9 @@ public class AbstractTest {
 
 	/** First NamedEntity of class <code>clazz</code> with the right name
 	 */
-    protected <T extends NamedEntity> T entityNamed(Class<T> clazz, String name) {
+    protected <T extends Entity> T entityNamed(Class<T> clazz, String name) {
         for (T fmx : entitiesOfType(clazz)) {
-            if (fmx.getName().equals(name)) {
+            if ( ((TNamedEntity)fmx).getName().equals(name) ) {
                 return fmx;
             }
         }

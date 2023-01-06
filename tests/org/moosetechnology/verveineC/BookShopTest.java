@@ -7,14 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.moosetechnology.famix.cpp.Access;
-import org.moosetechnology.famix.cpp.Attribute;
-import org.moosetechnology.famix.cpp.BehaviouralEntity;
-import org.moosetechnology.famix.cpp.Function;
-import org.moosetechnology.famix.cpp.GlobalVariable;
-import org.moosetechnology.famix.cpp.Invocation;
-import org.moosetechnology.famix.cpp.Method;
-import org.moosetechnology.famix.cpp.UnknownBehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.Attribute;
+import org.moosetechnology.famix.famixcentities.Function;
+import org.moosetechnology.famix.famixcppentities.Method;
+import org.moosetechnology.famix.famixtraits.GlobalVariableGroup;
+import org.moosetechnology.famix.famixtraits.TAccess;
+import org.moosetechnology.famix.famixtraits.TInvocable;
+import org.moosetechnology.famix.famixtraits.TInvocation;
+import org.moosetechnology.famix.famixtraits.TSourceEntity;
 
 class BookShopTest extends AbstractTest {
 
@@ -36,7 +36,7 @@ class BookShopTest extends AbstractTest {
 				// conn, rest_set, row, stmt, q, query
 		assertEquals(
 				7,
-				entitiesOfType(org.moosetechnology.famix.cpp.Class.class).size());
+				entitiesOfType(org.moosetechnology.famix.famixcppentities.Class.class).size());
 				// struct date, books, suppliers, purchases, employees, members, sales
 		assertEquals(
 				49,
@@ -86,12 +86,12 @@ class BookShopTest extends AbstractTest {
 		Function fct = entityNamed(Function.class, "sal_menu");
 		assertNotNull(fct);
 		assertEquals(2, fct.getOutgoingInvocations().size());
-		for (Invocation invok : fct.getOutgoingInvocations()) {
+		for (TInvocation invok : fct.getOutgoingInvocations()) {
 			assertEquals(fct, invok.getSender());
 			assertEquals(1, invok.getCandidates().size() );
 			
-			BehaviouralEntity candidate = first(invok.getCandidates());
-			assertFalse(candidate.getIsStub());
+			TInvocable candidate = first(invok.getCandidates());
+			assertFalse(  ((TSourceEntity)candidate).getIsStub());
 			assertEquals( Method.class, candidate.getClass());
 		}
 	}
@@ -103,7 +103,7 @@ class BookShopTest extends AbstractTest {
 		Function fct = entityNamed(Function.class, "main");
 		assertNotNull(fct);
 		assertFalse(fct.getAccesses().isEmpty());
-		for (Access acc : fct.getAccesses()) {
+		for (TAccess acc : fct.getAccesses()) {
 			assertEquals(fct, acc.getAccessor());
 /*
 			assertEquals( "conn", acc.getVariable().getName());

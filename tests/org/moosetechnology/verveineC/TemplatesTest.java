@@ -7,13 +7,10 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.moosetechnology.famix.cpp.Attribute;
-import org.moosetechnology.famix.cpp.Function;
-import org.moosetechnology.famix.cpp.Method;
-import org.moosetechnology.famix.cpp.Parameter;
-import org.moosetechnology.famix.cpp.ParameterType;
-import org.moosetechnology.famix.cpp.ParameterizableClass;
-import org.moosetechnology.famix.cpp.ParameterizedType;
+import org.moosetechnology.famix.famixcentities.Attribute;
+import org.moosetechnology.famix.famixcentities.Function;
+import org.moosetechnology.famix.famixcentities.Parameter;
+import org.moosetechnology.famix.famixcppentities.Method;
 
 
 class TemplatesTest extends AbstractTest {
