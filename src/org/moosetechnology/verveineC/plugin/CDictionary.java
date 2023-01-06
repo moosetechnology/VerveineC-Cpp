@@ -8,49 +8,53 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.moosetechnology.famix.cpp.AbstractFileAnchor;
-import org.moosetechnology.famix.cpp.Access;
-import org.moosetechnology.famix.cpp.Association;
-import org.moosetechnology.famix.cpp.Attribute;
-import org.moosetechnology.famix.cpp.BehaviouralEntity;
-import org.moosetechnology.famix.cpp.BehaviouralReference;
-import org.moosetechnology.famix.cpp.CFile;
-import org.moosetechnology.famix.cpp.Comment;
-import org.moosetechnology.famix.cpp.CompilationUnit;
-import org.moosetechnology.famix.cpp.ContainerEntity;
-import org.moosetechnology.famix.cpp.DereferencedInvocation;
-import org.moosetechnology.famix.cpp.Entity;
-import org.moosetechnology.famix.cpp.Enum;
-import org.moosetechnology.famix.cpp.EnumValue;
-import org.moosetechnology.famix.cpp.Function;
-import org.moosetechnology.famix.cpp.GlobalVariable;
-import org.moosetechnology.famix.cpp.Header;
-import org.moosetechnology.famix.cpp.ImplicitVariable;
-import org.moosetechnology.famix.cpp.Include;
-import org.moosetechnology.famix.cpp.IndexedFileAnchor;
-import org.moosetechnology.famix.cpp.Inheritance;
-import org.moosetechnology.famix.cpp.Invocation;
-import org.moosetechnology.famix.cpp.LocalVariable;
-import org.moosetechnology.famix.cpp.Method;
-import org.moosetechnology.famix.cpp.Module;
-import org.moosetechnology.famix.cpp.MultipleFileAnchor;
-import org.moosetechnology.famix.cpp.TNamedEntity;
-import org.moosetechnology.famix.cpp.Namespace;
-import org.moosetechnology.famix.cpp.Package;
-import org.moosetechnology.famix.cpp.Parameter;
-import org.moosetechnology.famix.cpp.ParameterType;
-import org.moosetechnology.famix.cpp.ParameterizableClass;
-import org.moosetechnology.famix.cpp.ParameterizedType;
-import org.moosetechnology.famix.cpp.PreprocessorIfdef;
-import org.moosetechnology.famix.cpp.PrimitiveType;
-import org.moosetechnology.famix.cpp.Reference;
-import org.moosetechnology.famix.cpp.ScopingEntity;
-import org.moosetechnology.famix.cpp.SourceAnchor;
-import org.moosetechnology.famix.cpp.SourcedEntity;
-import org.moosetechnology.famix.cpp.StructuralEntity;
-import org.moosetechnology.famix.cpp.Type;
-import org.moosetechnology.famix.cpp.TypeAlias;
-import org.moosetechnology.famix.cpp.UnknownVariable;
+import org.junit.runners.parameterized.TestWithParameters;
+import org.moosetechnology.famix.famixcentities.Access;
+import org.moosetechnology.famix.famixcentities.AliasType;
+import org.moosetechnology.famix.famixcentities.Association;
+import org.moosetechnology.famix.famixcentities.Attribute;
+import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.BehaviouralReference;
+import org.moosetechnology.famix.famixcentities.ContainerEntity;
+import org.moosetechnology.famix.famixcentities.DerefInvocation;
+import org.moosetechnology.famix.famixcentities.Function;
+import org.moosetechnology.famix.famixcentities.GlobalVar;
+import org.moosetechnology.famix.famixcentities.IndexedFileAnchor;
+import org.moosetechnology.famix.famixcentities.LocalVar;
+import org.moosetechnology.famix.famixcentities.MultipleFileanchor;
+import org.moosetechnology.famix.famixcentities.Parameter;
+import org.moosetechnology.famix.famixcentities.PrimitiveType;
+import org.moosetechnology.famix.famixcentities.Reference;
+import org.moosetechnology.famix.famixcentities.SourceAnchor;
+import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcppentities.Comment;
+import org.moosetechnology.famix.famixcppentities.ImplicitVar;
+import org.moosetechnology.famix.famixcppentities.Inheritance;
+import org.moosetechnology.famix.famixcppentities.Method;
+import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixcppentities.OOInvocation;
+import org.moosetechnology.famix.famixcpreprocentities.CFile;
+import org.moosetechnology.famix.famixcpreprocentities.CompilUnit;
+import org.moosetechnology.famix.famixcpreprocentities.Header;
+import org.moosetechnology.famix.famixcpreprocentities.Include;
+import org.moosetechnology.famix.famixcpreprocentities.PreprocIfdef;
+import org.moosetechnology.famix.famixtraits.TFileAnchor;
+import org.moosetechnology.famix.famixtraits.TInheritance;
+import org.moosetechnology.famix.famixtraits.TInvocationsReceiver;
+import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TReference;
+import org.moosetechnology.famix.famixtraits.TSourceEntity;
+import org.moosetechnology.famix.famixtraits.TStructuralEntity;
+import org.moosetechnology.famix.famixtraits.TWithAttributes;
+import org.moosetechnology.famix.famixtraits.TWithComments;
+import org.moosetechnology.famix.famixtraits.TWithDereferencedInvocations;
+import org.moosetechnology.famix.famixtraits.TWithFunctions;
+import org.moosetechnology.famix.famixtraits.TWithGlobalVariables;
+import org.moosetechnology.famix.famixtraits.TWithLocalVariables;
+import org.moosetechnology.famix.famixtraits.TWithMethods;
+import org.moosetechnology.famix.famixtraits.TWithParameters;
+import org.moosetechnology.famix.famixtraits.TWithTypes;
+import org.moosetechnology.famix.moose.Entity;
 import org.moosetechnology.verveineC.utils.Visibility;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
@@ -119,6 +123,7 @@ public class CDictionary {
 	 * Yet another dictionary for implicit variables ('self' and 'super')
 	 * Because they are implicit, they may not have a binding provided by the parser,
 	 * or may have the same binding than their associated type so they can't be kept easily in {@link Dictionary#keyToEntity}
+	 * TODO should be Class, not Type
 	 */
 	@Deprecated
 	protected Map<Type,ImplicitVars> typeToImpVar;
@@ -129,8 +134,8 @@ public class CDictionary {
 	 */
 	@Deprecated
 	protected class ImplicitVars {
-		public ImplicitVariable self_iv;
-		public ImplicitVariable super_iv;
+		public ImplicitVar self_iv;
+		public ImplicitVar super_iv;
 	}
 	
  	public CDictionary(Repository famixRepo) {
@@ -265,7 +270,6 @@ public class CDictionary {
 		fa.setStartPos(beg+1);
 		fa.setEndPos(end+1);
 		fa.setFileName( filename);
-
 		famixRepoAdd(fa);
 
 		return fa;
@@ -279,7 +283,7 @@ public class CDictionary {
 	 * @param ast -- ASTNode, where the information are extracted
 	 * @return the Famix SourceAnchor added to fmx. May be null in case of incorrect/null parameter
 	 */
-	public SourceAnchor addSourceAnchor(SourcedEntity fmx, String filename, IASTFileLocation anchor) {
+	public SourceAnchor addSourceAnchor(TSourceEntity fmx, String filename, IASTFileLocation anchor) {
 
 		if (anchor == null) {
 			return null;
@@ -292,7 +296,7 @@ public class CDictionary {
 		}
 	}
 
-	public SourceAnchor addSourceAnchor(SourcedEntity fmx, String filename, int start, int end) {
+	public SourceAnchor addSourceAnchor(TSourceEntity fmx, String filename, int start, int end) {
 			IndexedFileAnchor fa = null;
 
 			if (fmx == null) {
@@ -314,7 +318,7 @@ public class CDictionary {
 	 * @param ast -- ASTNode, where the information are extracted
 	 * @return the Famix SourceAnchor added to fmx. May be null in case of incorrect/null parameter
 	 */
-	public SourceAnchor addSourceAnchorMulti(SourcedEntity fmx, String filename, IASTFileLocation anchor) {
+	public SourceAnchor addSourceAnchorMulti(TSourceEntity fmx, String filename, IASTFileLocation anchor) {
 
 		if (anchor == null) {
 			return null;
@@ -327,29 +331,29 @@ public class CDictionary {
 		}
 	}
 
-	public SourceAnchor addSourceAnchorMulti(SourcedEntity fmx, String filename, int start, int end) {
-		MultipleFileAnchor mfa;
+	public SourceAnchor addSourceAnchorMulti(TSourceEntity fmx, String filename, int start, int end) {
+		MultipleFileanchor mfa;
 
 		if (fmx == null) {
 			return null;
 		}
 
-		mfa = (MultipleFileAnchor) fmx.getSourceAnchor();
+		mfa = (MultipleFileanchor) fmx.getSourceAnchor();
 		if (mfa == null) {
-			mfa = new MultipleFileAnchor();
+			mfa = new MultipleFileanchor();
 			fmx.setSourceAnchor(mfa);
 			famixRepoAdd(mfa);
 		}
 
 		// check if we already have this filename in the MultipleFileAnchor
-		for (AbstractFileAnchor f : mfa.getAllFiles()) {
+		for (TFileAnchor f : mfa.getFileAnchors()) {
 			if ( f.getFileName().equals(filename) ) {
 				// note: Could check also the position in the file ...
 				return mfa;
 			}
 		}
 		
-		mfa.addAllFiles( createIndexedSourceAnchor(filename, start, end) );
+		mfa.addFileAnchors( createIndexedSourceAnchor(filename, start, end) );
 
 		return mfa;
 	}
@@ -387,7 +391,8 @@ public class CDictionary {
 		
 		if (fmx != null) {
 			fmx.setName(name);
-			fmx.setIsStub(Boolean.TRUE);
+			// TODO move away from here ?
+			((TSourceEntity)fmx).setIsStub(Boolean.TRUE);
 
 			mapEntityToName(name, fmx);
 			
@@ -441,8 +446,8 @@ public class CDictionary {
 	 * @return the Famix Entity associated to the binding or null if not found
 	 */
 	@Deprecated
-	public ImplicitVariable getImplicitVariableByBinding(IBinding bnd, String iv_name) {
-		return getImplicitVariableByType((org.moosetechnology.famix.cpp.Class)getEntityByKey(bnd), iv_name);
+	public ImplicitVar getImplicitVariableByBinding(IBinding bnd, String iv_name) {
+		return getImplicitVariableByType((org.moosetechnology.famix.famixcppentities.Class)getEntityByKey(bnd), iv_name);
 	}
 	
 	/**
@@ -452,9 +457,9 @@ public class CDictionary {
 	 * @return the Famix ImplicitVariable associated to the Type or null if not found
 	 */
 	@Deprecated
-	public ImplicitVariable getImplicitVariableByType(Type type, String name) {
+	public ImplicitVar getImplicitVariableByType(Type type, String name) {
 		ImplicitVars iv = typeToImpVar.get(type);
-		ImplicitVariable ret = null;
+		ImplicitVar ret = null;
 		
 		if (iv == null) {
 			iv = new ImplicitVars();
@@ -479,9 +484,9 @@ public class CDictionary {
 	 * @param persistIt -- whether the ImplicitVariable should be persisted in the Famix repository
 	 * @return the FAMIX ImplicitVariable or null in case of a FAMIX error
 	 */
-	public ImplicitVariable ensureFamixImplicitVariable(IBinding key, String name, Type type, Method owner, boolean persistIt) {
-		ImplicitVariable fmx;
-		fmx = ensureFamixEntity(ImplicitVariable.class, key, name, persistIt);
+	public ImplicitVar ensureFamixImplicitVariable(IBinding key, String name, Type type, Method owner, boolean persistIt) {
+		ImplicitVar fmx;
+		fmx = ensureFamixEntity(ImplicitVar.class, key, name, persistIt);
 		fmx.setParentBehaviouralEntity(owner);
 		return fmx;
 	}
@@ -501,12 +506,12 @@ public class CDictionary {
 	 * @param prev -- previous inheritance relationship in the same context
 	 * @return the Inheritance relationship
 	 */
-	public Inheritance ensureFamixInheritance(Type sup, Type sub, Association prev) {
+	public TInheritance ensureFamixInheritance(org.moosetechnology.famix.famixcppentities.Class sup, org.moosetechnology.famix.famixcppentities.Class sub, Association prev) {
 		if ( (sup == null) || (sub == null) ) {
 			return null;
 		}
 			
-		for (Inheritance i : sup.getSubInheritances()) {
+		for (TInheritance i : sup.getSubInheritances()) {
 			if (i.getSubclass() == sub) {
 				return i;
 			}
@@ -527,22 +532,22 @@ public class CDictionary {
 	 * @param prev -- previous reference relationship in the same context
 	 * @return the FamixReference
 	 */
-	public Reference addFamixReference(BehaviouralEntity src, Type tgt, Association prev) {
+	public TReference addFamixReference(BehaviouralEntity src, Type tgt, Association prev) {
 		if ( (src == null) || (tgt == null) ) {
 			return null;
 		}
 
 		if (prev == null) {
-			for (Reference ref : src.getOutgoingReferences()) {
-				if (ref.getTarget() == tgt) {
+			for (TReference ref : src.getOutgoingReferences()) {
+				if (ref.getReferredType() == tgt) {
 					return ref;
 				}
 			}
 		}
 
 		Reference ref = new Reference();
-		ref.setTarget(tgt);
-		ref.setSource(src);
+		ref.setReferredType(tgt);
+		ref.setReferencer(src);
 		chainPrevNext(prev,ref);
 		famixRepoAdd(ref);
 
@@ -558,11 +563,11 @@ public class CDictionary {
 	 * @param prev -- previous invocation relationship in the same context
 	 * @return the FamixInvocation
 	 */
-	public Invocation addFamixInvocation(BehaviouralEntity sender, BehaviouralEntity invoked, TNamedEntity receiver, String signature, Association prev) {
+	public OOInvocation addFamixInvocation(BehaviouralEntity sender, BehaviouralEntity invoked, TInvocationsReceiver receiver, String signature, Association prev) {
 		if ( (sender == null) || (invoked == null) ) {
 			return null;
 		}
-		Invocation invok = new Invocation();
+		OOInvocation invok = new OOInvocation();
 		invok.setReceiver(receiver);
 		invok.setSender(sender);
 		invok.setSignature((signature== null) ? invoked.getSignature() : signature);
@@ -581,7 +586,7 @@ public class CDictionary {
 	 * @param prev -- previous access relationship in the same context
 	 * @return the FamixAccess
 	 */
-	public Access addFamixAccess(BehaviouralEntity accessor, StructuralEntity var, boolean isWrite, Association prev) {
+	public Access addFamixAccess(BehaviouralEntity accessor, TStructuralEntity var, boolean isWrite, Association prev) {
 		if ( (accessor == null) || (var == null) ) {
 			return null;
 		}
@@ -595,8 +600,8 @@ public class CDictionary {
 		return acc;
 	}
 
-	public DereferencedInvocation addFamixDereferencedInvocation(BehaviouralEntity sender, StructuralEntity referencer, String signature, Association prev) {
-		DereferencedInvocation invok = new DereferencedInvocation();
+	public DerefInvocation addFamixDereferencedInvocation(BehaviouralEntity sender, TWithDereferencedInvocations referencer, String signature, Association prev) {
+		DerefInvocation invok = new DerefInvocation();
 		invok.setSender(sender);
 		invok.setReferencer(referencer);
 		chainPrevNext(prev, invok);
@@ -624,7 +629,7 @@ public class CDictionary {
 				fmx = new Header();
 			}
 			else {
-				fmx = new CompilationUnit();
+				fmx = new CompilUnit();
 			}
 			fmx.setName(name);
 			famixRepo.add(fmx);
@@ -647,17 +652,17 @@ public class CDictionary {
 		}
 
 		Include inc = new Include();
-		inc.setTarget(tgt);
-		inc.setSource(src);
+		inc.setIncluded(tgt);
+		inc.setIncludedBy(src);
 		famixRepoAdd(inc);
 
 		return inc;
 	}
 
-	public PreprocessorIfdef createFamixPreprocIfdef(String macroName) {
-		PreprocessorIfdef fmx;
+	public PreprocIfdef createFamixPreprocIfdef(String macroName) {
+		PreprocIfdef fmx;
 
-		fmx = new PreprocessorIfdef();
+		fmx = new PreprocIfdef();
 		fmx.setMacro(macroName);
 		this.famixRepo.add(fmx);
 
@@ -714,9 +719,9 @@ public class CDictionary {
 	 * @param persistIt -- whether the Type should be persisted in the Famix repository
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
-	public Type ensureFamixType(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
+	public Type ensureFamixType(IBinding key, String name, TWithTypes owner, boolean persistIt) {
 		Type fmx = ensureFamixEntity(Type.class, key, name, persistIt);
-		fmx.setContainer(owner);
+		fmx.setTypeContainer(owner);
 		return fmx;
 	}
 
@@ -728,9 +733,9 @@ public class CDictionary {
 	 * @param persistIt -- whether the Class should be persisted in the Famix repository
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
-	public org.moosetechnology.famix.cpp.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
-		org.moosetechnology.famix.cpp.Class fmx = ensureFamixEntity(org.moosetechnology.famix.cpp.Class.class, key, name, persistIt);
-		fmx.setContainer(owner);
+	public org.moosetechnology.famix.famixcppentities.Class ensureFamixClass(IBinding key, String name, TWithTypes owner, boolean persistIt) {
+		org.moosetechnology.famix.famixcppentities.Class fmx = ensureFamixEntity(org.moosetechnology.famix.famixcppentities.Class.class, key, name, persistIt);
+		fmx.setTypeContainer(owner);
 		return fmx;
 	}
 
@@ -805,7 +810,7 @@ public class CDictionary {
 	 * @param persistIt -- whether the Method should be persisted in the Famix repository
 	 * @return the FAMIX Method or null in case of a FAMIX error
 	 */
-	public Method ensureFamixMethod(IBinding key, String name, String sig, Type ret, Type owner, boolean persistIt) {
+	public Method ensureFamixMethod(IBinding key, String name, String sig, Type ret, TWithMethods owner, boolean persistIt) {
 		Method fmx = (Method) ensureFamixEntity(Method.class, key, name, persistIt);
 		fmx.setSignature(sig);
 		fmx.setDeclaredType(ret);
@@ -823,11 +828,11 @@ public class CDictionary {
 	 * @param persistIt -- whether the Function should be persisted in the Famix repository
 	 * @return the FAMIX Method or null in case of a FAMIX error
 	 */
-	public Function ensureFamixFunction(IBinding key, String name, String sig, Type ret, ContainerEntity owner, boolean persistIt) {
+	public Function ensureFamixFunction(IBinding key, String name, String sig, Type ret, TWithFunctions owner, boolean persistIt) {
 		Function fmx = (Function) ensureFamixEntity(Function.class, key, name, persistIt);
 		fmx.setSignature(sig);
 		fmx.setDeclaredType(ret);
-		fmx.setContainer(owner);;
+		fmx.setFunctionOwner(owner);;
 		return fmx;
 	}
 
@@ -840,7 +845,7 @@ public class CDictionary {
 	 * @param persistIt -- whether the Attribute should be persisted in the Famix repository
 	 * @return the FAMIX Attribute or null in case of a FAMIX error
 	 */
-	public Attribute ensureFamixAttribute(IBinding key, String name, Type type, Type owner, boolean persistIt) {
+	public Attribute ensureFamixAttribute(IBinding key, String name, Type type, TWithAttributes owner, boolean persistIt) {
 		Attribute fmx = ensureFamixEntity(Attribute.class, key, name, persistIt);
 		fmx.setParentType(owner);
 		fmx.setDeclaredType(type);
@@ -853,8 +858,8 @@ public class CDictionary {
 	 * @param persistIt -- whether the LocalVariable should be persisted in the Famix repository
 	 * @return the FAMIX LocalVariable or null in case of a FAMIX error
 	 */
-	public LocalVariable ensureFamixLocalVariable(IBinding key, String name, Type type, BehaviouralEntity owner, boolean persistIt) {
-		LocalVariable fmx = ensureFamixEntity(LocalVariable.class, key, name, persistIt);
+	public LocalVar ensureFamixLocalVariable(IBinding key, String name, Type type, TWithLocalVariables owner, boolean persistIt) {
+		LocalVar fmx = ensureFamixEntity(LocalVar.class, key, name, persistIt);
 		fmx.setParentBehaviouralEntity(owner);
 		fmx.setDeclaredType(type);
 		return fmx;
@@ -882,7 +887,7 @@ public class CDictionary {
 	 * @param owner -- the entity concerned by this comment
 	 * @return the FAMIX Comment
 	 */
-	public Comment createFamixComment(String cmt, SourcedEntity owner) {
+	public Comment createFamixComment(String cmt, TWithComments owner) {
 		Comment fmx = null;
 		
 		if ( (cmt != null) && (owner != null) ) {
@@ -900,7 +905,7 @@ public class CDictionary {
 	 * @param persistIt -- whether the Parameter should be persisted in the Famix repository
 	 * @return the FAMIX parameter
 	 */
-	public Parameter createFamixParameter(IBinding key, String name, Type type, BehaviouralEntity owner, boolean persistIt) {
+	public Parameter createFamixParameter(IBinding key, String name, Type type, TWithParameters owner, boolean persistIt) {
 		Parameter fmx = ensureFamixEntity(Parameter.class, key, name, persistIt);
 		fmx.setParentBehaviouralEntity(owner);
 		fmx.setDeclaredType(type);
@@ -923,9 +928,9 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public GlobalVariable ensureFamixGlobalVariable(IBinding key, String name, ScopingEntity parent) {
-		GlobalVariable fmx;
-		fmx = ensureFamixEntity(GlobalVariable.class, key, name, /*persistIt*/true);
+	public GlobalVar ensureFamixGlobalVariable(IBinding key, String name, TWithGlobalVariables parent) {
+		GlobalVar fmx;
+		fmx = ensureFamixEntity(GlobalVar.class, key, name, /*persistIt*/true);
 		fmx.setParentScope(parent);
 
 		return fmx;
@@ -968,8 +973,8 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public TypeAlias ensureFamixTypeAlias(IBinding key, String name, ContainerEntity owner) {
-		TypeAlias fmx;
+	public AliasType ensureFamixTypeAlias(IBinding key, String name, ContainerEntity owner) {
+		AliasType fmx;
 
 		fmx = ensureFamixEntity(TypeAlias.class, key, name, /*persistIt*/true);
 		fmx.setContainer(owner);
@@ -987,8 +992,8 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public org.moosetechnology.famix.cpp.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner) {
-		org.moosetechnology.famix.cpp.Class fmx = getEntityIfNotNull(org.moosetechnology.famix.cpp.Class.class, key);
+	public org.moosetechnology.famix.famixcppentities.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner) {
+		org.moosetechnology.famix.famixcppentities.Class fmx = getEntityIfNotNull(org.moosetechnology.famix.famixcppentities.Class.class, key);
 
 		if (fmx == null) {
 			fmx = ensureFamixClass(key, name, owner, /*persistIt*/true);
@@ -1033,7 +1038,7 @@ public class CDictionary {
 	 * <li> If it is a Method (e.g. "<code>template &lt;class T&gt; void fct(T)</code> ..."), we create a Type
 	 * </ul>
 	 */
-	public org.moosetechnology.famix.cpp.Type createParameterType(String name, ContainerEntity owner) {
+	public Type createParameterType(String name, ContainerEntity owner) {
 		// apparently CDT gives a binding to the parameterType at its declaration ("template <class T> ...")
 		// but not when used ("... mth(T)") so we ignore CDT binding and always use our custom build one
     	IBinding bnd;
@@ -1066,7 +1071,7 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public Method ensureFamixMethod(IBinding key, String name, String signature, Type parent) {
+	public Method ensureFamixMethod(IBinding key, String name, String signature, TWithMethods parent) {
 		Method fmx = getEntityIfNotNull(Method.class, key);
 
 		if (fmx == null) {
@@ -1078,7 +1083,7 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public Attribute ensureFamixAttribute(IBinding key, String name, Type parent) {
+	public Attribute ensureFamixAttribute(IBinding key, String name, TWithAttributes parent) {
 		Attribute fmx = getEntityIfNotNull(Attribute.class, key);
 
 		if (fmx == null) {
@@ -1095,7 +1100,7 @@ public class CDictionary {
 	 * @param persistIt -- whether to persist or not the entity eventually created
 	 * @return the Famix Entity found or created. May return null if "bnd" is null or in case of a Famix error
 	 */
-	public Parameter ensureFamixParameter(IBinding bnd, String name, BehaviouralEntity owner) {
+	public Parameter ensureFamixParameter(IBinding bnd, String name, TWithParameters owner) {
 		Parameter fmx = null;
 
 		// --------------- to avoid useless computations if we can
@@ -1111,7 +1116,7 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public ImplicitVariable ensureFamixImplicitVariable(String name, Type type, Method owner) {
+	public ImplicitVar ensureFamixImplicitVariable(String name, Type type, Method owner) {
 		IBinding bnd = StubBinding.getInstance(Type.class, mooseName(owner, name));
 		return ensureFamixImplicitVariable( bnd, name, type, owner, /*persistIt*/true);
 	}
