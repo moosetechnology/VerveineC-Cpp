@@ -10,18 +10,20 @@ import org.moosetechnology.famix.famixtraits.TAccess;
 import org.moosetechnology.famix.famixtraits.THasSignature;
 import org.moosetechnology.famix.famixtraits.TInvocable;
 import org.moosetechnology.famix.famixtraits.TInvocation;
+import org.moosetechnology.famix.famixtraits.TParameter;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
 import org.moosetechnology.famix.famixtraits.TWithAccesses;
 import org.moosetechnology.famix.famixtraits.TWithInvocations;
+import org.moosetechnology.famix.famixtraits.TWithParameters;
 import org.moosetechnology.famix.famixtraits.TWithReferences;
 import org.moosetechnology.famix.famixtraits.TWithStatements;
 
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("BehaviouralEntity")
-public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TWithAccesses, TWithInvocations, TWithReferences, TWithStatements {
+public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TWithAccesses, TWithInvocations, TWithParameters, TWithReferences, TWithStatements {
 
     private Number numberOfStatements;
     
@@ -38,6 +40,8 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
     private Collection<TInvocation> outgoingInvocations; 
 
     private Collection<TReference> outgoingReferences; 
+
+    private Collection<TParameter> parameters; 
 
     private String signature;
     
@@ -317,16 +321,76 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
     }
 
 	public Number getCyclomaticComplexity() {
-		// TODO Auto-generated method stub
-		return null;
+		return cyclomaticComplexity;
 	}
 
 	public void setCyclomaticComplexity(Number cyclomaticComplexity) {
-		// TODO Auto-generated method stub
-		
+		this.cyclomaticComplexity = cyclomaticComplexity; 		
 	}
-    
 
+
+    @FameProperty(name = "parameters", opposite = "parentBehaviouralEntity", derived = true)
+    public Collection<TParameter> getParameters() {
+        if (parameters == null) {
+            parameters = new MultivalueSet<TParameter>() {
+                @Override
+                protected void clearOpposite(TParameter e) {
+                    e.setParentBehaviouralEntity(null);
+                }
+                @Override
+                protected void setOpposite(TParameter e) {
+                    e.setParentBehaviouralEntity(BehaviouralEntity.this);
+                }
+            };
+        }
+        return parameters;
+    }
+    
+	@Override
+   public void setParameters(Collection<? extends TParameter> parameters) {
+        this.getParameters().clear();
+        this.getParameters().addAll(parameters);
+    }                    
+    
+        
+	@Override
+    public void addParameters(TParameter one) {
+        this.getParameters().add(one);
+    }   
+    
+	@Override
+   public void addParameters(TParameter one, TParameter... many) {
+        this.getParameters().add(one);
+        for (TParameter each : many)
+            this.getParameters().add(each);
+    }   
+    
+	@Override
+    public void addParameters(Iterable<? extends TParameter> many) {
+        for (TParameter each : many)
+            this.getParameters().add(each);
+    }   
+                
+	@Override
+    public void addParameters(TParameter[] many) {
+        for (TParameter each : many)
+            this.getParameters().add(each);
+    }
+   
+	@Override
+    public boolean hasParameters() {
+        return !getParameters().isEmpty();
+    }
+
+	@Override
+	public Number getNumberOfParameters() {
+        return getParameters().size();
+	}
+
+	@Override
+	public int numberOfParameters() {
+        return getParameters().size();
+	}
 
 }
 

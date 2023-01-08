@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.Path;
 
-import org.moosetechnology.famix.famixcppentities.SourcedEntity;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.Parameter;
+import org.moosetechnology.famix.famixcentities.SourcedEntity;
 import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixcppentities.Package;
 

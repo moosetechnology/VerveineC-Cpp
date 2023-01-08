@@ -15,12 +15,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
-import org.moosetechnology.famix.cpp.Class;
-import org.moosetechnology.famix.cpp.ContainerEntity;
-import org.moosetechnology.famix.cpp.NamedEntity;
-import org.moosetechnology.famix.cpp.Package;
-import org.moosetechnology.famix.cpp.Type;
-import org.moosetechnology.famix.cpp.TypeAlias;
+import org.moosetechnology.famix.famixcentities.AliasType;
+import org.moosetechnology.famix.famixcentities.Enum;
+import org.moosetechnology.famix.famixcentities.NamedEntity;
+import org.moosetechnology.famix.famixcentities.SourcedEntity;
+import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcppentities.Package;
+import org.moosetechnology.famix.famixtraits.TWithTypes;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
@@ -72,14 +73,14 @@ public class TypeDefVisitor extends AbstractVisitor {
 		super.visit(elt);                                // visit children
 
 		if (currentPackage != null) {
-			currentPackage = currentPackage.getParentPackage();    // back to parent package
+			currentPackage = (Package) currentPackage.getParentPackage();    // back to parent package
 		}
 		leavePath(elt);
 	}
 
 	@Override
 	protected int visit(IASTSimpleDeclaration node) {
-		TypeAlias aliasType = null;
+		AliasType aliasType = null;
 		Type concreteType = null;
 
 		if (declarationIsTypedef(node)) {
@@ -113,7 +114,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 					nodeBnd = resolver.mkStubKey(nodeName, Type.class);
 				}
 
-				aliasType = dico.ensureFamixTypeAlias(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
+				aliasType = dico.ensureFamixTypeAlias(nodeBnd, nodeName.toString(), (TWithTypes)getContext().top());
 				aliasType.setIsStub(false);
 				aliasType.setParentPackage(currentPackage);
 				aliasType.setAliasedType(concreteType);
@@ -137,7 +138,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 	 */
 	@Override
 	protected int visit(ICPPASTCompositeTypeSpecifier node) {
-		Class fmx;
+		org.moosetechnology.famix.famixcppentities.Class fmx;
 
 		// compute nodeName and binding
 		super.visit(node);
@@ -148,7 +149,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = (SourcedEntity) getContext().pop();
 
 		return PROCESS_SKIP;
 	}
@@ -158,7 +159,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 	 */
 	@Override
 	protected int visit(ICASTCompositeTypeSpecifier node) {
-		Class fmx;
+		org.moosetechnology.famix.famixcppentities.Class fmx;
 
 		// compute nodeName and binding
 		super.visit(node);
@@ -169,7 +170,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = (SourcedEntity) getContext().pop();
 
 		return PROCESS_SKIP;
 	}
@@ -193,11 +194,11 @@ public class TypeDefVisitor extends AbstractVisitor {
 		nodeName = node.getName();
 		nodeBnd = resolver.getBinding(nodeName);
 		if (nodeBnd == null) {
-			nodeBnd = resolver.mkStubKey(nodeName, Class.class);
+			nodeBnd = resolver.mkStubKey(nodeName, org.moosetechnology.famix.famixcppentities.Class.class);
 		}
 
 		if (isCppFriendDeclaration(node)) {
-			ctxt = resolver.getContext().pop();
+			ctxt = (NamedEntity) resolver.getContext().pop();
 		}
 
 		switch (node.getKind()) {
@@ -232,18 +233,18 @@ public class TypeDefVisitor extends AbstractVisitor {
 
 	@Override
 	protected int visit(IASTEnumerationSpecifier node) {
-		org.moosetechnology.famix.cpp.Enum fmx;
+		Enum fmx;
 
 		nodeName = node.getName();
 		if (nodeName.equals("")) {
 			// case of anonymous enum: it is probably within a typedef and will never be used directly
 			// so the key is mostly irrelevant, only used to find back the type when creating its enumerated values 
-			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), org.moosetechnology.famix.cpp.Enum.class);
+			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), Enum.class);
 		}
 		else {
 			nodeBnd = resolver.getBinding(nodeName);
 			if (nodeBnd == null) {
-				nodeBnd = resolver.mkStubKey(nodeName, org.moosetechnology.famix.cpp.Enum.class);
+				nodeBnd = resolver.mkStubKey(nodeName, Enum.class);
 			}
 		}
 
@@ -268,18 +269,18 @@ public class TypeDefVisitor extends AbstractVisitor {
 	 * Common code to create a class that can be a template.
 	 * Used for ICPPASTCompositeTypeSpecifier, ICASTCompositeTypeSpecifier, ICPPASTElaboratedTypeSpecifier
 	 */
-	protected Class createClass(IASTDeclSpecifier node) {
-		Class fmx;
+	protected org.moosetechnology.famix.famixcppentities.Class createClass(IASTDeclSpecifier node) {
+		org.moosetechnology.famix.famixcppentities.Class fmx;
 		String tmpFilename;
 		boolean isTemplate = definitionOfATemplate;
 		definitionOfATemplate = false;   // Immediately turn it off because it could pollute visiting the children
 
 		if (isTemplate) {
-			fmx = dico.ensureFamixParameterizableClass(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
+			fmx = dico.ensureFamixParameterizableClass(nodeBnd, nodeName.toString(), (TWithTypes)getContext().top());
 		}
 		else {
 			// if node is a stub with a fully qualified name, its parent is not context.top() :-(
-			fmx = dico.ensureFamixClass(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
+			fmx = dico.ensureFamixClass(nodeBnd, nodeName.toString(), (TWithTypes)getContext().top());
 		}
 		fmx.setParentPackage(currentPackage);
 		
@@ -305,10 +306,10 @@ public class TypeDefVisitor extends AbstractVisitor {
 	 * Common code to create an enumeratedType.
 	 * Used for IASTEnumerationSpecifier, IASTElaboratedTypeSpecifier
 	 */
-	protected org.moosetechnology.famix.cpp.Enum createEnum(IASTDeclSpecifier node) {
-		org.moosetechnology.famix.cpp.Enum fmx;
+	protected Enum createEnum(IASTDeclSpecifier node) {
+		Enum fmx;
 
-		fmx = dico.ensureFamixEnum(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top(), /*persistIt*/true);
+		fmx = dico.ensureFamixEnum(nodeBnd, nodeName.toString(), (TWithTypes)getContext().top(), /*persistIt*/true);
 		dico.addSourceAnchor(fmx, filename, node.getFileLocation());
 
 		returnedEntity = fmx;

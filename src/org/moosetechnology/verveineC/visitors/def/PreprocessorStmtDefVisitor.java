@@ -8,7 +8,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
-import org.moosetechnology.famix.cpp.PreprocessorIfdef;
+import org.moosetechnology.famix.famixcpreprocentities.PreprocessorIfdef;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 
@@ -70,7 +70,7 @@ public class PreprocessorStmtDefVisitor extends AbstractVisitor {
 		int endPos;
 
 		startPos = defLoc.getNodeOffset();
-		endPos = startPos + fmx.getMacro().length();
+		endPos = startPos + fmx.getPreprocessorMacro().length();
 		dico.addSourceAnchor(fmx, filename, startPos, endPos);
 	}
 

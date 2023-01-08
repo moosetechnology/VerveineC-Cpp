@@ -12,10 +12,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
-import org.moosetechnology.famix.cpp.Class;
-import org.moosetechnology.famix.cpp.ContainerEntity;
-import org.moosetechnology.famix.cpp.NamedEntity;
-import org.moosetechnology.famix.cpp.UnknownVariable;
+import org.moosetechnology.famix.famixcentities.ContainerEntity;
+import org.moosetechnology.famix.famixcentities.NamedEntity;
+import org.moosetechnology.famix.famixcentities.SourcedEntity;
+import org.moosetechnology.famix.famixcentities.UnknownVariable;
+import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TWithTypes;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 
@@ -34,12 +36,12 @@ public class TemplateParameterDefVisitor extends AbstractVisitor {
 	 */
 	@Override
 	protected int visit(ICPPASTCompositeTypeSpecifier node) {
-		Class fmx;
+		org.moosetechnology.famix.famixcppentities.Class fmx;
 
 		/* Gets the key (IBinding) of the node to recover the famix type entity */
 		super.visit(node);
 
-		fmx = dico.getEntityByKey(Class.class, nodeBnd);
+		fmx = dico.getEntityByKey(org.moosetechnology.famix.famixcppentities.Class.class, nodeBnd);
 
 		/*
 		 * Visiting possible template methods
@@ -48,7 +50,7 @@ public class TemplateParameterDefVisitor extends AbstractVisitor {
 		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = (SourcedEntity) getContext().pop();
 
 		return PROCESS_SKIP;
 	}
@@ -87,14 +89,14 @@ public class TemplateParameterDefVisitor extends AbstractVisitor {
 
 	@Override
 	protected int visit(ICPPASTTemplateDeclaration node) {
-		ContainerEntity theTemplate = null;   // not really needed, but looks nicer
+		TWithTypes theTemplate = null;   // not really needed, but looks nicer
 
 		returnedEntity = null;
 		node.getDeclaration().accept(this);
-		theTemplate = (ContainerEntity)returnedEntity;
+		theTemplate = (TWithTypes) returnedEntity;
 
 		// template parameters are local to the entity defined in the template declaration
-		getContext().push(theTemplate);
+		getContext().push((TNamedEntity) theTemplate);
 		for (ICPPASTTemplateParameter param : node.getTemplateParameters()) {
 			String name;
 

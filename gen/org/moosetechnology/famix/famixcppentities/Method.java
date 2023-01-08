@@ -61,11 +61,7 @@ public class Method extends BehaviouralEntity implements TEntityMetaLevelDepende
 
     private Collection<TReference> outgoingReferences; 
 
-    private Collection<TParameter> parameters; 
-
     private TWithMethods parentType;
-    
-    private String signature;
     
     private TSourceAnchor sourceAnchor;
     
@@ -553,57 +549,6 @@ public class Method extends BehaviouralEntity implements TEntityMetaLevelDepende
         return !getOutgoingReferences().isEmpty();
     }
 
-    @FameProperty(name = "parameters", opposite = "parentBehaviouralEntity", derived = true)
-    public Collection<TParameter> getParameters() {
-        if (parameters == null) {
-            parameters = new MultivalueSet<TParameter>() {
-                @Override
-                protected void clearOpposite(TParameter e) {
-                    e.setParentBehaviouralEntity(null);
-                }
-                @Override
-                protected void setOpposite(TParameter e) {
-                    e.setParentBehaviouralEntity(Method.this);
-                }
-            };
-        }
-        return parameters;
-    }
-    
-    public void setParameters(Collection<? extends TParameter> parameters) {
-        this.getParameters().clear();
-        this.getParameters().addAll(parameters);
-    }                    
-    
-        
-    public void addParameters(TParameter one) {
-        this.getParameters().add(one);
-    }   
-    
-    public void addParameters(TParameter one, TParameter... many) {
-        this.getParameters().add(one);
-        for (TParameter each : many)
-            this.getParameters().add(each);
-    }   
-    
-    public void addParameters(Iterable<? extends TParameter> many) {
-        for (TParameter each : many)
-            this.getParameters().add(each);
-    }   
-                
-    public void addParameters(TParameter[] many) {
-        for (TParameter each : many)
-            this.getParameters().add(each);
-    }
-    
-    public int numberOfParameters() {
-        return getParameters().size();
-    }
-
-    public boolean hasParameters() {
-        return !getParameters().isEmpty();
-    }
-
     @FameProperty(name = "parentType", opposite = "methods", container = true)
     public TWithMethods getParentType() {
         return parentType;
@@ -618,16 +563,7 @@ public class Method extends BehaviouralEntity implements TEntityMetaLevelDepende
         if (parentType == null) return;
         parentType.getMethods().add(this);
     }
-    
-    @FameProperty(name = "signature")
-    public String getSignature() {
-        return signature;
-    }
 
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-    
     @FameProperty(name = "sourceAnchor", opposite = "element", derived = true)
     public TSourceAnchor getSourceAnchor() {
         return sourceAnchor;

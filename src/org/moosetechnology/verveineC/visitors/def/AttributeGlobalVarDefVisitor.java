@@ -15,18 +15,19 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.index.IIndex;
-import org.moosetechnology.famix.cpp.Attribute;
-import org.moosetechnology.famix.cpp.ContainerEntity;
-import org.moosetechnology.famix.cpp.Enum;
-import org.moosetechnology.famix.cpp.EnumValue;
-import org.moosetechnology.famix.cpp.GlobalVariable;
-import org.moosetechnology.famix.cpp.Namespace;
-import org.moosetechnology.famix.cpp.Package;
-import org.moosetechnology.famix.cpp.ScopingEntity;
-import org.moosetechnology.famix.cpp.StructuralEntity;
-import org.moosetechnology.famix.cpp.Type;
-import org.moosetechnology.famix.cpp.UnknownContainerEntity;
-import org.moosetechnology.famix.cpp.UnknownVariable;
+import org.moosetechnology.famix.famixcentities.Attribute;
+import org.moosetechnology.famix.famixcentities.ContainerEntity;
+import org.moosetechnology.famix.famixcentities.Enum;
+import org.moosetechnology.famix.famixcentities.EnumValue;
+import org.moosetechnology.famix.famixcentities.GlobalVariable;
+import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcentities.UnknownContainerEntity;
+import org.moosetechnology.famix.famixcentities.UnknownVariable;
+import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixcppentities.SourcedEntity;
+import org.moosetechnology.famix.famixtraits.TStructuralEntity;
+import org.moosetechnology.famix.famixtraits.TWithAttributes;
+import org.moosetechnology.famix.famixtraits.TWithGlobalVariables;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 
@@ -118,7 +119,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 	public int visitInternal(IASTDeclarator node) {
 		nodeName = node.getName();
 		nodeBnd = resolver.getBinding(nodeName);
-		StructuralEntity fmx;
+		TStructuralEntity fmx;
 
 		// In the case of the strange macro use, we found empty names
 		if (nodeName.toString().length() > 0) {
@@ -137,10 +138,10 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 	/**
 	 * ensure a StructuralEntity of the proper kind (GlobalVariable, Attribute, UnknownVariable) 
 	 */
-	protected StructuralEntity ensureVariableKind(IBinding bnd, IASTName name) {
+	protected TStructuralEntity ensureVariableKind(IBinding bnd, IASTName name) {
 		ContainerEntity parent;
 		VariableKind kind;
-		StructuralEntity fmx = null;
+		TStructuralEntity fmx = null;
 
 		if (QualifiedName.isFullyQualified(name)) {
 			parent = (ContainerEntity) resolver.resolveOrCreate( QualifiedName.parentNameFromEntityFullname(name.toString()), /*mayBeNull*/false, UnknownContainerEntity.class);
@@ -176,10 +177,10 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 
 		switch (kind) {
 		case GLOBAL:
-			fmx = dico.ensureFamixGlobalVariable(bnd, name.toString(), (ScopingEntity) parent);
+			fmx = dico.ensureFamixGlobalVariable(bnd, name.toString(), (TWithGlobalVariables) parent);
 			break;
 		case ATTRIBUTE:
-			fmx = dico.ensureFamixAttribute(bnd, name.toString(), (Type) parent);
+			fmx = dico.ensureFamixAttribute(bnd, name.toString(), (TWithAttributes) parent);
 			break;
 		case UNKNOWN:
 			try {			
@@ -190,7 +191,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 			// don't know the parser enough to understand precisely where it goes wrong
 			// my solution here is to give a try to resolve as an Attribute first.
 			// if it raise an error, go on with the initial behavior
-			fmx = dico.ensureFamixAttribute(bnd, name.toString(), (Type) parent);
+			fmx = dico.ensureFamixAttribute(bnd, name.toString(), (TWithAttributes) parent);
 			break;
 			}
 		
@@ -219,12 +220,12 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 		nodeName = node.getName();
 
 		if (nodeName.equals("")) {
-			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), org.moosetechnology.famix.cpp.Enum.class);
+			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), Enum.class);
 		}
 		else {
 			nodeBnd = resolver.getBinding(nodeName);
 			if (nodeBnd == null) {
-				nodeBnd = resolver.mkStubKey(nodeName.toString(), org.moosetechnology.famix.cpp.Enum.class);
+				nodeBnd = resolver.mkStubKey(nodeName.toString(), Enum.class);
 			}
 		}
 
@@ -232,7 +233,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 		for (IASTEnumerator decl : node.getEnumerators()) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = (SourcedEntity) getContext().pop();
 
 		return PROCESS_SKIP;
 	}

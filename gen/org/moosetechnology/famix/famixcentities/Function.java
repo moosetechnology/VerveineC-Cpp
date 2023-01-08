@@ -28,7 +28,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("Function")
-public class Function extends BehaviouralEntity implements TEntityMetaLevelDependency, TFunction, THasSignature, TNamedEntity, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithParameters, TWithReferences, TWithStatements {
+public class Function extends BehaviouralEntity implements TEntityMetaLevelDependency, TFunction, THasSignature, TNamedEntity, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithReferences, TWithStatements {
 
     private Collection<TAccess> accesses; 
 
@@ -46,10 +46,6 @@ public class Function extends BehaviouralEntity implements TEntityMetaLevelDepen
 
     private Collection<TReference> outgoingReferences; 
 
-    private Collection<TParameter> parameters; 
-
-    private String signature;
-    
     private TSourceAnchor sourceAnchor;
     
 
@@ -340,66 +336,6 @@ public class Function extends BehaviouralEntity implements TEntityMetaLevelDepen
 
     public boolean hasOutgoingReferences() {
         return !getOutgoingReferences().isEmpty();
-    }
-
-    @FameProperty(name = "parameters", opposite = "parentBehaviouralEntity", derived = true)
-    public Collection<TParameter> getParameters() {
-        if (parameters == null) {
-            parameters = new MultivalueSet<TParameter>() {
-                @Override
-                protected void clearOpposite(TParameter e) {
-                    e.setParentBehaviouralEntity(null);
-                }
-                @Override
-                protected void setOpposite(TParameter e) {
-                    e.setParentBehaviouralEntity(Function.this);
-                }
-            };
-        }
-        return parameters;
-    }
-    
-    public void setParameters(Collection<? extends TParameter> parameters) {
-        this.getParameters().clear();
-        this.getParameters().addAll(parameters);
-    }                    
-    
-        
-    public void addParameters(TParameter one) {
-        this.getParameters().add(one);
-    }   
-    
-    public void addParameters(TParameter one, TParameter... many) {
-        this.getParameters().add(one);
-        for (TParameter each : many)
-            this.getParameters().add(each);
-    }   
-    
-    public void addParameters(Iterable<? extends TParameter> many) {
-        for (TParameter each : many)
-            this.getParameters().add(each);
-    }   
-                
-    public void addParameters(TParameter[] many) {
-        for (TParameter each : many)
-            this.getParameters().add(each);
-    }
-    
-    public int numberOfParameters() {
-        return getParameters().size();
-    }
-
-    public boolean hasParameters() {
-        return !getParameters().isEmpty();
-    }
-
-    @FameProperty(name = "signature")
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
     }
     
     @FameProperty(name = "sourceAnchor", opposite = "element", derived = true)

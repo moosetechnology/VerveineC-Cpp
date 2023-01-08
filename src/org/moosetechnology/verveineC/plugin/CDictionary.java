@@ -950,7 +950,7 @@ public class CDictionary {
 		return ensureFamixEntity(fmxClass, key, name, /*persistIt*/true);
 	}
 
-	public Namespace ensureFamixNamespace(IBinding key, String name, ScopingEntity parent) {
+	public Namespace ensureFamixNamespace(IBinding key, String name, Namespace parent) {
 		Namespace fmx = ensureFamixNamespace(key, name);
 		/*System.out.println(this.getEntityByKey(key));
 		if ((parent != null) && (fmx.getParentScope() !=null)) {

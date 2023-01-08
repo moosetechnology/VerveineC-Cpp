@@ -8,7 +8,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.moosetechnology.famix.cpp.Class;
+import org.moosetechnology.famix.famixcentities.SourcedEntity;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.Visibility;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
@@ -58,16 +58,16 @@ public abstract class ClassMemberDefVisitor extends AbstractVisitor {
 
 	@Override
 	protected int visit(IASTCompositeTypeSpecifier node) {
-		Class fmx;
+		org.moosetechnology.famix.famixcppentities.Class fmx;
 
 		super.visit(node);
-		fmx = dico.getEntityByKey(Class.class, nodeBnd);
+		fmx = dico.getEntityByKey(org.moosetechnology.famix.famixcppentities.Class.class, nodeBnd);
 
 		this.getContext().push(fmx);
 		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
 			decl.accept(this);
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = (SourcedEntity) getContext().pop();
 
 		return PROCESS_SKIP;
 	}

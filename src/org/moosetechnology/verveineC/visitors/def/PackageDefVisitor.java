@@ -4,7 +4,7 @@ package org.moosetechnology.verveineC.visitors.def;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.moosetechnology.famix.cpp.Package;
+import org.moosetechnology.famix.famixcppentities.Package;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 
@@ -13,7 +13,7 @@ public class PackageDefVisitor extends AbstractVisitor {
 	/**
 	 * The file directory being visited at any given time
 	 */
-	protected org.moosetechnology.famix.cpp.Package currentPackage;
+	protected Package currentPackage;
 
 	public PackageDefVisitor(CDictionary dico, IIndex index, String rootFolder) {
 		super(dico, index, rootFolder);
@@ -41,7 +41,7 @@ public class PackageDefVisitor extends AbstractVisitor {
 		super.visit(elt);   // visiting children
 
 		if (currentPackage != null) {
-			currentPackage = currentPackage.getParentPackage();
+			currentPackage = (Package) currentPackage.getParentPackage();
 		}
 		leavePath(elt);
 	}
