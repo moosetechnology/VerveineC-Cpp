@@ -8,7 +8,7 @@ import org.moosetechnology.famix.moose.Model;
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("FamixCModel")
-public class FamixCModel extends Model  {
+public class FamixCModel extends org.moosetechnology.famix.famixcpreprocentities.FamixCPreprocModel  {
 
 
 

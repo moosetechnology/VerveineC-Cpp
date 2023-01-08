@@ -3,12 +3,13 @@ package org.moosetechnology.famix.famixcppentities;
 
 import ch.akuhn.fame.FameDescription;
 import ch.akuhn.fame.FamePackage;
-import org.moosetechnology.famix.moose.Model;
+
+import org.moosetechnology.famix.famixcentities.FamixCModel;
 
 
 @FamePackage("Famix-Cpp-Entities")
 @FameDescription("FamixCppModel")
-public class FamixCppModel extends Model  {
+public class FamixCppModel extends FamixCModel  {
 
 
 

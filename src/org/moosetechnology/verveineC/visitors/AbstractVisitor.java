@@ -19,12 +19,13 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.Path;
-import org.moosetechnology.famix.cpp.BehaviouralEntity;
-import org.moosetechnology.famix.cpp.Class;
-import org.moosetechnology.famix.cpp.Namespace;
-import org.moosetechnology.famix.cpp.Package;
-import org.moosetechnology.famix.cpp.Parameter;
-import org.moosetechnology.famix.cpp.SourcedEntity;
+
+import org.moosetechnology.famix.famixcppentities.SourcedEntity;
+import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.Parameter;
+import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixcppentities.Package;
+
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.AnonymousName;
 import org.moosetechnology.verveineC.utils.CppEntityStack;
@@ -168,7 +169,7 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 		nodeBnd = resolver.getBinding(nodeName);
 
 		if (nodeBnd == null) {
-			nodeBnd = resolver.mkStubKey(nodeName, Class.class);
+			nodeBnd = resolver.mkStubKey(nodeName, org.moosetechnology.famix.famixcppentities.Class.class);
 		}
 
 		return PROCESS_CONTINUE;

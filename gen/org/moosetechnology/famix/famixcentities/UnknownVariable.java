@@ -21,7 +21,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("unknownVariable")
-public class unknownVariable extends NamedEntity implements TAccessible, TEntityMetaLevelDependency, TNamedEntity, TSourceEntity, TStructuralEntity, TTypedEntity, TUnknownVariable {
+public class UnknownVariable extends NamedEntity implements TAccessible, TEntityMetaLevelDependency, TNamedEntity, TSourceEntity, TStructuralEntity, TTypedEntity, TUnknownVariable {
 
     private TType declaredType;
     
@@ -80,7 +80,7 @@ public class unknownVariable extends NamedEntity implements TAccessible, TEntity
                 }
                 @Override
                 protected void setOpposite(TAccess e) {
-                    e.setVariable(unknownVariable.this);
+                    e.setVariable(UnknownVariable.this);
                 }
             };
         }

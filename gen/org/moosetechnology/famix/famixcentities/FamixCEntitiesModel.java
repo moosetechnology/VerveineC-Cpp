@@ -47,7 +47,7 @@ public class FamixCEntitiesModel {
 		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownBehaviour.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownContainerEntity.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownSourceLanguage.class);
-		metamodel.with(org.moosetechnology.famix.famixcentities.unknownVariable.class);
+		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownVariable.class);
 
     }
 

@@ -41,8 +41,6 @@ public class Method extends BehaviouralEntity implements TEntityMetaLevelDepende
 
     private Collection<TAccess> accesses; 
 
-    private Number cyclomaticComplexity;
-    
     private TType declaredType;
     
     private Collection<TImplicitVariable> implicitVariables; 
@@ -136,15 +134,6 @@ public class Method extends BehaviouralEntity implements TEntityMetaLevelDepende
         return !getAccesses().isEmpty();
     }
 
-    @FameProperty(name = "cyclomaticComplexity")
-    public Number getCyclomaticComplexity() {
-        return cyclomaticComplexity;
-    }
-
-    public void setCyclomaticComplexity(Number cyclomaticComplexity) {
-        this.cyclomaticComplexity = cyclomaticComplexity;
-    }
-    
     @FameProperty(name = "declaredType", opposite = "typedEntities")
     public TType getDeclaredType() {
         return declaredType;

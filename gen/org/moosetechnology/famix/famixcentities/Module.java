@@ -6,11 +6,12 @@ import ch.akuhn.fame.FamePackage;
 import ch.akuhn.fame.FameProperty;
 import org.moosetechnology.famix.famixcpreprocentities.CompilationUnit;
 import org.moosetechnology.famix.famixcpreprocentities.HeaderFile;
+import org.moosetechnology.famix.famixtraits.TNamedEntity;
 
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("Module")
-public class Module extends Entity  {
+public class Module extends NamedEntity {
 
     private CompilationUnit compilationUnit;
     
@@ -45,7 +46,7 @@ public class Module extends Entity  {
             if (headerFile != null) headerFile.setModule(this);
         }
     }
-    
+
 
 
 }

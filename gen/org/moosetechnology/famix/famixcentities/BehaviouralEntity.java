@@ -27,6 +27,8 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
     
     private Collection<TAccess> accesses; 
 
+    private Number cyclomaticComplexity;
+    
     private Collection<TInvocation> incomingInvocations; 
 
     private Boolean isStub;
@@ -313,6 +315,16 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
         // TODO: this is a derived property, implement this method manually.
         throw new UnsupportedOperationException("Not yet implemented!");  
     }
+
+	public Number getCyclomaticComplexity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setCyclomaticComplexity(Number cyclomaticComplexity) {
+		// TODO Auto-generated method stub
+		
+	}
     
 
 

@@ -42,7 +42,7 @@ public class FamixCppCodegen {
         Importer builder = new Importer(fm3);
         builder.readFrom(input);
         Repository famix = builder.getResult();
-        CodeGeneration gen = new CodeGeneration(/*destinationPackage*/"org.moosetechnology.famix", /*outputDirectory*/"src", /*classNamePrefix*/"");
+        CodeGeneration gen = new CodeGeneration(/*destinationPackage*/"org.moosetechnology.famix", /*outputDirectory*/"gen", /*classNamePrefix*/"");
         gen.accept(famix);
         puts("done");
     }

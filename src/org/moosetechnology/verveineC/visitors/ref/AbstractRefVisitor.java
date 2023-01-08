@@ -24,20 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
-import org.moosetechnology.famix.cpp.Access;
-import org.moosetechnology.famix.cpp.Association;
-import org.moosetechnology.famix.cpp.BehaviouralEntity;
-import org.moosetechnology.famix.cpp.BehaviouralReference;
-import org.moosetechnology.famix.cpp.Class;
-import org.moosetechnology.famix.cpp.ContainerEntity;
-import org.moosetechnology.famix.cpp.DereferencedInvocation;
-import org.moosetechnology.famix.cpp.Invocation;
-import org.moosetechnology.famix.cpp.NamedEntity;
-import org.moosetechnology.famix.cpp.ParameterizableClass;
-import org.moosetechnology.famix.cpp.ParameterizedType;
-import org.moosetechnology.famix.cpp.SourcedEntity;
-import org.moosetechnology.famix.cpp.StructuralEntity;
-import org.moosetechnology.famix.cpp.Type;
+import org.moosetechnology.famix.famixcppentities.SourcedEntity;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
@@ -70,17 +57,17 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 	 */
 	@Override
 	protected int visit(ICPPASTCompositeTypeSpecifier node) {
-		Class fmx;
+		org.moosetechnology.famix.famixcppentities.Class fmx;
 
 		/* Gets the key (IBinding) of the node to recover the famix type entity */
 		super.visit(node);
 
-		fmx = dico.getEntityByKey(Class.class, nodeBnd);
+		fmx = dico.getEntityByKey(org.moosetechnology.famix.famixcppentities.Class.class, nodeBnd);
 
 		this.getContext().push(fmx);
 		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
 		}
-		returnedEntity = getContext().pop();
+		returnedEntity = (SourcedEntity) getContext().pop();
 
 		return PROCESS_SKIP;
 	}
@@ -146,7 +133,7 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 	 * @param fmx -- invoked BehaviouralEntity
 	 * @return the invocation created
 	 */
-	protected Invocation invocationOfBehavioural(BehaviouralEntity fmx) {
+	protected Invocation invocationOfBehavioural(org.moosetechnology.famix.famixcentities.BehaviouralEntity fmx) {
 		BehaviouralEntity accessor = this.getContext().topBehaviouralEntity();
 		Invocation invok = dico.addFamixInvocation(accessor, fmx, /*receiver*/null, /*signature*/null, getContext().getLastInvocation());
 		getContext().setLastInvocation(invok);

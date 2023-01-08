@@ -8,7 +8,7 @@ import ch.akuhn.fame.FameProperty;
 
 @FamePackage("Famix-Traits")
 @FameDescription("TCompilationUnit")
-public interface TCompilationUnit extends TFile, TFileSystemEntity {
+public interface TCompilationUnit extends TFileSystemEntity, TFile {
 
         @FameProperty(name = "compilationUnitOwner", opposite = "compilationUnit", container = true)
     public TWithCompilationUnits getCompilationUnitOwner();

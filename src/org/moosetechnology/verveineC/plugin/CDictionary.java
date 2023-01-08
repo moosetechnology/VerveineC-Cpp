@@ -8,7 +8,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.junit.runners.parameterized.TestWithParameters;
+
 import org.moosetechnology.famix.famixcentities.Access;
 import org.moosetechnology.famix.famixcentities.AliasType;
 import org.moosetechnology.famix.famixcentities.Association;
@@ -17,27 +17,35 @@ import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.BehaviouralReference;
 import org.moosetechnology.famix.famixcentities.ContainerEntity;
 import org.moosetechnology.famix.famixcentities.DerefInvocation;
+import org.moosetechnology.famix.famixcentities.Enum;
+import org.moosetechnology.famix.famixcentities.EnumValue;
 import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.GlobalVar;
 import org.moosetechnology.famix.famixcentities.IndexedFileAnchor;
 import org.moosetechnology.famix.famixcentities.LocalVar;
 import org.moosetechnology.famix.famixcentities.MultipleFileanchor;
+import org.moosetechnology.famix.famixcentities.Module;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.PrimitiveType;
 import org.moosetechnology.famix.famixcentities.Reference;
 import org.moosetechnology.famix.famixcentities.SourceAnchor;
 import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcentities.UnknownVariable;
 import org.moosetechnology.famix.famixcppentities.Comment;
-import org.moosetechnology.famix.famixcppentities.ImplicitVar;
+import org.moosetechnology.famix.famixcppentities.ImplicitVariable;
 import org.moosetechnology.famix.famixcppentities.Inheritance;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixcppentities.OOInvocation;
+import org.moosetechnology.famix.famixcppentities.Package;
+import org.moosetechnology.famix.famixcppentities.ParameterType;
+import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
+import org.moosetechnology.famix.famixcppentities.ParameterizedType;
 import org.moosetechnology.famix.famixcpreprocentities.CFile;
 import org.moosetechnology.famix.famixcpreprocentities.CompilUnit;
-import org.moosetechnology.famix.famixcpreprocentities.Header;
+import org.moosetechnology.famix.famixcpreprocentities.HeaderFile;
 import org.moosetechnology.famix.famixcpreprocentities.Include;
-import org.moosetechnology.famix.famixcpreprocentities.PreprocIfdef;
+import org.moosetechnology.famix.famixcpreprocentities.PreprocessorIfdef;
 import org.moosetechnology.famix.famixtraits.TFileAnchor;
 import org.moosetechnology.famix.famixtraits.TInheritance;
 import org.moosetechnology.famix.famixtraits.TInvocationsReceiver;
@@ -54,7 +62,9 @@ import org.moosetechnology.famix.famixtraits.TWithLocalVariables;
 import org.moosetechnology.famix.famixtraits.TWithMethods;
 import org.moosetechnology.famix.famixtraits.TWithParameters;
 import org.moosetechnology.famix.famixtraits.TWithTypes;
+
 import org.moosetechnology.famix.moose.Entity;
+
 import org.moosetechnology.verveineC.utils.Visibility;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
@@ -134,8 +144,8 @@ public class CDictionary {
 	 */
 	@Deprecated
 	protected class ImplicitVars {
-		public ImplicitVar self_iv;
-		public ImplicitVar super_iv;
+		public ImplicitVariable self_iv;
+		public ImplicitVariable super_iv;
 	}
 	
  	public CDictionary(Repository famixRepo) {
@@ -446,7 +456,7 @@ public class CDictionary {
 	 * @return the Famix Entity associated to the binding or null if not found
 	 */
 	@Deprecated
-	public ImplicitVar getImplicitVariableByBinding(IBinding bnd, String iv_name) {
+	public ImplicitVariable getImplicitVariableByBinding(IBinding bnd, String iv_name) {
 		return getImplicitVariableByType((org.moosetechnology.famix.famixcppentities.Class)getEntityByKey(bnd), iv_name);
 	}
 	
@@ -457,9 +467,9 @@ public class CDictionary {
 	 * @return the Famix ImplicitVariable associated to the Type or null if not found
 	 */
 	@Deprecated
-	public ImplicitVar getImplicitVariableByType(Type type, String name) {
+	public ImplicitVariable getImplicitVariableByType(Type type, String name) {
 		ImplicitVars iv = typeToImpVar.get(type);
-		ImplicitVar ret = null;
+		ImplicitVariable ret = null;
 		
 		if (iv == null) {
 			iv = new ImplicitVars();
@@ -484,9 +494,9 @@ public class CDictionary {
 	 * @param persistIt -- whether the ImplicitVariable should be persisted in the Famix repository
 	 * @return the FAMIX ImplicitVariable or null in case of a FAMIX error
 	 */
-	public ImplicitVar ensureFamixImplicitVariable(IBinding key, String name, Type type, Method owner, boolean persistIt) {
-		ImplicitVar fmx;
-		fmx = ensureFamixEntity(ImplicitVar.class, key, name, persistIt);
+	public ImplicitVariable ensureFamixImplicitVariable(IBinding key, String name, Type type, Method owner, boolean persistIt) {
+		ImplicitVariable fmx;
+		fmx = ensureFamixEntity(ImplicitVariable.class, key, name, persistIt);
 		fmx.setParentBehaviouralEntity(owner);
 		return fmx;
 	}
@@ -626,7 +636,7 @@ public class CDictionary {
 		CFile fmx = nameToFile.get(key);
 		if (fmx == null) {
 			if (FileUtil.isHeader(name)) {
-				fmx = new Header();
+				fmx = new HeaderFile();
 			}
 			else {
 				fmx = new CompilUnit();
@@ -659,11 +669,11 @@ public class CDictionary {
 		return inc;
 	}
 
-	public PreprocIfdef createFamixPreprocIfdef(String macroName) {
-		PreprocIfdef fmx;
+	public PreprocessorIfdef createFamixPreprocIfdef(String macroName) {
+		PreprocessorIfdef fmx;
 
-		fmx = new PreprocIfdef();
-		fmx.setMacro(macroName);
+		fmx = new PreprocessorIfdef();
+		fmx.setPreprocessorMacro(macroName);
 		this.famixRepo.add(fmx);
 
 		return fmx;
@@ -746,9 +756,9 @@ public class CDictionary {
 	 * @param persistIt -- whether the ParameterizableClass should be persisted in the Famix repository
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
-	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
+	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, TWithTypes owner, boolean persistIt) {
 		ParameterizableClass fmx = ensureFamixEntity(ParameterizableClass.class, key, name, persistIt);
-		fmx.setContainer(owner);
+		fmx.setTypeContainer(owner);
 		return fmx;
 	}
 
@@ -758,9 +768,9 @@ public class CDictionary {
 	 * @param persistIt -- whether the ParameterizableClass should be persisted in the Famix repository
 	 * @return the FAMIX ParameterizableType or null in case of a FAMIX error
 	 */
-	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, ContainerEntity owner, boolean persistIt) {
+	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, TWithTypes owner, boolean persistIt) {
 		ParameterizedType fmx = ensureFamixEntity(ParameterizedType.class, key, name, persistIt);
-		fmx.setContainer(owner);
+		fmx.setTypeContainer(owner);
 		fmx.setParameterizableClass(generic);
 		return fmx;
 	}
@@ -772,15 +782,15 @@ public class CDictionary {
 	 * @param persistIt -- whether the ParameterType should be persisted in the Famix repository
 	 * @return the FAMIX ParameterType or null in case of a FAMIX error
 	 */
-	public ParameterType ensureFamixParameterType(IBinding key, String name, ContainerEntity owner, boolean persistIt) {
+	public ParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner, boolean persistIt) {
 		ParameterType fmx = ensureFamixEntity(ParameterType.class, key, name, persistIt);
-		fmx.setContainer(owner);
+		fmx.setTypeContainer(owner);
 		return fmx;
 	}
 
-	public Enum ensureFamixEnum(IBinding key, String name,	ContainerEntity owner, boolean persistIt) {
+	public Enum ensureFamixEnum(IBinding key, String name,	TWithTypes owner, boolean persistIt) {
 		Enum fmx = ensureFamixEntity(Enum.class, key, name, persistIt);
-		fmx.setContainer(owner);
+		fmx.setTypeContainer(owner);
 		return fmx;
 	}
 
@@ -973,16 +983,16 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public AliasType ensureFamixTypeAlias(IBinding key, String name, ContainerEntity owner) {
+	public AliasType ensureFamixTypeAlias(IBinding key, String name, TWithTypes owner) {
 		AliasType fmx;
 
-		fmx = ensureFamixEntity(TypeAlias.class, key, name, /*persistIt*/true);
-		fmx.setContainer(owner);
+		fmx = ensureFamixEntity(AliasType.class, key, name, /*persistIt*/true);
+		fmx.setTypeContainer(owner);
 
 		return fmx;
 	}
 
-	public Type ensureFamixType(IBinding key, String name, ContainerEntity owner) {
+	public Type ensureFamixType(IBinding key, String name, TWithTypes owner) {
 		Type fmx = getEntityIfNotNull(Type.class, key);
 
 		if (fmx == null) {
@@ -992,7 +1002,7 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public org.moosetechnology.famix.famixcppentities.Class ensureFamixClass(IBinding key, String name, ContainerEntity owner) {
+	public org.moosetechnology.famix.famixcppentities.Class ensureFamixClass(IBinding key, String name, TWithTypes owner) {
 		org.moosetechnology.famix.famixcppentities.Class fmx = getEntityIfNotNull(org.moosetechnology.famix.famixcppentities.Class.class, key);
 
 		if (fmx == null) {
@@ -1002,7 +1012,7 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, ContainerEntity owner) {
+	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, TWithTypes owner) {
 		ParameterizableClass fmx = getEntityIfNotNull(ParameterizableClass.class, key);
 
 		if (fmx == null) {
@@ -1012,7 +1022,7 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public ParameterType ensureFamixParameterType(IBinding key, String name, ContainerEntity owner) {
+	public ParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner) {
 		ParameterType fmx = getEntityIfNotNull(ParameterType.class, key);
 
 		if (fmx == null) {
@@ -1021,7 +1031,7 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, ContainerEntity owner) {
+	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, TWithTypes owner) {
 		ParameterizedType fmx = getEntityIfNotNull(ParameterizedType.class, key);
 
 		if (fmx == null) {
@@ -1038,7 +1048,7 @@ public class CDictionary {
 	 * <li> If it is a Method (e.g. "<code>template &lt;class T&gt; void fct(T)</code> ..."), we create a Type
 	 * </ul>
 	 */
-	public Type createParameterType(String name, ContainerEntity owner) {
+	public Type createParameterType(String name, TWithTypes owner) {
 		// apparently CDT gives a binding to the parameterType at its declaration ("template <class T> ...")
 		// but not when used ("... mth(T)") so we ignore CDT binding and always use our custom build one
     	IBinding bnd;
@@ -1060,7 +1070,7 @@ public class CDictionary {
 		return ensureFamixPrimitiveType(bnd, primitiveTypeName(type));
 	}
 
-	public Function ensureFamixFunction(IBinding key, String name, String sig, ContainerEntity parent) {
+	public Function ensureFamixFunction(IBinding key, String name, String sig, TWithFunctions parent) {
 		Function fmx = getEntityIfNotNull(Function.class, key);
 
 		if (fmx == null) {
@@ -1116,7 +1126,7 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public ImplicitVar ensureFamixImplicitVariable(String name, Type type, Method owner) {
+	public ImplicitVariable ensureFamixImplicitVariable(String name, Type type, Method owner) {
 		IBinding bnd = StubBinding.getInstance(Type.class, mooseName(owner, name));
 		return ensureFamixImplicitVariable( bnd, name, type, owner, /*persistIt*/true);
 	}
@@ -1244,7 +1254,7 @@ public class CDictionary {
 	 */
 	static public String mooseName(Function parent, String name) {
 		if (parent != null) {
-			return concatMooseName( mooseName(parent.getContainer(), parent.getSignature()) , name);
+			return concatMooseName( mooseName(parent.getFunctionOwner(), parent.getSignature()) , name);
 		}
 		else {
 			return name;
@@ -1257,7 +1267,7 @@ public class CDictionary {
 	 */
 	static public String mooseName(Type parent, String name) {
 		if (parent != null) {
-			return concatMooseName( mooseName(parent.getContainer(), parent.getName()) , name);
+			return concatMooseName( mooseName(parent.getTypeContainer(), parent.getName()) , name);
 		}
 		else {
 			return name;

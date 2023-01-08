@@ -21,19 +21,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.moosetechnology.famix.cpp.Access;
-import org.moosetechnology.famix.cpp.Association;
-import org.moosetechnology.famix.cpp.Attribute;
-import org.moosetechnology.famix.cpp.BehaviouralEntity;
-import org.moosetechnology.famix.cpp.DereferencedInvocation;
-import org.moosetechnology.famix.cpp.Function;
-import org.moosetechnology.famix.cpp.Invocation;
-import org.moosetechnology.famix.cpp.Method;
-import org.moosetechnology.famix.cpp.NamedEntity;
-import org.moosetechnology.famix.cpp.StructuralEntity;
-import org.moosetechnology.famix.cpp.Type;
-import org.moosetechnology.famix.cpp.UnknownBehaviouralEntity;
-import org.moosetechnology.famix.cpp.UnknownVariable;
+import org.moosetechnology.famix.famixcentities.Association;
+import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.Invocation;
+import org.moosetechnology.famix.famixcentities.UnknownVariable;
+import org.moosetechnology.famix.famixtraits.TAccess;
+import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 import org.moosetechnology.verveineC.visitors.AbstractDispatcherVisitor;
@@ -158,7 +151,7 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 				// we create fake associations for arguments that we could not resolve
 				IBinding fakeBnd = resolver.mkStubKey(EMPTY_ARGUMENT_NAME, UnknownVariable.class);
 				UnknownVariable fake = dico.ensureFamixUniqEntity(UnknownVariable.class, fakeBnd, EMPTY_ARGUMENT_NAME);
-				Access acc = dico.addFamixAccess(getContext().topBehaviouralEntity(), fake, /*isWrite*/false, /*prev*/null);
+				TAccess acc = dico.addFamixAccess(getContext().topBehaviouralEntity(), fake, /*isWrite*/false, /*prev*/null);
 				if (invok != null) {
 					invok.addArguments(acc);
 				}
@@ -389,10 +382,10 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 			fmx = resolver.findInParent(nodeName.toString(), getContext().top(), /*recursive*/true);
 		}
 
-		if (fmx instanceof StructuralEntity) {
-			assoc = accessToVar((StructuralEntity) fmx);
+		if (fmx instanceof TStructuralEntity) {
+			assoc = accessToVar((TStructuralEntity) fmx);
 		}
-		else if (fmx instanceof BehaviouralEntity) { //&& (! inAmpersandUnaryExpression) ) {
+		else if (fmx instanceof BehaviouralEntity) {
 			if (inAmpersandUnaryExpression) {
 				return behaviouralPointer((BehaviouralEntity) fmx);
 			}

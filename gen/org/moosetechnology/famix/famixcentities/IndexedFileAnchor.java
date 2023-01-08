@@ -6,26 +6,22 @@ import ch.akuhn.fame.FamePackage;
 import ch.akuhn.fame.FameProperty;
 import org.moosetechnology.famix.famixtraits.TFile;
 import org.moosetechnology.famix.famixtraits.TFileAnchor;
-import org.moosetechnology.famix.famixtraits.TFileNavigation;
+import org.moosetechnology.famix.famixtraits.TIndexedFileNavigation;
 
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("IndexedFileAnchor")
-public class IndexedFileAnchor extends SourceAnchor implements TFileAnchor, TFileNavigation {
+public class IndexedFileAnchor extends SourceAnchor implements TFileAnchor, TIndexedFileNavigation {
 
     private TFile correspondingFile;
     
     private String encoding;
     
-    private Number endColumn;
-    
-    private Number endLine;
+    private Number endPos;
     
     private String fileName;
     
-    private Number startColumn;
-    
-    private Number startLine;
+    private Number startPos;
     
 
 
@@ -47,22 +43,13 @@ public class IndexedFileAnchor extends SourceAnchor implements TFileAnchor, TFil
         this.encoding = encoding;
     }
     
-    @FameProperty(name = "endColumn")
-    public Number getEndColumn() {
-        return endColumn;
+    @FameProperty(name = "endPos")
+    public Number getEndPos() {
+        return endPos;
     }
 
-    public void setEndColumn(Number endColumn) {
-        this.endColumn = endColumn;
-    }
-    
-    @FameProperty(name = "endLine")
-    public Number getEndLine() {
-        return endLine;
-    }
-
-    public void setEndLine(Number endLine) {
-        this.endLine = endLine;
+    public void setEndPos(Number endPos) {
+        this.endPos = endPos;
     }
     
     @FameProperty(name = "fileName")
@@ -74,22 +61,13 @@ public class IndexedFileAnchor extends SourceAnchor implements TFileAnchor, TFil
         this.fileName = fileName;
     }
     
-    @FameProperty(name = "startColumn")
-    public Number getStartColumn() {
-        return startColumn;
+    @FameProperty(name = "startPos")
+    public Number getStartPos() {
+        return startPos;
     }
 
-    public void setStartColumn(Number startColumn) {
-        this.startColumn = startColumn;
-    }
-    
-    @FameProperty(name = "startLine")
-    public Number getStartLine() {
-        return startLine;
-    }
-
-    public void setStartLine(Number startLine) {
-        this.startLine = startLine;
+    public void setStartPos(Number startPos) {
+        this.startPos = startPos;
     }
     
 
