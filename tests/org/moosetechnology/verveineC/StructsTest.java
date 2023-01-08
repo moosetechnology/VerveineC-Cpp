@@ -33,7 +33,7 @@ class StructsTest extends AbstractTest {
 
 		assertEquals(3, clazz.numberOfAttributes());
 		assertEquals(1, clazz.numberOfTypes());
-		assertNull(clazz.getContainer());
+		assertNull(clazz.getTypeContainer());
 
 		assertEquals("Student", first(clazz.getTypes()).getName());
 	}
@@ -45,9 +45,9 @@ class StructsTest extends AbstractTest {
 
 		assertEquals(3, clazz.numberOfAttributes());
 		assertEquals(0, clazz.numberOfTypes());
-		assertNotNull(clazz.getContainer());
+		assertNotNull(clazz.getTypeContainer());
 
-		assertEquals("College", clazz.getContainer().getName());
+		assertEquals("College", clazz.getTypeContainer().getName());
 	}
 
 }

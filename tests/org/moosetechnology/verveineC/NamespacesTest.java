@@ -34,7 +34,7 @@ class NamespacesTest extends AbstractTest {
 		assertNotNull(nspace);
 
 		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
-		assertEquals(0, nspace.numberOfChildScopes());
+		assertEquals(0, nspace.getNumberOfChildren());
 		assertNull(nspace.getParentScope());
 
 		assertEquals("func", first( ((TWithFunctions)nspace).getFunctions()).getName());
@@ -46,7 +46,7 @@ class NamespacesTest extends AbstractTest {
 		assertNotNull(nspace);
 
 		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
-		assertEquals(1, nspace.numberOfChildScopes());
+		assertEquals(1, nspace.getNumberOfChildren());
 		assertNull(nspace.getParentScope());
 
 		assertEquals("func", first( ((TWithFunctions)nspace).getFunctions()).getName());
@@ -58,7 +58,7 @@ class NamespacesTest extends AbstractTest {
 		assertNotNull(nspace);
 
 		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
-		assertEquals(0, nspace.numberOfChildScopes());
+		assertEquals(0, nspace.getNumberOfChildren());
 
 		assertNotNull(nspace.getParentScope());
 		assertEquals("second_space", nspace.getParentScope().getName());

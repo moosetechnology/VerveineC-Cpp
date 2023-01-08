@@ -8,12 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.moosetechnology.famix.famixcentities.Attribute;
+import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.Function;
+import org.moosetechnology.famix.famixcentities.GlobalVariable;
+import org.moosetechnology.famix.famixcentities.Invocation;
+import org.moosetechnology.famix.famixcentities.UnknownBehaviour;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixtraits.GlobalVariableGroup;
 import org.moosetechnology.famix.famixtraits.TAccess;
 import org.moosetechnology.famix.famixtraits.TInvocable;
 import org.moosetechnology.famix.famixtraits.TInvocation;
+import org.moosetechnology.famix.famixtraits.TMethod;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
 
 class BookShopTest extends AbstractTest {
@@ -67,13 +72,13 @@ class BookShopTest extends AbstractTest {
 		Function fct = entityNamed(Function.class, "main");
 		assertNotNull(fct);
 		assertEquals(7, fct.getOutgoingInvocations().size());
-		for (Invocation invok : fct.getOutgoingInvocations()) {
+		for (TInvocation invok : fct.getOutgoingInvocations()) {
 			assertEquals(fct, invok.getSender());
 			assertEquals(1, invok.getCandidates().size() );
 			
-			BehaviouralEntity candidate = first(invok.getCandidates());
+			TMethod candidate = (TMethod) first(invok.getCandidates());
 			if (candidate.getIsStub()) {
-				assertEquals( UnknownBehaviouralEntity.class, candidate.getClass());
+				assertEquals( UnknownBehaviour.class, candidate.getClass());
 			}
 			else  {
 				assertEquals( Function.class, candidate.getClass());

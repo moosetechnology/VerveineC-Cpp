@@ -11,6 +11,7 @@ import org.moosetechnology.famix.famixtraits.TAssociation;
 import org.moosetechnology.famix.famixtraits.TInvocable;
 import org.moosetechnology.famix.famixtraits.TInvocation;
 import org.moosetechnology.famix.famixtraits.TInvocationsReceiver;
+import org.moosetechnology.famix.famixtraits.TMethod;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
 import org.moosetechnology.famix.famixtraits.TWithInvocations;

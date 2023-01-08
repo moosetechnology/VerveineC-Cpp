@@ -6,8 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.moosetechnology.famix.cpp.Enum;
-import org.moosetechnology.famix.cpp.EnumValue;
+import org.moosetechnology.famix.famixcentities.Enum;
+import org.moosetechnology.famix.famixcentities.EnumValue;
+import org.moosetechnology.famix.famixcentities.NamedEntity;
 
 class EnumsTest extends AbstractTest {
 
@@ -33,31 +34,31 @@ class EnumsTest extends AbstractTest {
 
 		eval = entityNamed(EnumValue.class, "Monday");
 		assertNotNull(eval);
-		assertEquals("week", eval.getParentEnum().getName());
+		assertEquals("week", ((NamedEntity)eval.getParentEnum()).getName());
 
 		eval = entityNamed(EnumValue.class, "Tuesday");
 		assertNotNull(eval);
-		assertEquals("week", eval.getParentEnum().getName());
+		assertEquals("week", ((NamedEntity)eval.getParentEnum()).getName());
 
 		eval = entityNamed(EnumValue.class, "Wednesday");
 		assertNotNull(eval);
-		assertEquals("week", eval.getParentEnum().getName());
+		assertEquals("week", ((NamedEntity)eval.getParentEnum()).getName());
 
 		eval = entityNamed(EnumValue.class, "Thursday");
 		assertNotNull(eval);
-		assertEquals("week", eval.getParentEnum().getName());
+		assertEquals("week", ((NamedEntity)eval.getParentEnum()).getName());
 
 		eval = entityNamed(EnumValue.class, "Friday");
 		assertNotNull(eval);
-		assertEquals("week", eval.getParentEnum().getName());
+		assertEquals("week", ((NamedEntity)eval.getParentEnum()).getName());
 
 		eval = entityNamed(EnumValue.class, "Saturday");
 		assertNotNull(eval);
-		assertEquals("week", eval.getParentEnum().getName());
+		assertEquals("week", ((NamedEntity)eval.getParentEnum()).getName());
 
 		eval = entityNamed(EnumValue.class, "Sunday");
 		assertNotNull(eval);
-		assertEquals("week", eval.getParentEnum().getName());
+		assertEquals("week", ((NamedEntity)eval.getParentEnum()).getName());
 	}
 
 	@Test

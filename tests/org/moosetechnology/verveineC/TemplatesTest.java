@@ -9,8 +9,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.Function;
+import org.moosetechnology.famix.famixcentities.NamedEntity;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcppentities.Method;
+import org.moosetechnology.famix.famixcppentities.ParameterType;
+import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
+import org.moosetechnology.famix.famixcppentities.ParameterizedType;
+import org.moosetechnology.famix.famixtraits.TAttribute;
+import org.moosetechnology.famix.famixtraits.TParameter;
 
 
 class TemplatesTest extends AbstractTest {
@@ -39,18 +45,18 @@ class TemplatesTest extends AbstractTest {
 		assertEquals( "mypair",	generic.getName());
 
 		assertEquals(1, generic.getParameterizedTypes().size());
-		ParameterizedType tparam = first( generic.getParameterizedTypes());
+		ParameterizedType tparam = (ParameterizedType) first( generic.getParameterizedTypes());
 		assertEquals("T", tparam.getName());
 
 		assertEquals(1, generic.getAttributes().size());
-		Attribute attribute = first( generic.getAttributes());
+		TAttribute attribute = first( generic.getAttributes());
 		assertEquals("values", attribute.getName());
 		assertEquals(tparam, attribute.getDeclaredType());
 
 		assertEquals(1, generic.getMethods().size());
-		Collection<Parameter> params = first(generic.getMethods()).getParameters();
+		Collection<TParameter> params = first(generic.getMethods()).getParameters();
 		assertEquals(2, params.size());
-		for (Parameter p : params) {
+		for (TParameter p : params) {
 			assertEquals(tparam, p.getDeclaredType());
 		}
 	}
@@ -64,9 +70,9 @@ class TemplatesTest extends AbstractTest {
 		assertEquals(ParameterType.class, fct.getDeclaredType().getClass());
 		ParameterType tparam = (ParameterType) fct.getDeclaredType();
 		
-		assertEquals("mypair", tparam.getContainer().getName());  // not sure this is what should be (the T of GetMax is the same as the one of mypair)
+		assertEquals("mypair", ((NamedEntity) tparam.getTypeContainer()).getName());  // not sure this is what should be (the T of GetMax is the same as the one of mypair)
 		
-		for (Parameter param : fct.getParameters()) {
+		for (TParameter param : fct.getParameters()) {
 			assertEquals("T", param.getDeclaredType().getName()); // this should be the same as 'tparam', no ?
 		}
 	}
