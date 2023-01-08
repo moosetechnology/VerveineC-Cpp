@@ -17,11 +17,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
-import org.moosetechnology.famix.cpp.Attribute;
-import org.moosetechnology.famix.cpp.BehaviouralEntity;
-import org.moosetechnology.famix.cpp.Parameter;
-import org.moosetechnology.famix.cpp.StructuralEntity;
-import org.moosetechnology.famix.cpp.Type;
+import org.moosetechnology.famix.famixcentities.Attribute;
+import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.Parameter;
+import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 
 public class DeclaredTypeRefVisitor extends AbstractRefVisitor {
@@ -105,7 +105,7 @@ public class DeclaredTypeRefVisitor extends AbstractRefVisitor {
 	 */
 	@Override
 	public int visitInternal(IASTDeclarator node) {
-		StructuralEntity fmx = null;
+		TStructuralEntity fmx = null;
 
 		nodeName = node.getName();
 		nodeBnd = resolver.getBinding(nodeName);
@@ -118,7 +118,7 @@ public class DeclaredTypeRefVisitor extends AbstractRefVisitor {
 			}
 		}
 
-		fmx = dico.getEntityByKey(StructuralEntity.class, nodeBnd);
+		fmx = dico.getEntityByKey(TStructuralEntity.class, nodeBnd);
 		if (fmx != null) {
 			fmx.setDeclaredType(referredType);
 		}

@@ -24,7 +24,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
-import org.moosetechnology.famix.famixcppentities.SourcedEntity;
+import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.BehaviouralReference;
+import org.moosetechnology.famix.famixcentities.DereferencedInvocation;
+import org.moosetechnology.famix.famixcentities.Invocation;
+import org.moosetechnology.famix.famixcentities.SourcedEntity;
+import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
@@ -97,11 +103,11 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 	protected int visit(IASTFunctionDefinition node) {
 		returnedEntity = null;
 		node.getDeclarator().accept(this);
-		this.getContext().push((BehaviouralEntity)returnedEntity);
+		this.getContext().push((TNamedEntity) returnedEntity);
 		if (node.getBody() != null) {
 			node.getBody().accept(this);
 		}
-		returnedEntity = this.getContext().pop();
+		returnedEntity = (SourcedEntity) this.getContext().pop();
 
 		return PROCESS_SKIP;
 	}
@@ -116,13 +122,13 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 
 		visit( (IASTFunctionDefinition)node);  // visit declarator and body (see above)
 
-		this.getContext().push((BehaviouralEntity)returnedEntity);
+		this.getContext().push((TNamedEntity)returnedEntity);
 
 		for (ICPPASTConstructorChainInitializer init : node.getMemberInitializers()) {
 			init.accept(this);
 		}
 
-		returnedEntity = this.getContext().pop();
+		returnedEntity = (SourcedEntity) this.getContext().pop();
 
 		return PROCESS_SKIP;
 	}
@@ -146,7 +152,7 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 	 * @param fmx -- StructuralEntity pointing to a BehaviouralEntity invoked
 	 * @return the invocation created
 	 */
-	protected DereferencedInvocation dereferencedInvocation(StructuralEntity fmx, String sig) {
+	protected DereferencedInvocation dereferencedInvocation(TStructuralEntity fmx, String sig) {
 		BehaviouralEntity accessor = this.getContext().topBehaviouralEntity();
 		DereferencedInvocation invok = dico.addFamixDereferencedInvocation(accessor, fmx, /*signature*/sig, getContext().getLastInvocation());
 		getContext().setLastInvocation(invok);

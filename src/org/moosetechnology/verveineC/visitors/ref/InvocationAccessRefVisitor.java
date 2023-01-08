@@ -21,10 +21,19 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.moosetechnology.famix.famixcentities.Access;
 import org.moosetechnology.famix.famixcentities.Association;
+import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.Invocation;
+import org.moosetechnology.famix.famixcentities.NamedEntity;
+import org.moosetechnology.famix.famixcentities.SourcedEntity;
+import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcentities.UnknownBehaviour;
 import org.moosetechnology.famix.famixcentities.UnknownVariable;
+import org.moosetechnology.famix.famixcppentities.Class;
+import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixtraits.TAccess;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.verveineC.plugin.CDictionary;
@@ -172,14 +181,14 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 		nodeBnd = resolver.getBinding( nodeName );
 
 		if (nodeBnd != null) {
-			fmx = dico.getEntityByKey(nodeBnd);
+			fmx = (NamedEntity) dico.getEntityByKey(nodeBnd);
 		}
 
 		if ( (fmx == null) && (nodeName != null) ) {
-			fmx = resolver.resolveOrCreate(nodeName.toString(), /*mayBeNull*/false, UnknownBehaviouralEntity.class);
+			fmx = (NamedEntity) resolver.resolveOrCreate(nodeName.toString(), /*mayBeNull*/false, UnknownBehaviour.class);
 		}
 
-		if (fmx instanceof org.moosetechnology.famix.cpp.Class) {
+		if (fmx instanceof org.moosetechnology.famix.famixcppentities.Class) {
 			// found a class instead of a behavioral. May happen, for example in the case of a "throw ClassName(...)"
 			fmx = makeStubBehavioural(fmx.getName(), node.getArguments().length, /*isMethod*/true);
 		}
@@ -190,10 +199,10 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 				invok = invocationOfBehavioural((BehaviouralEntity) fmx);
 				dico.addSourceAnchor(invok, filename, node.getFileLocation());
 			}
-			else if (fmx instanceof StructuralEntity) {
+			else if (fmx instanceof TStructuralEntity) {
 				// fmx is probably a pointer to a BehavioralEntity
 				String stubSig =  resolver.mkStubSig(fmx.getName(), node.getArguments().length);
-				invok = (DereferencedInvocation) dereferencedInvocation( (StructuralEntity)fmx, stubSig);
+				invok = dereferencedInvocation( (TStructuralEntity)fmx, stubSig);
 				dico.addSourceAnchor(invok, filename, node.getFileLocation());
 			}
 		}
@@ -208,19 +217,19 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 	protected int visit(ICPPASTConstructorChainInitializer node) {
 		IASTName memberName = node.getMemberInitializerId();
 		nodeBnd = resolver.getBinding(memberName);
-		returnedEntity = dico.getEntityByKey(nodeBnd);
+		returnedEntity = (SourcedEntity) dico.getEntityByKey(nodeBnd);
 		if (returnedEntity == null) {
-			Type parent = null;
+			org.moosetechnology.famix.famixcppentities.Class parent = null;
 			// top of context stack should be the constructor method that is ChainInitialized
 			if (resolver.getContext().topMethod() != null) {
-				parent = resolver.getContext().topMethod().getParentType();
+				parent = (org.moosetechnology.famix.famixcppentities.Class) resolver.getContext().topMethod().getParentType();
 			}
 			// just in case, we look if the class of the constructor is not in the context stack ...
 			else if (resolver.getContext().topType() != null) {
-				parent = resolver.getContext().topType();
+				parent = (org.moosetechnology.famix.famixcppentities.Class) resolver.getContext().topType();
 			}
 			if (parent != null) {
-				returnedEntity = resolver.findInParent(memberName.toString(), parent, /*recursive*/true);
+				returnedEntity = (SourcedEntity) resolver.findInParent(memberName.toString(), parent, /*recursive*/true);
 			}
 		}
 		node.getInitializer().accept(this);
@@ -241,7 +250,7 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 			constBnd = resolver.getBinding( candidate );
 
 			if (constBnd != null) {
-				fmx = dico.getEntityByKey(constBnd);
+				fmx = (NamedEntity) dico.getEntityByKey(constBnd);
 
 				if (fmx instanceof BehaviouralEntity) {
 					break;  // we found one method matching the implicit constructor. We are happy for now.
@@ -310,7 +319,7 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(CDictionary.SELF_NAME, /*type*/getContext().topType(), (Method) /*owner*/getContext().topBehaviouralEntity()));
 			}
 			else if (getContext().topMethod() != null) {
-				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(CDictionary.SELF_NAME, /*type*/getContext().topMethod().getParentType(), (Method) /*owner*/getContext().topBehaviouralEntity()));
+				returnedEntity = accessToVar(dico.ensureFamixImplicitVariable(CDictionary.SELF_NAME, (Type) /*type*/getContext().topMethod().getParentType(), /*owner*/ (Method)getContext().topBehaviouralEntity()));
 			}
 			if (returnedEntity != null) {
 				dico.addSourceAnchor(returnedEntity, filename, node.getFileLocation());
@@ -376,10 +385,10 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 		nodeBnd = resolver.getBinding(nodeName);
 
 		if (nodeBnd != null) {
-			fmx = dico.getEntityByKey(nodeBnd);
+			fmx = (NamedEntity) dico.getEntityByKey(nodeBnd);
 		}
 		else {
-			fmx = resolver.findInParent(nodeName.toString(), getContext().top(), /*recursive*/true);
+			fmx = (NamedEntity) resolver.findInParent(nodeName.toString(), getContext().top(), /*recursive*/true);
 		}
 
 		if (fmx instanceof TStructuralEntity) {
@@ -406,7 +415,7 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 	 * @param fmx -- Accessed StructuralEntity
 	 * @return the Access created
 	 */
-	protected Access accessToVar(StructuralEntity fmx) {
+	protected Access accessToVar(TStructuralEntity fmx) {
 		BehaviouralEntity accessor;
 		// put false to isWrite by default, will be corrected in the visitor
 		accessor = this.getContext().topBehaviouralEntity();

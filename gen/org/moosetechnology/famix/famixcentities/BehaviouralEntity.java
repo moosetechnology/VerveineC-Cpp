@@ -14,6 +14,8 @@ import org.moosetechnology.famix.famixtraits.TParameter;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
+import org.moosetechnology.famix.famixtraits.TType;
+import org.moosetechnology.famix.famixtraits.TTypedEntity;
 import org.moosetechnology.famix.famixtraits.TWithAccesses;
 import org.moosetechnology.famix.famixtraits.TWithInvocations;
 import org.moosetechnology.famix.famixtraits.TWithParameters;
@@ -23,13 +25,15 @@ import org.moosetechnology.famix.famixtraits.TWithStatements;
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("BehaviouralEntity")
-public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TWithAccesses, TWithInvocations, TWithParameters, TWithReferences, TWithStatements {
+public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithParameters, TWithReferences, TWithStatements {
 
     private Number numberOfStatements;
     
     private Collection<TAccess> accesses; 
 
     private Number cyclomaticComplexity;
+
+    private TType declaredType;
     
     private Collection<TInvocation> incomingInvocations; 
 
@@ -392,5 +396,20 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
         return getParameters().size();
 	}
 
+    @FameProperty(name = "declaredType", opposite = "typedEntities")
+    public TType getDeclaredType() {
+        return declaredType;
+    }
+
+    public void setDeclaredType(TType declaredType) {
+        if (this.declaredType != null) {
+            if (this.declaredType.equals(declaredType)) return;
+            this.declaredType.getTypedEntities().remove(this);
+        }
+        this.declaredType = declaredType;
+        if (declaredType == null) return;
+        declaredType.getTypedEntities().add(this);
+    }
+    
 }
 

@@ -28,12 +28,10 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("Function")
-public class Function extends BehaviouralEntity implements TEntityMetaLevelDependency, TFunction, THasSignature, TNamedEntity, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithReferences, TWithStatements {
+public class Function extends BehaviouralEntity implements TEntityMetaLevelDependency, TFunction, THasSignature, TNamedEntity, TSourceEntity, TWithAccesses, TWithInvocations, TWithReferences, TWithStatements {
 
     private Collection<TAccess> accesses; 
 
-    private TType declaredType;
-    
     private TWithFunctions functionOwner;
     
     private Boolean isStub;
@@ -101,21 +99,6 @@ public class Function extends BehaviouralEntity implements TEntityMetaLevelDepen
         return !getAccesses().isEmpty();
     }
 
-    @FameProperty(name = "declaredType", opposite = "typedEntities")
-    public TType getDeclaredType() {
-        return declaredType;
-    }
-
-    public void setDeclaredType(TType declaredType) {
-        if (this.declaredType != null) {
-            if (this.declaredType.equals(declaredType)) return;
-            this.declaredType.getTypedEntities().remove(this);
-        }
-        this.declaredType = declaredType;
-        if (declaredType == null) return;
-        declaredType.getTypedEntities().add(this);
-    }
-    
     @FameProperty(name = "fanIn", derived = true)
     public Number getFanIn() {
         // TODO: this is a derived property, implement this method manually.

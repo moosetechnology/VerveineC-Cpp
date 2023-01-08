@@ -12,8 +12,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.moosetechnology.famix.cpp.Reference;
-import org.moosetechnology.famix.cpp.Type;
+import org.moosetechnology.famix.famixcentities.Reference;
+import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 
 public class ReferenceRefVisitor extends AbstractRefVisitor {
@@ -138,7 +138,7 @@ public class ReferenceRefVisitor extends AbstractRefVisitor {
 
 
 	protected Reference referenceToType(Type referedType) {
-		Reference ref = dico.addFamixReference(getContext().topBehaviouralEntity(), referedType,  getContext().getLastReference());
+		Reference ref = (Reference) dico.addFamixReference(getContext().topBehaviouralEntity(), referedType,  getContext().getLastReference());
 		getContext().setLastReference(ref);
 		return ref;
 	}
