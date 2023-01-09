@@ -151,9 +151,9 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 			icl.accept(this);
 
 			if (returnedEntity instanceof Association) {
-				if (invok != null) {
-					invok.addArguments((Association) returnedEntity);
-				}
+//				if (invok != null) {
+//					invok.addArguments((Association) returnedEntity);
+//				}
 			}
 			else {
 				// so that the position of arguments match exactly their corresponding parameters
@@ -161,9 +161,9 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 				IBinding fakeBnd = resolver.mkStubKey(EMPTY_ARGUMENT_NAME, UnknownVariable.class);
 				UnknownVariable fake = dico.ensureFamixUniqEntity(UnknownVariable.class, fakeBnd, EMPTY_ARGUMENT_NAME);
 				TAccess acc = dico.addFamixAccess(getContext().topBehaviouralEntity(), fake, /*isWrite*/false, /*prev*/null);
-				if (invok != null) {
-					invok.addArguments(acc);
-				}
+//				if (invok != null) {
+//					invok.addArguments(acc);
+//				}
 				dico.addSourceAnchor(acc, filename, icl.getFileLocation());
 			}
 		}

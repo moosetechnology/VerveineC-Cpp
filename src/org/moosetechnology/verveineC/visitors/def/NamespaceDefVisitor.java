@@ -4,7 +4,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.index.IIndex;
-import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixcppentities.Package;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 
@@ -28,13 +28,13 @@ public class NamespaceDefVisitor extends AbstractVisitor {
 
 	@Override
 	public int visit(ICPPASTNamespaceDefinition node) {
-		Namespace fmx;
+		Package fmx;
 		IASTName localNodeName = nodeName = node.getName();
 		if (! nodeName.toString().equals("")) {
 			nodeBnd = resolver.getBinding(nodeName);
 
-			fmx = dico.ensureFamixNamespace(nodeBnd, nodeName.toString(), (Namespace) this.getContext().top());
-			fmx.setIsStub(false);
+			fmx = dico.ensureFamixPackage(nodeBnd, nodeName.toString(), (Package)null/*this.getContext().top()*/ );
+			//fmx.setIsStub(false);
 			
 			this.getContext().push(fmx);
 		}

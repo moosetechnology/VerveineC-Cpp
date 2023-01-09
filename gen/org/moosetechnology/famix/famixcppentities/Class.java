@@ -33,7 +33,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Cpp-Entities")
 @FameDescription("Class")
-public class Class extends Type implements TClass, TEntityMetaLevelDependency, TInvocationsReceiver, TNamedEntity, TPackageable, TReferenceable, TSourceEntity, TType, TWithAttributes, TWithComments, TWithInheritances, TWithMethods {
+public class Class extends Type implements TClass, TEntityMetaLevelDependency, TInvocationsReceiver, TNamedEntity, TPackageable, TReferenceable, TSourceEntity, TType, TWithAttributes, TWithComments, TWithInheritances, TWithMethods, TWithTypes {
 
     private Collection<TAttribute> attributes; 
 
@@ -62,6 +62,8 @@ public class Class extends Type implements TClass, TEntityMetaLevelDependency, T
     private TWithTypes typeContainer;
     
     private Collection<TTypedEntity> typedEntities; 
+
+    private Collection<TType> types; 
 
 
 
@@ -674,6 +676,57 @@ public class Class extends Type implements TClass, TEntityMetaLevelDependency, T
 
     public boolean hasTypedEntities() {
         return !getTypedEntities().isEmpty();
+    }
+
+    @FameProperty(name = "types", opposite = "typeContainer", derived = true)
+    public Collection<TType> getTypes() {
+        if (types == null) {
+            types = new MultivalueSet<TType>() {
+                @Override
+                protected void clearOpposite(TType e) {
+                    e.setTypeContainer(null);
+                }
+                @Override
+                protected void setOpposite(TType e) {
+                    e.setTypeContainer(Class.this);
+                }
+            };
+        }
+        return types;
+    }
+    
+    public void setTypes(Collection<? extends TType> types) {
+        this.getTypes().clear();
+        this.getTypes().addAll(types);
+    }                    
+    
+        
+    public void addTypes(TType one) {
+        this.getTypes().add(one);
+    }   
+    
+    public void addTypes(TType one, TType... many) {
+        this.getTypes().add(one);
+        for (TType each : many)
+            this.getTypes().add(each);
+    }   
+    
+    public void addTypes(Iterable<? extends TType> many) {
+        for (TType each : many)
+            this.getTypes().add(each);
+    }   
+                
+    public void addTypes(TType[] many) {
+        for (TType each : many)
+            this.getTypes().add(each);
+    }
+    
+    public int numberOfTypes() {
+        return getTypes().size();
+    }
+
+    public boolean hasTypes() {
+        return !getTypes().isEmpty();
     }
 
     @FameProperty(name = "weightOfAClass", derived = true)

@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Path;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.SourcedEntity;
-import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixcppentities.Package;
 
 import org.moosetechnology.verveineC.plugin.CDictionary;
@@ -130,12 +129,12 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public int visit(ICPPASTNamespaceDefinition node) {
-		Namespace fmx;
+		Package fmx;
 	
 
 		nodeBnd = resolver.getBinding(node.getName());
 
-		fmx = dico.getEntityByKey(Namespace.class, nodeBnd);
+		fmx = dico.getEntityByKey(Package.class, nodeBnd);
 		
 		getContext().push(fmx);
 

@@ -116,7 +116,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 
 				aliasType = dico.ensureFamixTypeAlias(nodeBnd, nodeName.toString(), (TWithTypes)getContext().top());
 				aliasType.setIsStub(false);
-				aliasType.setParentPackage(currentPackage);
+				//TODO aliasType.setParentPackage(currentPackage);
 				aliasType.setAliasedType(concreteType);
 				/* We can be in a case where the class declaration being processed belongs to a file imported using an #includes statement
 				 In such a case, filename instance variable will be initialized with location of the file *including* the external file. 

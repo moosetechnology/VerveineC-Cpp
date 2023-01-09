@@ -34,6 +34,7 @@ import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcppentities.Method;
+import org.moosetechnology.famix.famixtraits.TWithParameters;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
@@ -416,7 +417,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 		Parameter fmx;
 		
 		if (! paramAlreadyExist(iParam)) {
-			fmx = dico.ensureFamixParameter(nodeBnd, nodeName.toString(), getContext().topBehaviouralEntity());
+			fmx = dico.ensureFamixParameter(nodeBnd, nodeName.toString(), (TWithParameters) getContext().topBehaviouralEntity());
 			fmx.setIsStub(! isBehaviouralDefinition);
 			isDefinitiveParameters[iParam] = isBehaviouralDefinition;
 			orderedParameters[iParam] = fmx;
@@ -428,7 +429,7 @@ public class BehaviouralDefVisitor extends ClassMemberDefVisitor {
 					// we are creating a "definitive" parameter, previous one existed as a "potential" parameter
 					// but with a different name, so we need to change the parameter
 					dico.removeParameter( potential);
-					fmx = dico.ensureFamixParameter(nodeBnd, nodeName.toString(), getContext().topBehaviouralEntity());
+					fmx = dico.ensureFamixParameter(nodeBnd, nodeName.toString(), (TWithParameters) getContext().topBehaviouralEntity());
 				}
 				else {
 					fmx = potential;

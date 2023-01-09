@@ -9,7 +9,7 @@ import org.moosetechnology.famix.famixcentities.Invocation;
 import org.moosetechnology.famix.famixcentities.Reference;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcppentities.Method;
-import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixcppentities.Package;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
 
 public class CppEntityStack {
@@ -109,7 +109,7 @@ public class CppEntityStack {
 	 * Sets the Famix namespace on top of the "context stack"
 	 * @param e -- the Famix namespace
 	 */
-	public void pushPckg(Namespace e) {
+	public void pushPckg(Package e) {
 		push(e);
 	}
 
@@ -206,12 +206,12 @@ public class CppEntityStack {
 	}
 
 	/**
-	 * Pops the top Famix Namespace from the "context stack"<BR>
-	 * Note: does not check that there is such a namesapce, so could possibly throw an EmptyStackException
-	 * @return the Famix Namespace
+	 * Pops the top Famix Package (or C++ Namespace) from the "context stack"<BR>
+	 * Note: does not check that there is such a package, so could possibly throw an EmptyStackException
+	 * @return the Famix Package
 	 */
-	public Namespace popNamespace() {
-		return this.popUpto(Namespace.class);
+	public Package popPckg() {
+		return this.popUpto(Package.class);
 	}
 
 	/**
@@ -254,12 +254,12 @@ public class CppEntityStack {
 	}
 
 	/**
-	 * Returns the Famix Namespace on top of the "context stack"
-	 * Note: does not check that there is such a Namespace, so could possibly throw an EmptyStackException
-	 * @return the Famix Namespace
+	 * Returns the Famix Package on top of the "context stack"
+	 * Note: does not check that there is such a Package, so could possibly throw an EmptyStackException
+	 * @return the Famix Package
 	 */
-	public Namespace topNamespace() {
-		return this.lookUpto(Namespace.class);
+	public Package topPckg() {
+		return this.lookUpto(Package.class);
 	}
 
 	/**
@@ -282,12 +282,13 @@ public class CppEntityStack {
 	}
 
 	/**
-	 * Returns the higher-most namespace in the C++ sense on the EntityStack
+	 * Returns the higher-most namespace in the Famix sense on the EntityStack
 	 * C++ namespaces we are interested in are: methods, classes, namespaces
 	 * @return null if could not find a C++ namespace
 	 */
-	public Namespace getTopCppNamespace() {
-		return this.lookUpto(Namespace.class);
+	@Deprecated
+	public Package getTopCppNamespace() {
+		return this.lookUpto(Package.class);
 /*		Stack<TNamedEntity> tmp = new Stack<TNamedEntity>();
 		TNamedEntity top;
 		

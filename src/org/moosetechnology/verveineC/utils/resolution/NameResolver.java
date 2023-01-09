@@ -17,8 +17,10 @@ import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.ContainerEntity;
 import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcentities.UnknownContainerEntity;
 import org.moosetechnology.famix.famixcppentities.Method;
-import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixcppentities.Package;
+import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
 import org.moosetechnology.famix.famixtraits.TAttribute;
 import org.moosetechnology.famix.famixtraits.TFunction;
 import org.moosetechnology.famix.famixtraits.TMethod;
@@ -28,6 +30,7 @@ import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.famix.famixtraits.TType;
 import org.moosetechnology.famix.famixtraits.TWithAttributes;
 import org.moosetechnology.famix.famixtraits.TWithFunctions;
+import org.moosetechnology.famix.famixtraits.TWithGlobalVariables;
 import org.moosetechnology.famix.famixtraits.TWithLocalVariables;
 import org.moosetechnology.famix.famixtraits.TWithMethods;
 import org.moosetechnology.famix.famixtraits.TWithParameterizedTypes;
@@ -102,7 +105,7 @@ public class NameResolver {
 				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.famixcppentities.Class.class);
 			}
 			else {
-				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, Namespace.class);
+				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, Package.class);
 			}
 			simpleName = qualName.unqualifiedName();
 		}
@@ -346,7 +349,7 @@ public class NameResolver {
 				fmx = dico.ensureFamixMethod(bnd, new QualifiedName(name).unqualifiedName(), sig, /*owner*/(TWithMethods)parent);
 			}
 			else {                    //   C function or may be a stub ?
-				fmx = dico.ensureFamixFunction(bnd, new QualifiedName(name).unqualifiedName(), SignatureBuilderVisitor.signatureFromAST(node), (ContainerEntity)context.top());
+				fmx = dico.ensureFamixFunction(bnd, new QualifiedName(name).unqualifiedName(), SignatureBuilderVisitor.signatureFromAST(node), (TWithFunctions)context.top());
 			}
 		}
 
@@ -361,7 +364,7 @@ public class NameResolver {
 		for (Type cl : dico.getEntityByName(Type.class, name)) {
 			return cl;   // return the 1st type found (if any)
 		}
-		for (Namespace ns : dico.getEntityByName(Namespace.class, name)) {
+		for (Package ns : dico.getEntityByName(Package.class, name)) {
 			return ns;   // return the 1st namespace found (if any)
 		}
 		for (Function fct : dico.getEntityByName(Function.class, name)) {
@@ -439,7 +442,7 @@ public class NameResolver {
 	 * Search for a unqualified name within the scope of a context.
 	 * @return TNamedEntity found or null if none match
 	 */
-	public TNamedEntity findInLocals(String name, ScopingEntity context) {		
+	public TNamedEntity findInLocals(String name, TWithGlobalVariables context) {		
 		for (TStructuralEntity child : context.getGlobalVariables()) {
 			if (child.getName().equals(name)) {
 				return child;
@@ -592,7 +595,7 @@ public class NameResolver {
 		ContainerEntity parent;
 		QualifiedName qualName = new QualifiedName(name);
 		if (qualName.isFullyQualified()) {
-			parent = (ContainerEntity) resolveOrCreate( qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.cpp.Class.class);
+			parent = (ContainerEntity) resolveOrCreate( qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.famixcppentities.Class.class);
 		}
 		else {
 			parent = (ContainerEntity) context.top();
@@ -639,7 +642,8 @@ public class NameResolver {
 			}
 			else {
 				QualifiedName qualName = new QualifiedName(name);
-				fmx = dico.ensureFamixType(bnd, qualName.unqualifiedName(), /*owner*/(ContainerEntity)resolveOrCreate(qualName.nameQualifiers().toString(), /*mayBeNull*/false, UnknownContainerEntity.class));
+				TWithTypes owner = (TWithTypes) resolveOrCreate(qualName.nameQualifiers().toString(), /*mayBeNull*/false, UnknownContainerEntity.class);
+				fmx = dico.ensureFamixType(bnd, qualName.unqualifiedName(), owner);
 			}
 		}
 
@@ -660,22 +664,23 @@ public class NameResolver {
 		String typName = new QualifiedName(strName.substring(0, i)).unqualifiedName();
 
 		TParameterizedType fmx = null;
-		TWithParameterizedTypes generic = null;
+		ParameterizableClass generic = null;
 		try {
-			generic = (TWithParameterizedTypes) findInParent(typName, getContext().top(), /*recursive*/true);
+			generic = (ParameterizableClass) findInParent(typName, getContext().top(), /*recursive*/true);
 		}
 		catch (ClassCastException e) {
 			// create a ParameterizedType for an unknown generic
 			// 'generic' var. remains null
 		}
-		fmx = dico.ensureFamixParameterizedType(bnd, typName, generic, (ContainerEntity)resolveOrCreate(new QualifiedName(name).nameQualifiers().toString(), /*mayBeNull*/false, UnknownContainerEntity.class));
+		TWithTypes owner = (TWithTypes) resolveOrCreate(new QualifiedName(name).nameQualifiers().toString(), /*mayBeNull*/false, UnknownContainerEntity.class);
+		fmx = dico.ensureFamixParameterizedType(bnd, typName, generic, owner);
 
 		for (String typArg : strName.substring(i+1, strName.length()-1).split(",")) {
 			typArg = typArg.trim();
 			try {
 				Type arg = (Type) findInParent(typArg, getContext().top(), /*recursive*/true);
 				if (arg != null) {
-					fmx.addArguments(arg);
+//TODO					fmx.addArguments(arg);
 				}
 			}
 			catch (ClassCastException e) {
@@ -684,7 +689,7 @@ public class NameResolver {
 			}
 		}
 		
-		return fmx;
+		return (Type) fmx;
 	}
 
 }

@@ -10,12 +10,9 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Traits")
 @FameDescription("TPackage")
-public interface TPackage extends TEntityMetaLevelDependency, TNamedEntity, TSourceEntity {
+public interface TPackage extends TNamedEntity, TEntityMetaLevelDependency, TSourceEntity {
 
-        @FameProperty(name = "weightedMethodCount", derived = true)
-    public Number getWeightedMethodCount();
-
-    @FameProperty(name = "childEntities", opposite = "parentPackage", derived = true)
+        @FameProperty(name = "childEntities", opposite = "parentPackage", derived = true)
     public Collection<TPackageable> getChildEntities();
 
     public void setChildEntities(Collection<? extends TPackageable> childEntities);
@@ -31,6 +28,9 @@ public interface TPackage extends TEntityMetaLevelDependency, TNamedEntity, TSou
     public int numberOfChildEntities();
 
     public boolean hasChildEntities();
+
+    @FameProperty(name = "weightedMethodCount", derived = true)
+    public Number getWeightedMethodCount();
 
 
 

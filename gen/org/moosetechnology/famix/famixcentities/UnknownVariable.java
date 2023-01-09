@@ -20,7 +20,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 
 @FamePackage("Famix-C-Entities")
-@FameDescription("unknownVariable")
+@FameDescription("UnknownVariable")
 public class UnknownVariable extends NamedEntity implements TAccessible, TEntityMetaLevelDependency, TNamedEntity, TSourceEntity, TStructuralEntity, TTypedEntity, TUnknownVariable {
 
     private TType declaredType;

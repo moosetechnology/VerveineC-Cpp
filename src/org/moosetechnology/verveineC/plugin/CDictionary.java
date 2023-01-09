@@ -14,35 +14,34 @@ import org.moosetechnology.famix.famixcentities.AliasType;
 import org.moosetechnology.famix.famixcentities.Association;
 import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
-import org.moosetechnology.famix.famixcentities.BehaviouralReference;
+import org.moosetechnology.famix.famixcentities.BehaviouralPointer;
+import org.moosetechnology.famix.famixcentities.Comment;
 import org.moosetechnology.famix.famixcentities.ContainerEntity;
-import org.moosetechnology.famix.famixcentities.DerefInvocation;
+import org.moosetechnology.famix.famixcentities.DereferencedInvocation;
 import org.moosetechnology.famix.famixcentities.Enum;
 import org.moosetechnology.famix.famixcentities.EnumValue;
 import org.moosetechnology.famix.famixcentities.Function;
-import org.moosetechnology.famix.famixcentities.GlobalVar;
+import org.moosetechnology.famix.famixcentities.GlobalVariable;
 import org.moosetechnology.famix.famixcentities.IndexedFileAnchor;
-import org.moosetechnology.famix.famixcentities.LocalVar;
-import org.moosetechnology.famix.famixcentities.MultipleFileanchor;
+import org.moosetechnology.famix.famixcentities.LocalVariable;
 import org.moosetechnology.famix.famixcentities.Module;
+import org.moosetechnology.famix.famixcentities.MultipleFileAnchor;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.PrimitiveType;
 import org.moosetechnology.famix.famixcentities.Reference;
 import org.moosetechnology.famix.famixcentities.SourceAnchor;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcentities.UnknownVariable;
-import org.moosetechnology.famix.famixcppentities.Comment;
 import org.moosetechnology.famix.famixcppentities.ImplicitVariable;
 import org.moosetechnology.famix.famixcppentities.Inheritance;
 import org.moosetechnology.famix.famixcppentities.Method;
-import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixcppentities.OOInvocation;
 import org.moosetechnology.famix.famixcppentities.Package;
 import org.moosetechnology.famix.famixcppentities.ParameterType;
 import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
 import org.moosetechnology.famix.famixcppentities.ParameterizedType;
 import org.moosetechnology.famix.famixcpreprocentities.CFile;
-import org.moosetechnology.famix.famixcpreprocentities.CompilUnit;
+import org.moosetechnology.famix.famixcpreprocentities.CompilationUnit;
 import org.moosetechnology.famix.famixcpreprocentities.HeaderFile;
 import org.moosetechnology.famix.famixcpreprocentities.Include;
 import org.moosetechnology.famix.famixcpreprocentities.PreprocessorIfdef;
@@ -342,15 +341,15 @@ public class CDictionary {
 	}
 
 	public SourceAnchor addSourceAnchorMulti(TSourceEntity fmx, String filename, int start, int end) {
-		MultipleFileanchor mfa;
+		MultipleFileAnchor mfa;
 
 		if (fmx == null) {
 			return null;
 		}
 
-		mfa = (MultipleFileanchor) fmx.getSourceAnchor();
+		mfa = (MultipleFileAnchor) fmx.getSourceAnchor();
 		if (mfa == null) {
-			mfa = new MultipleFileanchor();
+			mfa = new MultipleFileAnchor();
 			fmx.setSourceAnchor(mfa);
 			famixRepoAdd(mfa);
 		}
@@ -610,8 +609,8 @@ public class CDictionary {
 		return acc;
 	}
 
-	public DerefInvocation addFamixDereferencedInvocation(BehaviouralEntity sender, TWithDereferencedInvocations referencer, String signature, Association prev) {
-		DerefInvocation invok = new DerefInvocation();
+	public DereferencedInvocation addFamixDereferencedInvocation(BehaviouralEntity sender, TWithDereferencedInvocations referencer, String signature, Association prev) {
+		DereferencedInvocation invok = new DereferencedInvocation();
 		invok.setSender(sender);
 		invok.setReferencer(referencer);
 		chainPrevNext(prev, invok);
@@ -624,9 +623,9 @@ public class CDictionary {
 		return invok;
 	}
 
-	public BehaviouralReference addFamixBehaviouralPointer(BehaviouralEntity ref, BehaviouralEntity fmx) {
-		BehaviouralReference pointer = new BehaviouralReference();
-		pointer.setPointed(fmx);
+	public BehaviouralPointer addFamixBehaviouralPointer(BehaviouralEntity ref, BehaviouralEntity fmx) {
+		BehaviouralPointer pointer = new BehaviouralPointer();
+		pointer.setBehaviouralPointed(fmx);
 		pointer.setReferer(ref);
 		famixRepoAdd(pointer);
 		return pointer;
@@ -639,7 +638,7 @@ public class CDictionary {
 				fmx = new HeaderFile();
 			}
 			else {
-				fmx = new CompilUnit();
+				fmx = new CompilationUnit();
 			}
 			fmx.setName(name);
 			famixRepo.add(fmx);
@@ -868,8 +867,8 @@ public class CDictionary {
 	 * @param persistIt -- whether the LocalVariable should be persisted in the Famix repository
 	 * @return the FAMIX LocalVariable or null in case of a FAMIX error
 	 */
-	public LocalVar ensureFamixLocalVariable(IBinding key, String name, Type type, TWithLocalVariables owner, boolean persistIt) {
-		LocalVar fmx = ensureFamixEntity(LocalVar.class, key, name, persistIt);
+	public LocalVariable ensureFamixLocalVariable(IBinding key, String name, Type type, TWithLocalVariables owner, boolean persistIt) {
+		LocalVariable fmx = ensureFamixEntity(LocalVariable.class, key, name, persistIt);
 		fmx.setParentBehaviouralEntity(owner);
 		fmx.setDeclaredType(type);
 		return fmx;
@@ -932,15 +931,15 @@ public class CDictionary {
 
 		if (fmx == null) {
 			fmx = ensureFamixEntity(UnknownVariable.class, key, name, /*persistIt*/true);
-			fmx.setParentPackage(parent);
+			//TODO fmx.setParentPackage(parent);
 		}
 		
 		return fmx;
 	}
 
-	public GlobalVar ensureFamixGlobalVariable(IBinding key, String name, TWithGlobalVariables parent) {
-		GlobalVar fmx;
-		fmx = ensureFamixEntity(GlobalVar.class, key, name, /*persistIt*/true);
+	public GlobalVariable ensureFamixGlobalVariable(IBinding key, String name, TWithGlobalVariables parent) {
+		GlobalVariable fmx;
+		fmx = ensureFamixEntity(GlobalVariable.class, key, name, /*persistIt*/true);
 		fmx.setParentScope(parent);
 
 		return fmx;
@@ -950,6 +949,7 @@ public class CDictionary {
 		return ensureFamixEntity(fmxClass, key, name, /*persistIt*/true);
 	}
 
+/*
 	public Namespace ensureFamixNamespace(IBinding key, String name, Namespace parent) {
 		Namespace fmx = ensureFamixNamespace(key, name);
 		/*System.out.println(this.getEntityByKey(key));
@@ -957,7 +957,7 @@ public class CDictionary {
 			if (parent != fmx.getParentScope()) {
 				fmx.getName();
 			}
-		}*/
+		}* /
 		if (parent != null) {
 			fmx.setParentScope(parent);
 		}
@@ -969,10 +969,11 @@ public class CDictionary {
 	 * We assume that Namespaces must be uniq for a given name
 	 * @param name -- the name of the FAMIX Namespace
 	 * @return the FAMIX Namespace or null in case of a FAMIX error
-	 */
+	 * /
 	public Namespace ensureFamixNamespace(IBinding key, String name) {
 		return ensureFamixUniqEntity(Namespace.class, key, name);
 	}
+*/
 
 	public Package ensureFamixPackage(IBinding key, String name, Package parent) {
 		Package fmx = ensureFamixEntity(Package.class, key, name, /*persitIt*/true);
@@ -1137,7 +1138,7 @@ public class CDictionary {
 	 */
 	public void setVisibility(TNamedEntity fmx, Visibility visi) {
 		if (visi != null) {
-			fmx.addModifiers(visi.toString());
+//TODO			fmx.addModifiers(visi.toString());
 		}
 	}
 
@@ -1182,15 +1183,16 @@ public class CDictionary {
 
 	/**
 	 * Computes moose name for an entity in a Container.
-	 * This is a convenience method that delegates to one of {@link #mooseName(Function, String)}; {@link #mooseName(Method, String)}; {@link #mooseName(Namespace, String)};
+	 * This is a convenience method that delegates to one of {@link #mooseName(Function, String)}; {@link #mooseName(Method, String)}; {@link #mooseName(Package, String)};
 	 * {@link #mooseName(Package, String)}; or {@link #mooseName(Type, String)}
 	 * And this is required because at some point we need to call it with an unknown ContainerEntity :-(
 	 */
 	static public String mooseName(ContainerEntity parent, String name) {
-		if (parent instanceof Namespace) {
+		/*if (parent instanceof Namespace) {
 			return mooseName((Namespace)parent, name);
 		}
-		else if (parent instanceof Package) {
+		else */
+		if (parent instanceof Package) {
 			return mooseName((Package)parent, name);
 		}
 		else if (parent instanceof Type) {
@@ -1210,8 +1212,8 @@ public class CDictionary {
 	/**
 	 * Computes moose name for a Namespace child.
 	 * MooseName is the concatenation of the moosename of the parent Namescape with the simple name of the child
-	 */
-	static public String mooseName(Namespace parent, String name) {
+	 * /
+	static public String mooseName(Package parent, String name) {
 		String ret;
 		if (parent != null) {
 			ret = concatMooseName( mooseName((Namespace)parent.getParentScope(), parent.getName()) , name);
@@ -1221,18 +1223,26 @@ public class CDictionary {
 		}
 		return ret;
 	}
-	
+*/
+
 	/**
 	 * Computes moose name for a Package child
 	 * MooseName is the concatenation of the moosename of the parent Package with the simple name of the child
 	 */
 	static public String mooseName(Package parent, String name) {
 		if (parent != null) {
-			return concatMooseName( mooseName(parent.getParentPackage(), parent.getName()) , name);
+			return concatMooseName( mooseName( (Package)parent.getParentPackage(), parent.getName()) , name);
 		}
 		else {
 			return name;
 		}
+	}
+
+	/**
+	 * Computes moose name for a Module.
+	 */
+	static public String mooseName(Module parent, String name) {
+		return name;
 	}
 
 	/**
@@ -1241,7 +1251,7 @@ public class CDictionary {
 	 */
 	static public String mooseName(Method parent, String name) {
 		if (parent != null) {
-			return concatMooseName( mooseName(parent.getParentType(), parent.getSignature()) , name);
+			return concatMooseName( mooseName((Type)parent.getParentType(), parent.getSignature()) , name);
 		}
 		else {
 			return name;
@@ -1254,7 +1264,7 @@ public class CDictionary {
 	 */
 	static public String mooseName(Function parent, String name) {
 		if (parent != null) {
-			return concatMooseName( mooseName(parent.getFunctionOwner(), parent.getSignature()) , name);
+			return concatMooseName( mooseName((Module)parent.getFunctionOwner(), parent.getSignature()) , name);
 		}
 		else {
 			return name;
@@ -1267,7 +1277,7 @@ public class CDictionary {
 	 */
 	static public String mooseName(Type parent, String name) {
 		if (parent != null) {
-			return concatMooseName( mooseName(parent.getTypeContainer(), parent.getName()) , name);
+			return concatMooseName( mooseName((ContainerEntity) parent.getTypeContainer(), parent.getName()) , name);
 		}
 		else {
 			return name;

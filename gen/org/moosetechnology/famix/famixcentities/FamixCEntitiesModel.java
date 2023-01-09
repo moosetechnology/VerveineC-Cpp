@@ -17,7 +17,7 @@ public class FamixCEntitiesModel {
 		metamodel.with(org.moosetechnology.famix.famixcentities.Association.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Attribute.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.BehaviouralEntity.class);
-		metamodel.with(org.moosetechnology.famix.famixcentities.BehaviouralReference.class);
+		metamodel.with(org.moosetechnology.famix.famixcentities.BehaviouralPointer.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Comment.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.ContainerEntity.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.DereferencedInvocation.class);
@@ -44,7 +44,7 @@ public class FamixCEntitiesModel {
 		metamodel.with(org.moosetechnology.famix.famixcentities.Struct.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Type.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Union.class);
-		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownBehaviour.class);
+		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownBehaviouralEntity.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownContainerEntity.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownSourceLanguage.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownVariable.class);

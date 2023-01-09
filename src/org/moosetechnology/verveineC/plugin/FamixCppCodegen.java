@@ -19,7 +19,7 @@
 //  <http://www.gnu.org/licenses/>.
 //  
 
-package org.moosetechnology.famix;
+package org.moosetechnology.verveineC.plugin;
 
 import ch.akuhn.fame.MetaRepository;
 import ch.akuhn.fame.Repository;

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.moosetechnology.famix.famixcentities.Attribute;
+import org.moosetechnology.famix.famixtraits.TNamedEntity;
 
 class StructsTest extends AbstractTest {
 
@@ -47,7 +48,7 @@ class StructsTest extends AbstractTest {
 		assertEquals(0, clazz.numberOfTypes());
 		assertNotNull(clazz.getTypeContainer());
 
-		assertEquals("College", clazz.getTypeContainer().getName());
+		assertEquals("College", ((TNamedEntity)clazz.getTypeContainer()).getName());
 	}
 
 }

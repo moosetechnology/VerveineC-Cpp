@@ -37,10 +37,14 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Cpp-Entities")
 @FameDescription("Method")
-public class Method extends BehaviouralEntity implements TEntityMetaLevelDependency, THasKind, TInvocable, TMethod, TMethodMetrics, TNamedEntity, TNamespace, TSourceEntity, TWithAccesses, TWithImplicitVariables, TWithInvocations, TWithLocalVariables, TWithParameters, TWithReferences, TWithStatements {
+public class Method extends BehaviouralEntity implements TEntityMetaLevelDependency, THasKind, THasSignature, TInvocable, TMethod, TMethodMetrics, TNamedEntity, TNamespace, TSourceEntity, TTypedEntity, TWithAccesses, TWithImplicitVariables, TWithInvocations, TWithLocalVariables, TWithParameters, TWithReferences, TWithStatements {
 
     private Collection<TAccess> accesses; 
 
+    private Number cyclomaticComplexity;
+    
+    private TType declaredType;
+    
     private Collection<TImplicitVariable> implicitVariables; 
 
     private Collection<TInvocation> incomingInvocations; 
@@ -59,7 +63,11 @@ public class Method extends BehaviouralEntity implements TEntityMetaLevelDepende
 
     private Collection<TReference> outgoingReferences; 
 
+    private Collection<TParameter> parameters; 
+
     private TWithMethods parentType;
+    
+    private String signature;
     
     private TSourceAnchor sourceAnchor;
     
@@ -128,6 +136,30 @@ public class Method extends BehaviouralEntity implements TEntityMetaLevelDepende
         return !getAccesses().isEmpty();
     }
 
+    @FameProperty(name = "cyclomaticComplexity")
+    public Number getCyclomaticComplexity() {
+        return cyclomaticComplexity;
+    }
+
+    public void setCyclomaticComplexity(Number cyclomaticComplexity) {
+        this.cyclomaticComplexity = cyclomaticComplexity;
+    }
+    
+    @FameProperty(name = "declaredType", opposite = "typedEntities")
+    public TType getDeclaredType() {
+        return declaredType;
+    }
+
+    public void setDeclaredType(TType declaredType) {
+        if (this.declaredType != null) {
+            if (this.declaredType.equals(declaredType)) return;
+            this.declaredType.getTypedEntities().remove(this);
+        }
+        this.declaredType = declaredType;
+        if (declaredType == null) return;
+        declaredType.getTypedEntities().add(this);
+    }
+    
     @FameProperty(name = "fanIn", derived = true)
     public Number getFanIn() {
         // TODO: this is a derived property, implement this method manually.
@@ -532,6 +564,57 @@ public class Method extends BehaviouralEntity implements TEntityMetaLevelDepende
         return !getOutgoingReferences().isEmpty();
     }
 
+    @FameProperty(name = "parameters", opposite = "parentBehaviouralEntity", derived = true)
+    public Collection<TParameter> getParameters() {
+        if (parameters == null) {
+            parameters = new MultivalueSet<TParameter>() {
+                @Override
+                protected void clearOpposite(TParameter e) {
+                    e.setParentBehaviouralEntity(null);
+                }
+                @Override
+                protected void setOpposite(TParameter e) {
+                    e.setParentBehaviouralEntity(Method.this);
+                }
+            };
+        }
+        return parameters;
+    }
+    
+    public void setParameters(Collection<? extends TParameter> parameters) {
+        this.getParameters().clear();
+        this.getParameters().addAll(parameters);
+    }                    
+    
+        
+    public void addParameters(TParameter one) {
+        this.getParameters().add(one);
+    }   
+    
+    public void addParameters(TParameter one, TParameter... many) {
+        this.getParameters().add(one);
+        for (TParameter each : many)
+            this.getParameters().add(each);
+    }   
+    
+    public void addParameters(Iterable<? extends TParameter> many) {
+        for (TParameter each : many)
+            this.getParameters().add(each);
+    }   
+                
+    public void addParameters(TParameter[] many) {
+        for (TParameter each : many)
+            this.getParameters().add(each);
+    }
+    
+    public int numberOfParameters() {
+        return getParameters().size();
+    }
+
+    public boolean hasParameters() {
+        return !getParameters().isEmpty();
+    }
+
     @FameProperty(name = "parentType", opposite = "methods", container = true)
     public TWithMethods getParentType() {
         return parentType;
@@ -546,7 +629,16 @@ public class Method extends BehaviouralEntity implements TEntityMetaLevelDepende
         if (parentType == null) return;
         parentType.getMethods().add(this);
     }
+    
+    @FameProperty(name = "signature")
+    public String getSignature() {
+        return signature;
+    }
 
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+    
     @FameProperty(name = "sourceAnchor", opposite = "element", derived = true)
     public TSourceAnchor getSourceAnchor() {
         return sourceAnchor;

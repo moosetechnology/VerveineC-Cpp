@@ -6,8 +6,8 @@ import ch.akuhn.fame.FamePackage;
 
 
 @FamePackage("Famix-C-Entities")
-@FameDescription("BehaviouralReference")
-public class BehaviouralReference extends Association  {
+@FameDescription("UnknownBehaviouralEntity")
+public class UnknownBehaviouralEntity extends BehaviouralEntity  {
 
 
 

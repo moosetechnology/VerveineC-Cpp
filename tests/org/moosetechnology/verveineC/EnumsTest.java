@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.Enum;
 import org.moosetechnology.famix.famixcentities.EnumValue;
 import org.moosetechnology.famix.famixcentities.NamedEntity;
+import org.moosetechnology.famix.famixtraits.TAccess;
 
 class EnumsTest extends AbstractTest {
 
@@ -68,7 +70,8 @@ class EnumsTest extends AbstractTest {
 		assertNotNull(eval);
 
 		assertEquals(1, eval.getIncomingAccesses().size());
-		assertEquals("main", first(eval.getIncomingAccesses()).getAccessor().getName());
+		TAccess accessor = first( eval.getIncomingAccesses() );
+		assertEquals("main", ((BehaviouralEntity)accessor.getAccessor()).getName());
 	}
 
 }

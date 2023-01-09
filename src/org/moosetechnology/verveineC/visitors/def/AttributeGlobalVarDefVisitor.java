@@ -20,11 +20,11 @@ import org.moosetechnology.famix.famixcentities.ContainerEntity;
 import org.moosetechnology.famix.famixcentities.Enum;
 import org.moosetechnology.famix.famixcentities.EnumValue;
 import org.moosetechnology.famix.famixcentities.GlobalVariable;
+import org.moosetechnology.famix.famixcentities.SourcedEntity;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcentities.UnknownContainerEntity;
 import org.moosetechnology.famix.famixcentities.UnknownVariable;
-import org.moosetechnology.famix.famixcppentities.Namespace;
-import org.moosetechnology.famix.famixcppentities.SourcedEntity;
+import org.moosetechnology.famix.famixcppentities.Package;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.famix.famixtraits.TWithAttributes;
 import org.moosetechnology.famix.famixtraits.TWithGlobalVariables;
@@ -150,7 +150,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 			parent = (ContainerEntity) getContext().top();
 		}
 
-		if ( (parent == null) || (parent instanceof Namespace) ) {
+		if ( (parent == null) || (parent instanceof Package) ) {
 			kind = VariableKind.GLOBAL;
 		}
 		else if (parent instanceof Type) {

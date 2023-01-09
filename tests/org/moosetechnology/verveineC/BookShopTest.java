@@ -12,7 +12,7 @@ import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.GlobalVariable;
 import org.moosetechnology.famix.famixcentities.Invocation;
-import org.moosetechnology.famix.famixcentities.UnknownBehaviour;
+import org.moosetechnology.famix.famixcentities.UnknownBehaviouralEntity;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixtraits.GlobalVariableGroup;
 import org.moosetechnology.famix.famixtraits.TAccess;
@@ -78,7 +78,7 @@ class BookShopTest extends AbstractTest {
 			
 			TMethod candidate = (TMethod) first(invok.getCandidates());
 			if (candidate.getIsStub()) {
-				assertEquals( UnknownBehaviour.class, candidate.getClass());
+				assertEquals( UnknownBehaviouralEntity.class, candidate.getClass());
 			}
 			else  {
 				assertEquals( Function.class, candidate.getClass());

@@ -10,31 +10,29 @@ import org.moosetechnology.famix.famixtraits.TAccess;
 import org.moosetechnology.famix.famixtraits.THasSignature;
 import org.moosetechnology.famix.famixtraits.TInvocable;
 import org.moosetechnology.famix.famixtraits.TInvocation;
-import org.moosetechnology.famix.famixtraits.TParameter;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
-import org.moosetechnology.famix.famixtraits.TType;
-import org.moosetechnology.famix.famixtraits.TTypedEntity;
 import org.moosetechnology.famix.famixtraits.TWithAccesses;
 import org.moosetechnology.famix.famixtraits.TWithInvocations;
-import org.moosetechnology.famix.famixtraits.TWithParameters;
 import org.moosetechnology.famix.famixtraits.TWithReferences;
 import org.moosetechnology.famix.famixtraits.TWithStatements;
 
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("BehaviouralEntity")
-public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithParameters, TWithReferences, TWithStatements {
+public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TWithAccesses, TWithInvocations, TWithReferences, TWithStatements {
 
+    private Collection<BehaviouralPointer> behaviouralAddressers; 
+
+    private Collection<BehaviouralPointer> behaviouralPointers; 
+
+    private Number cyclomaticComplexity;
+    
     private Number numberOfStatements;
     
     private Collection<TAccess> accesses; 
 
-    private Number cyclomaticComplexity;
-
-    private TType declaredType;
-    
     private Collection<TInvocation> incomingInvocations; 
 
     private Boolean isStub;
@@ -45,14 +43,123 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
 
     private Collection<TReference> outgoingReferences; 
 
-    private Collection<TParameter> parameters; 
-
     private String signature;
     
     private TSourceAnchor sourceAnchor;
     
 
 
+    @FameProperty(name = "behaviouralAddressers", opposite = "behaviouralPointed", derived = true)
+    public Collection<BehaviouralPointer> getBehaviouralAddressers() {
+        if (behaviouralAddressers == null) {
+            behaviouralAddressers = new MultivalueSet<BehaviouralPointer>() {
+                @Override
+                protected void clearOpposite(BehaviouralPointer e) {
+                    e.setBehaviouralPointed(null);
+                }
+                @Override
+                protected void setOpposite(BehaviouralPointer e) {
+                    e.setBehaviouralPointed(BehaviouralEntity.this);
+                }
+            };
+        }
+        return behaviouralAddressers;
+    }
+    
+    public void setBehaviouralAddressers(Collection<? extends BehaviouralPointer> behaviouralAddressers) {
+        this.getBehaviouralAddressers().clear();
+        this.getBehaviouralAddressers().addAll(behaviouralAddressers);
+    }                    
+    
+        
+    public void addBehaviouralAddressers(BehaviouralPointer one) {
+        this.getBehaviouralAddressers().add(one);
+    }   
+    
+    public void addBehaviouralAddressers(BehaviouralPointer one, BehaviouralPointer... many) {
+        this.getBehaviouralAddressers().add(one);
+        for (BehaviouralPointer each : many)
+            this.getBehaviouralAddressers().add(each);
+    }   
+    
+    public void addBehaviouralAddressers(Iterable<? extends BehaviouralPointer> many) {
+        for (BehaviouralPointer each : many)
+            this.getBehaviouralAddressers().add(each);
+    }   
+                
+    public void addBehaviouralAddressers(BehaviouralPointer[] many) {
+        for (BehaviouralPointer each : many)
+            this.getBehaviouralAddressers().add(each);
+    }
+    
+    public int numberOfBehaviouralAddressers() {
+        return getBehaviouralAddressers().size();
+    }
+
+    public boolean hasBehaviouralAddressers() {
+        return !getBehaviouralAddressers().isEmpty();
+    }
+
+    @FameProperty(name = "behaviouralPointers", opposite = "referer", derived = true)
+    public Collection<BehaviouralPointer> getBehaviouralPointers() {
+        if (behaviouralPointers == null) {
+            behaviouralPointers = new MultivalueSet<BehaviouralPointer>() {
+                @Override
+                protected void clearOpposite(BehaviouralPointer e) {
+                    e.setReferer(null);
+                }
+                @Override
+                protected void setOpposite(BehaviouralPointer e) {
+                    e.setReferer(BehaviouralEntity.this);
+                }
+            };
+        }
+        return behaviouralPointers;
+    }
+    
+    public void setBehaviouralPointers(Collection<? extends BehaviouralPointer> behaviouralPointers) {
+        this.getBehaviouralPointers().clear();
+        this.getBehaviouralPointers().addAll(behaviouralPointers);
+    }                    
+    
+        
+    public void addBehaviouralPointers(BehaviouralPointer one) {
+        this.getBehaviouralPointers().add(one);
+    }   
+    
+    public void addBehaviouralPointers(BehaviouralPointer one, BehaviouralPointer... many) {
+        this.getBehaviouralPointers().add(one);
+        for (BehaviouralPointer each : many)
+            this.getBehaviouralPointers().add(each);
+    }   
+    
+    public void addBehaviouralPointers(Iterable<? extends BehaviouralPointer> many) {
+        for (BehaviouralPointer each : many)
+            this.getBehaviouralPointers().add(each);
+    }   
+                
+    public void addBehaviouralPointers(BehaviouralPointer[] many) {
+        for (BehaviouralPointer each : many)
+            this.getBehaviouralPointers().add(each);
+    }
+    
+    public int numberOfBehaviouralPointers() {
+        return getBehaviouralPointers().size();
+    }
+
+    public boolean hasBehaviouralPointers() {
+        return !getBehaviouralPointers().isEmpty();
+    }
+
+    @FameProperty(name = "cyclomaticComplexity")
+    public Number getCyclomaticComplexity() {
+        return cyclomaticComplexity;
+    }
+
+    public void setCyclomaticComplexity(Number cyclomaticComplexity) {
+        this.cyclomaticComplexity = cyclomaticComplexity;
+    }
+    
     @FameProperty(name = "numberOfStatements")
     public Number getNumberOfStatements() {
         return numberOfStatements;
@@ -323,93 +430,8 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
         // TODO: this is a derived property, implement this method manually.
         throw new UnsupportedOperationException("Not yet implemented!");  
     }
-
-	public Number getCyclomaticComplexity() {
-		return cyclomaticComplexity;
-	}
-
-	public void setCyclomaticComplexity(Number cyclomaticComplexity) {
-		this.cyclomaticComplexity = cyclomaticComplexity; 		
-	}
-
-
-    @FameProperty(name = "parameters", opposite = "parentBehaviouralEntity", derived = true)
-    public Collection<TParameter> getParameters() {
-        if (parameters == null) {
-            parameters = new MultivalueSet<TParameter>() {
-                @Override
-                protected void clearOpposite(TParameter e) {
-                    e.setParentBehaviouralEntity(null);
-                }
-                @Override
-                protected void setOpposite(TParameter e) {
-                    e.setParentBehaviouralEntity(BehaviouralEntity.this);
-                }
-            };
-        }
-        return parameters;
-    }
     
-	@Override
-   public void setParameters(Collection<? extends TParameter> parameters) {
-        this.getParameters().clear();
-        this.getParameters().addAll(parameters);
-    }                    
-    
-        
-	@Override
-    public void addParameters(TParameter one) {
-        this.getParameters().add(one);
-    }   
-    
-	@Override
-   public void addParameters(TParameter one, TParameter... many) {
-        this.getParameters().add(one);
-        for (TParameter each : many)
-            this.getParameters().add(each);
-    }   
-    
-	@Override
-    public void addParameters(Iterable<? extends TParameter> many) {
-        for (TParameter each : many)
-            this.getParameters().add(each);
-    }   
-                
-	@Override
-    public void addParameters(TParameter[] many) {
-        for (TParameter each : many)
-            this.getParameters().add(each);
-    }
-   
-	@Override
-    public boolean hasParameters() {
-        return !getParameters().isEmpty();
-    }
 
-	@Override
-	public Number getNumberOfParameters() {
-        return getParameters().size();
-	}
 
-	@Override
-	public int numberOfParameters() {
-        return getParameters().size();
-	}
-
-    @FameProperty(name = "declaredType", opposite = "typedEntities")
-    public TType getDeclaredType() {
-        return declaredType;
-    }
-
-    public void setDeclaredType(TType declaredType) {
-        if (this.declaredType != null) {
-            if (this.declaredType.equals(declaredType)) return;
-            this.declaredType.getTypedEntities().remove(this);
-        }
-        this.declaredType = declaredType;
-        if (declaredType == null) return;
-        declaredType.getTypedEntities().add(this);
-    }
-    
 }
 
