@@ -19,15 +19,14 @@ import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.ContainerEntity;
 import org.moosetechnology.famix.famixcentities.Enum;
 import org.moosetechnology.famix.famixcentities.EnumValue;
-import org.moosetechnology.famix.famixcentities.GlobalVariable;
-import org.moosetechnology.famix.famixcentities.Namespace;
+import org.moosetechnology.famix.famixcentities.LocalVariable;
 import org.moosetechnology.famix.famixcentities.SourcedEntity;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcentities.UnknownContainerEntity;
 import org.moosetechnology.famix.famixcentities.UnknownVariable;
+import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.famix.famixtraits.TWithAttributes;
-import org.moosetechnology.famix.famixtraits.TWithGlobalVariables;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 
@@ -164,7 +163,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 		if (bnd == null) {
 			switch (kind) {
 			case GLOBAL:
-				bnd = resolver.mkStubKey(name, GlobalVariable.class);
+				bnd = resolver.mkStubKey(name, LocalVariable.class);
 				break;
 			case ATTRIBUTE:
 				bnd = resolver.mkStubKey(name, Attribute.class);
@@ -177,7 +176,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 
 		switch (kind) {
 		case GLOBAL:
-			fmx = dico.ensureFamixGlobalVariable(bnd, name.toString(), (TWithGlobalVariables) parent);
+			fmx = dico.ensureFamixLocalVariable(bnd, name.toString(), /*decalredType*/null, parent);
 			break;
 		case ATTRIBUTE:
 			fmx = dico.ensureFamixAttribute(bnd, name.toString(), (TWithAttributes) parent);

@@ -9,7 +9,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Traits")
 @FameDescription("TMethod")
-public interface TMethod extends TEntityMetaLevelDependency, TWithReferences, TMethodMetrics, TSourceEntity, TWithAccesses, TWithImplicitVariables, TWithParameters, TInvocable, TWithInvocations, TWithLocalVariables, TNamedEntity, THasSignature, TTypedEntity, TWithStatements {
+public interface TMethod extends TEntityMetaLevelDependency, TWithReferences, TMethodMetrics, TSourceEntity, TWithAccesses, TWithImplicitVariables, TWithParameters, TWithInvocations, TInvocable, TWithLocalVariables, TNamedEntity, THasSignature, TWithStatements, TTypedEntity {
 
         @FameProperty(name = "hasClassScope", derived = true)
     public Boolean getHasClassScope();

@@ -12,23 +12,23 @@ import org.moosetechnology.famix.famixtraits.TParameterType;
 @FameDescription("ParameterType")
 public class ParameterType extends Type implements TParameterType {
 
-    private ParameterizableClass parameterizableClass;
+    private ParameterizableClass parentParameterizableClass;
     
 
 
-    @FameProperty(name = "parameterizableClass", opposite = "parameterTypes", container = true)
-    public ParameterizableClass getParameterizableClass() {
-        return parameterizableClass;
+    @FameProperty(name = "parentParameterizableClass", opposite = "parameterTypes", container = true)
+    public ParameterizableClass getParentParameterizableClass() {
+        return parentParameterizableClass;
     }
 
-    public void setParameterizableClass(ParameterizableClass parameterizableClass) {
-        if (this.parameterizableClass != null) {
-            if (this.parameterizableClass.equals(parameterizableClass)) return;
-            this.parameterizableClass.getParameterTypes().remove(this);
+    public void setParentParameterizableClass(ParameterizableClass parentParameterizableClass) {
+        if (this.parentParameterizableClass != null) {
+            if (this.parentParameterizableClass.equals(parentParameterizableClass)) return;
+            this.parentParameterizableClass.getParameterTypes().remove(this);
         }
-        this.parameterizableClass = parameterizableClass;
-        if (parameterizableClass == null) return;
-        parameterizableClass.getParameterTypes().add(this);
+        this.parentParameterizableClass = parentParameterizableClass;
+        if (parentParameterizableClass == null) return;
+        parentParameterizableClass.getParameterTypes().add(this);
     }
     
 

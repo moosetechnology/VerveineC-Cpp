@@ -6,7 +6,7 @@ import ch.akuhn.fame.FamePackage;
 import ch.akuhn.fame.FameProperty;
 import ch.akuhn.fame.internal.MultivalueSet;
 import java.util.*;
-import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcentities.StructuredType;
 import org.moosetechnology.famix.famixtraits.TAttribute;
 import org.moosetechnology.famix.famixtraits.TClass;
 import org.moosetechnology.famix.famixtraits.TComment;
@@ -33,7 +33,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Cpp-Entities")
 @FameDescription("Class")
-public class Class extends Type implements TClass, TEntityMetaLevelDependency, TInvocationsReceiver, TNamedEntity, TPackageable, TReferenceable, TSourceEntity, TType, TWithAttributes, TWithComments, TWithInheritances, TWithMethods, TWithTypes {
+public class Class extends StructuredType implements TClass, TEntityMetaLevelDependency, TInvocationsReceiver, TNamedEntity, TPackageable, TReferenceable, TSourceEntity, TType, TWithAttributes, TWithComments, TWithInheritances, TWithMethods, TWithTypes {
 
     private Collection<TAttribute> attributes; 
 

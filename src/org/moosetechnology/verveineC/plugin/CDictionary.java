@@ -21,11 +21,9 @@ import org.moosetechnology.famix.famixcentities.DereferencedInvocation;
 import org.moosetechnology.famix.famixcentities.Enum;
 import org.moosetechnology.famix.famixcentities.EnumValue;
 import org.moosetechnology.famix.famixcentities.Function;
-import org.moosetechnology.famix.famixcentities.GlobalVariable;
 import org.moosetechnology.famix.famixcentities.IndexedFileAnchor;
 import org.moosetechnology.famix.famixcentities.LocalVariable;
 import org.moosetechnology.famix.famixcentities.MultipleFileAnchor;
-import org.moosetechnology.famix.famixcentities.Namespace;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.PrimitiveType;
 import org.moosetechnology.famix.famixcentities.Reference;
@@ -35,6 +33,7 @@ import org.moosetechnology.famix.famixcentities.UnknownVariable;
 import org.moosetechnology.famix.famixcppentities.ImplicitVariable;
 import org.moosetechnology.famix.famixcppentities.Inheritance;
 import org.moosetechnology.famix.famixcppentities.Method;
+import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixcppentities.OOInvocation;
 import org.moosetechnology.famix.famixcppentities.ParameterType;
 import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
@@ -48,16 +47,12 @@ import org.moosetechnology.famix.famixtraits.TFileAnchor;
 import org.moosetechnology.famix.famixtraits.TInheritance;
 import org.moosetechnology.famix.famixtraits.TInvocationsReceiver;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
-import org.moosetechnology.famix.famixtraits.TNamespace;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.famix.famixtraits.TWithAttributes;
 import org.moosetechnology.famix.famixtraits.TWithComments;
 import org.moosetechnology.famix.famixtraits.TWithDereferencedInvocations;
-import org.moosetechnology.famix.famixtraits.TWithFunctions;
-import org.moosetechnology.famix.famixtraits.TWithGlobalVariables;
-import org.moosetechnology.famix.famixtraits.TWithLocalVariables;
 import org.moosetechnology.famix.famixtraits.TWithMethods;
 import org.moosetechnology.famix.famixtraits.TWithParameters;
 import org.moosetechnology.famix.famixtraits.TWithTypes;
@@ -775,7 +770,7 @@ public class CDictionary {
 	 */
 	public ParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner, boolean persistIt) {
 		ParameterType fmx = ensureFamixEntity(ParameterType.class, key, name);
-		fmx.setParameterizableClass((ParameterizableClass) owner);
+		fmx.setParentParameterizableClass((ParameterizableClass) owner);
 		return fmx;
 	}
 
@@ -835,7 +830,7 @@ public class CDictionary {
 		if (fmx == null) {
 			fmx = (Function) ensureFamixEntity(Function.class, key, name);
 			fmx.setSignature(sig);
-			fmx.setParentPackage(parent);
+			fmx.setFunctionOwner(parent);
 			fmx.setCyclomaticComplexity(1);
 			fmx.setNumberOfStatements(0);
 		}
@@ -865,10 +860,9 @@ public class CDictionary {
 	/**
 	 * Returns a FAMIX LocalVariable with the given <b>name</b>, creating it if it does not exist yet
 	 * @param name -- the name of the FAMIX LocalVariable
-	 * @param persistIt -- whether the LocalVariable should be persisted in the Famix repository
 	 * @return the FAMIX LocalVariable or null in case of a FAMIX error
 	 */
-	public LocalVariable ensureFamixLocalVariable(IBinding key, String name, Type type, TWithLocalVariables owner, boolean persistIt) {
+	public LocalVariable ensureFamixLocalVariable(IBinding key, String name, Type type, ContainerEntity owner) {
 		LocalVariable fmx = ensureFamixEntity(LocalVariable.class, key, name);
 		fmx.setParentBehaviouralEntity(owner);
 		fmx.setDeclaredType(type);
@@ -938,19 +932,11 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public GlobalVariable ensureFamixGlobalVariable(IBinding key, String name, TWithGlobalVariables parent) {
-		GlobalVariable fmx;
-		fmx = ensureFamixEntity(GlobalVariable.class, key, name);
-		fmx.setParentScope(parent);
-
-		return fmx;
-	}
-
 	public Namespace ensureFamixNamespace(IBinding key, String name, Namespace parent) {
 		Namespace fmx = ensureFamixEntity(Namespace.class, key, name);
 		fmx.setIsStub(false);
 		if (parent != null) {
-			fmx.setParentPackage(parent);
+			fmx.setParentNamespace(parent);
 		}
 		return fmx;
 	}
@@ -1151,7 +1137,7 @@ public class CDictionary {
 	 */
 	static public String mooseName(Namespace parent, String name) {
 		if (parent != null) {
-			return concatMooseName( mooseName( (Namespace)parent.getParentPackage(), parent.getName()) , name);
+			return concatMooseName( mooseName( (Namespace)parent.getParentNamespace(), parent.getName()) , name);
 		}
 		else {
 			return name;

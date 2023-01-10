@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.Function;
-import org.moosetechnology.famix.famixcentities.GlobalVariable;
+import org.moosetechnology.famix.famixcentities.LocalVariable;
 import org.moosetechnology.famix.famixcentities.UnknownBehaviouralEntity;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixtraits.TAccess;
@@ -34,8 +34,16 @@ class BookShopTest extends AbstractTest {
 	public void testNumberOfEntities() {	
 		assertEquals(
 				6,
-				entitiesOfType(GlobalVariable.class).size());		
+				entitiesOfType(LocalVariable.class).size());		
 				// conn, rest_set, row, stmt, q, query
+/* currently not exporting local variables in functions
+		assertEquals(
+				24,
+				entitiesOfType(LocalVariable.class).size());
+				// books::update_price(1), books::update(4), books::display(1), 
+				// purchases::view(1), employees::display(1)
+				// main_menu(1), book_menu(2), sup_menu(2), pur_menu(2), emp_menu(2), mem_menu(2), sal_menu(2), pass(2), main(1)
+*/
 		assertEquals(
 				7,
 				entitiesOfType(org.moosetechnology.famix.famixcppentities.Class.class).size());
@@ -53,14 +61,6 @@ class BookShopTest extends AbstractTest {
 				entitiesOfType(Function.class).size());
 				// main_menu, book_menu, sup_menu, pur_menu, emp_menu, mem_menu, sal_menu, pass, main
 		
-/* not exporting local variables
-		assertEquals(
-				24,
-				entitiesOfType(LocalVariable.class).size());
-				// books::update_price(1), books::update(4), books::display(1), 
-				// purchases::view(1), employees::display(1)
-				// main_menu(1), book_menu(2), sup_menu(2), pur_menu(2), emp_menu(2), mem_menu(2), sal_menu(2), pass(2), main(1)
-*/
 
 	}
 

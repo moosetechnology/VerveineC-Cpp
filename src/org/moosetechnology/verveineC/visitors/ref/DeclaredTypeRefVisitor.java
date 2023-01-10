@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
 import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.Parameter;

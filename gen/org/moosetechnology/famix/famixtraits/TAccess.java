@@ -16,11 +16,11 @@ public interface TAccess extends TAssociationMetaLevelDependency, TAssociation, 
 
     public void setAccessor(TWithAccesses accessor);
 
-    @FameProperty(name = "isRead", derived = true)
-    public Boolean getIsRead();
-
     @FameProperty(name = "isReadWriteUnknown", derived = true)
     public Boolean getIsReadWriteUnknown();
+
+    @FameProperty(name = "isRead", derived = true)
+    public Boolean getIsRead();
 
     @FameProperty(name = "variable", opposite = "incomingAccesses")
     public TAccessible getVariable();

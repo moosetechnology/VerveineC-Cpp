@@ -5,10 +5,10 @@ import java.util.Stack;
 import org.moosetechnology.famix.famixcentities.Access;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.Invocation;
-import org.moosetechnology.famix.famixcentities.Namespace;
 import org.moosetechnology.famix.famixcentities.Reference;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcppentities.Method;
+import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
 
 public class CppEntityStack {

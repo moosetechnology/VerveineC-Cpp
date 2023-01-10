@@ -16,11 +16,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.moosetechnology.famix.famixcentities.AliasType;
+import org.moosetechnology.famix.famixcentities.ContainerEntity;
 import org.moosetechnology.famix.famixcentities.Enum;
 import org.moosetechnology.famix.famixcentities.NamedEntity;
-import org.moosetechnology.famix.famixcentities.Namespace;
 import org.moosetechnology.famix.famixcentities.SourcedEntity;
 import org.moosetechnology.famix.famixcentities.Type;
+import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixtraits.TWithTypes;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
@@ -73,7 +74,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 		super.visit(elt);                                // visit children
 
 		if (currentNamespace != null) {
-			currentNamespace = (Namespace) currentNamespace.getParentPackage();    // back to parent Namespace
+			currentNamespace = (Namespace) currentNamespace.getParentNamespace();    // back to parent Namespace
 		}
 		leavePath(elt);
 	}
@@ -185,7 +186,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 	}
 
 	/**
-	 * a class declaration such as "class XYZ;"
+	 * a class, struct, or enum declaration such as "class XYZ;"
 	 */
 	@Override
 	protected int visit(IASTElaboratedTypeSpecifier node) {
@@ -276,13 +277,13 @@ public class TypeDefVisitor extends AbstractVisitor {
 		definitionOfATemplate = false;   // Immediately turn it off because it could pollute visiting the children
 
 		if (isTemplate) {
-			fmx = dico.ensureFamixParameterizableClass(nodeBnd, nodeName.toString(), (TWithTypes)getContext().top());
+			fmx = dico.ensureFamixParameterizableClass(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
 		}
 		else {
 			// if node is a stub with a fully qualified name, its parent is not context.top() :-(
-			fmx = dico.ensureFamixClass(nodeBnd, nodeName.toString(), (TWithTypes)getContext().top());
+			fmx = dico.ensureFamixClass(nodeBnd, nodeName.toString(), (ContainerEntity)getContext().top());
 		}
-		fmx.setParentPackage(currentNamespace);
+		//fmx.setTypeContainer(currentNamespace);
 		
 		/* We can be in a case where the class declaration being processed belongs to a file imported using an #includes statement
 		 In such a case, filename instance variable will be initialized with location of the file "including" the external file. 
@@ -291,7 +292,6 @@ public class TypeDefVisitor extends AbstractVisitor {
 		tmpFilename = FileUtil.localized( node.getFileLocation().getFileName(), rootFolder);
 		// dealing with template class/struct
 		if (isTemplate) {
-		
 			dico.addSourceAnchor(fmx, tmpFilename, ((ICPPASTTemplateDeclaration)node.getParent().getParent()).getFileLocation());
 		}
 		else {

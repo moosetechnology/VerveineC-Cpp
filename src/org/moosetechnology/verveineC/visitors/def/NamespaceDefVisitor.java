@@ -4,7 +4,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.index.IIndex;
-import org.moosetechnology.famix.famixcentities.Namespace;
+import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;
 

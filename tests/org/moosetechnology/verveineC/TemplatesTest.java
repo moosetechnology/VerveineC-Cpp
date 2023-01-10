@@ -8,11 +8,9 @@ import java.util.Collection;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.moosetechnology.famix.famixcentities.Function;
-import org.moosetechnology.famix.famixcentities.NamedEntity;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixcppentities.ParameterType;
 import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
-import org.moosetechnology.famix.famixcppentities.ParameterizedType;
 import org.moosetechnology.famix.famixtraits.TAttribute;
 import org.moosetechnology.famix.famixtraits.TParameter;
 
@@ -70,7 +68,7 @@ class TemplatesTest extends AbstractTest {
 		assertEquals(ParameterType.class, fct.getDeclaredType().getClass());
 		ParameterType tparam = (ParameterType) fct.getDeclaredType();
 		
-		assertEquals("mypair", tparam.getParameterizableClass().getName());  // not sure this is what should be (the T of GetMax is the same as the one of mypair)
+		assertEquals("mypair", tparam.getParentParameterizableClass().getName());  // not sure this is what should be (the T of GetMax is the same as the one of mypair)
 		
 		for (TParameter param : fct.getParameters()) {
 			assertEquals("T", param.getDeclaredType().getName()); // this should be the same as 'tparam', no ?

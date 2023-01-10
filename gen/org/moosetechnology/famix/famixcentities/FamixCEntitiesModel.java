@@ -26,13 +26,11 @@ public class FamixCEntitiesModel {
 		metamodel.with(org.moosetechnology.famix.famixcentities.EnumValue.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.FamixCModel.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Function.class);
-		metamodel.with(org.moosetechnology.famix.famixcentities.GlobalVariable.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.IndexedFileAnchor.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Invocation.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.LocalVariable.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.MultipleFileAnchor.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.NamedEntity.class);
-		metamodel.with(org.moosetechnology.famix.famixcentities.Namespace.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Parameter.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.PrimitiveType.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Reference.class);
@@ -42,6 +40,7 @@ public class FamixCEntitiesModel {
 		metamodel.with(org.moosetechnology.famix.famixcentities.SourceTextAnchor.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.SourcedEntity.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Struct.class);
+		metamodel.with(org.moosetechnology.famix.famixcentities.StructuredType.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Type.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Union.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.UnknownBehaviouralEntity.class);

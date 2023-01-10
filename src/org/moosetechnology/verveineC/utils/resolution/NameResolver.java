@@ -16,25 +16,25 @@ import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.ContainerEntity;
 import org.moosetechnology.famix.famixcentities.Function;
-import org.moosetechnology.famix.famixcentities.GlobalVariable;
 import org.moosetechnology.famix.famixcentities.LocalVariable;
-import org.moosetechnology.famix.famixcentities.Namespace;
 import org.moosetechnology.famix.famixcentities.Parameter;
+import org.moosetechnology.famix.famixcentities.StructuredType;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcentities.UnknownContainerEntity;
 import org.moosetechnology.famix.famixcppentities.Method;
+import org.moosetechnology.famix.famixcppentities.Namespace;
+import org.moosetechnology.famix.famixcppentities.ParameterType;
 import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
 import org.moosetechnology.famix.famixtraits.TAttribute;
 import org.moosetechnology.famix.famixtraits.TFunction;
+import org.moosetechnology.famix.famixtraits.TLocalVariable;
 import org.moosetechnology.famix.famixtraits.TMethod;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
 import org.moosetechnology.famix.famixtraits.TPackage;
-import org.moosetechnology.famix.famixtraits.TPackageable;
 import org.moosetechnology.famix.famixtraits.TParameterizedType;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.famix.famixtraits.TType;
 import org.moosetechnology.famix.famixtraits.TWithAttributes;
-import org.moosetechnology.famix.famixtraits.TWithFunctions;
 import org.moosetechnology.famix.famixtraits.TWithLocalVariables;
 import org.moosetechnology.famix.famixtraits.TWithMethods;
 import org.moosetechnology.famix.famixtraits.TWithParameters;
@@ -382,56 +382,20 @@ public class NameResolver {
 	 * @return TNamedEntity found or null if none match
 	 */
 	public TNamedEntity findInLocals(String name, ContainerEntity context) {
-		for (TType child : ((TWithTypes)context).getTypes()) {
+		for (TType child : context.getTypes()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
 		}
 
-		for (TFunction child : ((TWithFunctions)context).getFunctions()) {
+		for (TFunction child : context.getFunctions()) {
 			if ( child.getName().equals(name) || child.getSignature().equals(name)) {
 				return child;
 			}
 		}
-
-		return null;
-	}
-
-	/**
-	 * Search for a unqualified name within the scope of a BehaviouralEntity.
-	 * @return TNamedEntity found or null if none match
-	 */
-	public TNamedEntity findInLocals(String name, BehaviouralEntity context) {		
-		for (TStructuralEntity child : ((TWithLocalVariables)context).getLocalVariables()) {
-			if (child.getName().equals(name)) {
-				return child;
-			}
-		}
-
-		for (TStructuralEntity child : ((TWithParameters)context).getParameters()) {
-			if (child.getName().equals(name)) {
-				return child;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Search for a unqualified name within the scope of a Type.
-	 * In the case of looking for a method, name is actually a signature.
-	 * @return TNamedEntity found or null if none match
-	 */
-	public TNamedEntity findInLocals(String name, Type context) {		
-
-		for (TAttribute child : ((TWithAttributes)context).getAttributes()) {
-			if (child.getName().equals(name)) {
-				return child;
-			}
-		}
-
-		for (TMethod child : ((TWithMethods)context).getMethods()) {
-			if (child.getSignature().equals(name)) {
+		
+		for (TLocalVariable child : context.getLocalVariables()) {
+			if ( child.getName().equals(name)) {
 				return child;
 			}
 		}
@@ -444,13 +408,67 @@ public class NameResolver {
 	 * @return TNamedEntity found or null if none match
 	 */
 	public TNamedEntity findInLocals(String name, Namespace context) {		
-		for (TPackageable child : context.getChildEntities()) {
-			if (((TNamedEntity) child).getName().equals(name)) {
-				return (TNamedEntity) child;
+		for (Namespace child : context.getChildrenNamespaces()) {
+			if (child.getName().equals(name)) {
+				return child;
 			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * Search for a unqualified name within the scope of a BehaviouralEntity.
+	 * @return TNamedEntity found or null if none match
+	 */
+	public TNamedEntity findInLocals(String name, BehaviouralEntity context) {		
+		for (TStructuralEntity child : ((TWithParameters)context).getParameters()) {
+			if (child.getName().equals(name)) {
+				return child;
+			}
+		}
+
+		// kind of "super" call
+		return findInLocals(name, (ContainerEntity)context);
+	}
+
+	public TNamedEntity findInLocals(String name, StructuredType context) {		
+		for (TAttribute child : context.getAttributes()) {
+			if (child.getName().equals(name)) {
+				return child;
+			}
+		}
+
+		// kind of "super" call
+		return findInLocals(name, (org.moosetechnology.famix.famixcppentities.Class)context);
+	}
+
+	/**
+	 * Search for a unqualified name within the scope of a Type.
+	 * In the case of looking for a method, name is actually a signature.
+	 * @return TNamedEntity found or null if none match
+	 */
+	public TNamedEntity findInLocals(String name, org.moosetechnology.famix.famixcppentities.Class context) {		
+		for (TMethod child : context.getMethods()) {
+			if (child.getSignature().equals(name)) {
+				return child;
+			}
+		}
+
+		// kind of "super" call
+		return findInLocals(name, (ContainerEntity)context);
+	}
+
+	public TNamedEntity findInLocals(String name, ParameterizableClass context) {		
+
+		for (ParameterType child : context.getParameterTypes()) {
+			if (child.getName().equals(name)) {
+				return child;
+			}
+		}
+
+		// kind of "super" call
+		return findInLocals(name, (org.moosetechnology.famix.famixcppentities.Class)context);
 	}
 
 	/**
@@ -470,7 +488,7 @@ public class NameResolver {
 		}
 		else if (context instanceof Function) {
 			found = findInLocals(name, (Function)context);
-			parent = ((Function)context).getParentPackage();
+			parent = (TNamedEntity) ((Function)context).getFunctionOwner();
 		}
 		else if (context instanceof Method) {
 			found = findInLocals(name, (Method)context);
@@ -478,11 +496,11 @@ public class NameResolver {
 		}
 		else if (context instanceof Package) {
 			found = findInLocals(name, (Namespace)context);
-			parent = ((Namespace)context).getParentPackage();
+			parent = (TNamedEntity) ((Namespace)context).getParentNamespace();
 		}
 		else if (context instanceof Type) {
 			found = findInLocals(name, (Type)context);
-			parent = ((Type)context).getParentPackage();
+			parent = (TNamedEntity) ((Type)context).getTypeContainer();
 		}
 		else {
 			// non ContainerEntity, should never happen
@@ -573,13 +591,13 @@ public class NameResolver {
 			return;
 		}
 		else if (fmx instanceof Namespace) {
-			((Namespace)fmx).setParentPackage((TPackage) parent);
+			((Namespace)fmx).setParentNamespace((Namespace) parent);
 		}
 		else if (fmx instanceof org.moosetechnology.famix.famixcppentities.Class) {
 			((org.moosetechnology.famix.famixcppentities.Class)fmx).setParentPackage((TPackage) parent);
 		}
 		else if (fmx instanceof Function) {
-			((Function)fmx).setParentPackage((TPackage) parent);
+			((Function)fmx).setFunctionOwner(parent);
 		}
 		else if (fmx instanceof Method) {
 			((Method)fmx).setParentType((TWithMethods) parent);
@@ -593,8 +611,8 @@ public class NameResolver {
 		else if (fmx instanceof Attribute) {
 			((Attribute)fmx).setParentType((TWithAttributes) parent);
 		}
-		else if (fmx instanceof GlobalVariable) {
-			((GlobalVariable)fmx).setParentPackage((TPackage) parent);
+		else {
+			// bug ?
 		}
 	}
 

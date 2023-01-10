@@ -20,17 +20,17 @@ public class ParameterizableClass extends Class implements TWithParameterizedTyp
 
 
 
-    @FameProperty(name = "parameterTypes", opposite = "parameterizableClass", derived = true)
+    @FameProperty(name = "parameterTypes", opposite = "parentParameterizableClass", derived = true)
     public Collection<ParameterType> getParameterTypes() {
         if (parameterTypes == null) {
             parameterTypes = new MultivalueSet<ParameterType>() {
                 @Override
                 protected void clearOpposite(ParameterType e) {
-                    e.setParameterizableClass(null);
+                    e.setParentParameterizableClass(null);
                 }
                 @Override
                 protected void setOpposite(ParameterType e) {
-                    e.setParameterizableClass(ParameterizableClass.this);
+                    e.setParentParameterizableClass(ParameterizableClass.this);
                 }
             };
         }
