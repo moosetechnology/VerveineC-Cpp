@@ -48,6 +48,7 @@ import org.moosetechnology.famix.famixtraits.TFileAnchor;
 import org.moosetechnology.famix.famixtraits.TInheritance;
 import org.moosetechnology.famix.famixtraits.TInvocationsReceiver;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TNamespace;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
@@ -377,13 +378,12 @@ public class CDictionary {
 
 	/**
 	 * Creates and returns a FAMIX Entity of the type <b>fmxClass</b>.
-	 * The Entity is always created (see {@link Dictionary#ensureFamixEntity(Class, Object, String, boolean)}).
+	 * The Entity is always created (see {@link Dictionary#ensureFamixEntity(Class, Object, String)}).
 	 * @param fmxClass -- the FAMIX class of the instance to create
 	 * @param name -- the name of the new instance must not be null (and this is not tested)
-	 * @param persistIt -- whether the Entity should be persisted in the Famix repository
 	 * @return the FAMIX Entity or null in case of a FAMIX error
 	 */
-	protected <T extends TNamedEntity> T createFamixEntity(Class<T> fmxClass, String name, boolean persistIt) {
+	protected <T extends TNamedEntity> T createFamixEntity(Class<T> fmxClass, String name) {
 		T fmx = null;
 
 		if (name == null) {
@@ -403,11 +403,7 @@ public class CDictionary {
 			((TSourceEntity)fmx).setIsStub(Boolean.TRUE);
 
 			mapEntityToName(name, fmx);
-			
-			if (persistIt) {
-				// put new entity in Famix repository
-				this.famixRepo.add(fmx);
-			}
+			this.famixRepo.add(fmx);
 		}
 
 		return fmx;
@@ -419,11 +415,10 @@ public class CDictionary {
 	 * @param fmxClass -- the FAMIX class of the instance to create
 	 * @param bnd -- the binding to map to the new instance
 	 * @param name -- the name of the new instance (used if <tt>bnd == null</tt>)
-	 * @param persistIt -- whether the Entity should be persisted in the Famix repository
 	 * @return the FAMIX Entity or null if <b>bnd</b> was null or in case of a FAMIX error
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T extends TNamedEntity> T ensureFamixEntity(Class<T> fmxClass, IBinding bnd, String name, boolean persistIt) {
+	public <T extends TNamedEntity> T ensureFamixEntity(Class<T> fmxClass, IBinding bnd, String name) {
 		T fmx = null;
 		if (bnd != null) {
 			fmx = (T) getEntityByKey(bnd);
@@ -436,7 +431,7 @@ public class CDictionary {
 		// e.g. 2 parameters of 2 different methods but having the same name
 		// so we cannot recover just from the name
 
-		fmx = createFamixEntity(fmxClass, name, persistIt);
+		fmx = createFamixEntity(fmxClass, name);
 		if ( (bnd != null) && (fmx != null) ) {
 			keyToEntity.put(bnd, fmx);
 			entityToKey.put(fmx, bnd);
@@ -494,7 +489,7 @@ public class CDictionary {
 	 */
 	public ImplicitVariable ensureFamixImplicitVariable(IBinding key, String name, Type type, Method owner, boolean persistIt) {
 		ImplicitVariable fmx;
-		fmx = ensureFamixEntity(ImplicitVariable.class, key, name, persistIt);
+		fmx = ensureFamixEntity(ImplicitVariable.class, key, name);
 		fmx.setParentBehaviouralEntity(owner);
 		return fmx;
 	}
@@ -698,7 +693,7 @@ public class CDictionary {
 			}
 			else {
 				// may be we should be careful not to persist all these special entities?
-				fmx = createFamixEntity(fmxClass, name, /*persistIt*/true);
+				fmx = createFamixEntity(fmxClass, name);
 			}
 			
 			if (key != null) {
@@ -721,7 +716,7 @@ public class CDictionary {
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
 	public Type ensureFamixType(IBinding key, String name, TWithTypes owner, boolean persistIt) {
-		Type fmx = ensureFamixEntity(Type.class, key, name, persistIt);
+		Type fmx = ensureFamixEntity(Type.class, key, name);
 		fmx.setTypeContainer(owner);
 		return fmx;
 	}
@@ -734,9 +729,14 @@ public class CDictionary {
 	 * @param persistIt -- whether the Class should be persisted in the Famix repository
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
-	public org.moosetechnology.famix.famixcppentities.Class ensureFamixClass(IBinding key, String name, TWithTypes owner, boolean persistIt) {
-		org.moosetechnology.famix.famixcppentities.Class fmx = ensureFamixEntity(org.moosetechnology.famix.famixcppentities.Class.class, key, name, persistIt);
-		fmx.setTypeContainer(owner);
+	public org.moosetechnology.famix.famixcppentities.Class ensureFamixClass(IBinding key, String name, TWithTypes owner) {
+		org.moosetechnology.famix.famixcppentities.Class fmx = getEntityIfNotNull(org.moosetechnology.famix.famixcppentities.Class.class, key);
+
+		if (fmx == null) {
+			fmx = ensureFamixEntity(org.moosetechnology.famix.famixcppentities.Class.class, key, name);
+			fmx.setTypeContainer(owner);
+		}
+		
 		return fmx;
 	}
 
@@ -748,7 +748,7 @@ public class CDictionary {
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
 	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, TWithTypes owner, boolean persistIt) {
-		ParameterizableClass fmx = ensureFamixEntity(ParameterizableClass.class, key, name, persistIt);
+		ParameterizableClass fmx = ensureFamixEntity(ParameterizableClass.class, key, name);
 		fmx.setTypeContainer(owner);
 		return fmx;
 	}
@@ -760,7 +760,7 @@ public class CDictionary {
 	 * @return the FAMIX ParameterizableType or null in case of a FAMIX error
 	 */
 	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, TWithTypes owner, boolean persistIt) {
-		ParameterizedType fmx = ensureFamixEntity(ParameterizedType.class, key, name, persistIt);
+		ParameterizedType fmx = ensureFamixEntity(ParameterizedType.class, key, name);
 		fmx.setTypeContainer(owner);
 		fmx.setParameterizableClass(generic);
 		return fmx;
@@ -774,19 +774,19 @@ public class CDictionary {
 	 * @return the FAMIX ParameterType or null in case of a FAMIX error
 	 */
 	public ParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner, boolean persistIt) {
-		ParameterType fmx = ensureFamixEntity(ParameterType.class, key, name, persistIt);
+		ParameterType fmx = ensureFamixEntity(ParameterType.class, key, name);
 		fmx.setParameterizableClass((ParameterizableClass) owner);
 		return fmx;
 	}
 
 	public Enum ensureFamixEnum(IBinding key, String name,	TWithTypes owner, boolean persistIt) {
-		Enum fmx = ensureFamixEntity(Enum.class, key, name, persistIt);
+		Enum fmx = ensureFamixEntity(Enum.class, key, name);
 		fmx.setTypeContainer(owner);
 		return fmx;
 	}
 
 	public EnumValue ensureFamixEnumValue(IBinding key, String name, Enum owner, boolean persistIt) {
-		EnumValue fmx = ensureFamixEntity(EnumValue.class, key, name, persistIt);
+		EnumValue fmx = ensureFamixEntity(EnumValue.class, key, name);
 		fmx.setParentEnum(owner);
 		return fmx;
 	}
@@ -812,7 +812,7 @@ public class CDictionary {
 	 * @return the FAMIX Method or null in case of a FAMIX error
 	 */
 	public Method ensureFamixMethod(IBinding key, String name, String sig, Type ret, TWithMethods owner, boolean persistIt) {
-		Method fmx = (Method) ensureFamixEntity(Method.class, key, name, persistIt);
+		Method fmx = (Method) ensureFamixEntity(Method.class, key, name);
 		fmx.setSignature(sig);
 		fmx.setDeclaredType(ret);
 		fmx.setParentType(owner);
@@ -829,11 +829,16 @@ public class CDictionary {
 	 * @param persistIt -- whether the Function should be persisted in the Famix repository
 	 * @return the FAMIX Method or null in case of a FAMIX error
 	 */
-	public Function ensureFamixFunction(IBinding key, String name, String sig, Type ret, TWithFunctions owner, boolean persistIt) {
-		Function fmx = (Function) ensureFamixEntity(Function.class, key, name, persistIt);
-		fmx.setSignature(sig);
-		fmx.setDeclaredType(ret);
-		fmx.setFunctionOwner(owner);;
+	public Function ensureFamixFunction(IBinding key, String name, String sig, Namespace parent) {
+		Function fmx = getEntityIfNotNull(Function.class, key);
+
+		if (fmx == null) {
+			fmx = (Function) ensureFamixEntity(Function.class, key, name);
+			fmx.setSignature(sig);
+			fmx.setParentPackage(parent);
+			fmx.setCyclomaticComplexity(1);
+			fmx.setNumberOfStatements(0);
+		}
 		return fmx;
 	}
 
@@ -846,10 +851,14 @@ public class CDictionary {
 	 * @param persistIt -- whether the Attribute should be persisted in the Famix repository
 	 * @return the FAMIX Attribute or null in case of a FAMIX error
 	 */
-	public Attribute ensureFamixAttribute(IBinding key, String name, Type type, TWithAttributes owner, boolean persistIt) {
-		Attribute fmx = ensureFamixEntity(Attribute.class, key, name, persistIt);
-		fmx.setParentType(owner);
-		fmx.setDeclaredType(type);
+	public Attribute ensureFamixAttribute(IBinding key, String name, TWithAttributes parent) {
+		Attribute fmx = getEntityIfNotNull(Attribute.class, key);
+
+		if (fmx == null) {
+			fmx = ensureFamixEntity(Attribute.class, key, name);
+			fmx.setParentType(parent);
+		}
+
 		return fmx;
 	}
 
@@ -860,7 +869,7 @@ public class CDictionary {
 	 * @return the FAMIX LocalVariable or null in case of a FAMIX error
 	 */
 	public LocalVariable ensureFamixLocalVariable(IBinding key, String name, Type type, TWithLocalVariables owner, boolean persistIt) {
-		LocalVariable fmx = ensureFamixEntity(LocalVariable.class, key, name, persistIt);
+		LocalVariable fmx = ensureFamixEntity(LocalVariable.class, key, name);
 		fmx.setParentBehaviouralEntity(owner);
 		fmx.setDeclaredType(type);
 		return fmx;
@@ -907,7 +916,7 @@ public class CDictionary {
 	 * @return the FAMIX parameter
 	 */
 	public Parameter createFamixParameter(IBinding key, String name, Type type, TWithParameters owner, boolean persistIt) {
-		Parameter fmx = ensureFamixEntity(Parameter.class, key, name, persistIt);
+		Parameter fmx = ensureFamixEntity(Parameter.class, key, name);
 		fmx.setParentBehaviouralEntity(owner);
 		fmx.setDeclaredType(type);
 		
@@ -922,7 +931,7 @@ public class CDictionary {
 		}
 
 		if (fmx == null) {
-			fmx = ensureFamixEntity(UnknownVariable.class, key, name, /*persistIt*/true);
+			fmx = ensureFamixEntity(UnknownVariable.class, key, name);
 			//TODO fmx.setParentPackage(parent);
 		}
 		
@@ -931,44 +940,14 @@ public class CDictionary {
 
 	public GlobalVariable ensureFamixGlobalVariable(IBinding key, String name, TWithGlobalVariables parent) {
 		GlobalVariable fmx;
-		fmx = ensureFamixEntity(GlobalVariable.class, key, name, /*persistIt*/true);
+		fmx = ensureFamixEntity(GlobalVariable.class, key, name);
 		fmx.setParentScope(parent);
 
 		return fmx;
 	}
 
-	public <T extends TNamedEntity> T ensureFamixEntity(Class<T> fmxClass, IBinding key, String name) {
-		return ensureFamixEntity(fmxClass, key, name, /*persistIt*/true);
-	}
-
-/*
 	public Namespace ensureFamixNamespace(IBinding key, String name, Namespace parent) {
-		Namespace fmx = ensureFamixNamespace(key, name);
-		/*System.out.println(this.getEntityByKey(key));
-		if ((parent != null) && (fmx.getParentScope() !=null)) {
-			if (parent != fmx.getParentScope()) {
-				fmx.getName();
-			}
-		}* /
-		if (parent != null) {
-			fmx.setParentScope(parent);
-		}
-		return fmx;
-	}
-
-	/**
-	 * Returns a FAMIX Namespace with the given <b>name</b>, creating it if it does not exist yet
-	 * We assume that Namespaces must be uniq for a given name
-	 * @param name -- the name of the FAMIX Namespace
-	 * @return the FAMIX Namespace or null in case of a FAMIX error
-	 * /
-	public Namespace ensureFamixNamespace(IBinding key, String name) {
-		return ensureFamixUniqEntity(Namespace.class, key, name);
-	}
-*/
-
-	public Namespace ensureFamixNamespace(IBinding key, String name, Namespace parent) {
-		Namespace fmx = ensureFamixEntity(Namespace.class, key, name, /*persitIt*/true);
+		Namespace fmx = ensureFamixEntity(Namespace.class, key, name);
 		fmx.setIsStub(false);
 		if (parent != null) {
 			fmx.setParentPackage(parent);
@@ -979,7 +958,7 @@ public class CDictionary {
 	public AliasType ensureFamixTypeAlias(IBinding key, String name, TWithTypes owner) {
 		AliasType fmx;
 
-		fmx = ensureFamixEntity(AliasType.class, key, name, /*persistIt*/true);
+		fmx = ensureFamixEntity(AliasType.class, key, name);
 		fmx.setTypeContainer(owner);
 
 		return fmx;
@@ -990,16 +969,6 @@ public class CDictionary {
 
 		if (fmx == null) {
 			fmx = ensureFamixType(key, name, owner, /*persistIt*/true);
-		}
-		
-		return fmx;
-	}
-
-	public org.moosetechnology.famix.famixcppentities.Class ensureFamixClass(IBinding key, String name, TWithTypes owner) {
-		org.moosetechnology.famix.famixcppentities.Class fmx = getEntityIfNotNull(org.moosetechnology.famix.famixcppentities.Class.class, key);
-
-		if (fmx == null) {
-			fmx = ensureFamixClass(key, name, owner, /*persistIt*/true);
 		}
 		
 		return fmx;
@@ -1063,17 +1032,6 @@ public class CDictionary {
 		return ensureFamixPrimitiveType(bnd, primitiveTypeName(type));
 	}
 
-	public Function ensureFamixFunction(IBinding key, String name, String sig, TWithFunctions parent) {
-		Function fmx = getEntityIfNotNull(Function.class, key);
-
-		if (fmx == null) {
-			fmx = ensureFamixFunction(key, name, sig, /*returnType*/null, parent, /*persistIt*/true);
-			fmx.setCyclomaticComplexity(1);
-			fmx.setNumberOfStatements(0);
-		}
-		return fmx;
-	}
-
 	public Method ensureFamixMethod(IBinding key, String name, String signature, TWithMethods parent) {
 		Method fmx = getEntityIfNotNull(Method.class, key);
 
@@ -1081,16 +1039,6 @@ public class CDictionary {
 			fmx = ensureFamixMethod(key, name, signature, /*returnType*/null, parent, /*persistIt*/true);
 			fmx.setCyclomaticComplexity(1);
 			fmx.setNumberOfStatements(0);
-		}
-
-		return fmx;
-	}
-
-	public Attribute ensureFamixAttribute(IBinding key, String name, TWithAttributes parent) {
-		Attribute fmx = getEntityIfNotNull(Attribute.class, key);
-
-		if (fmx == null) {
-			fmx = ensureFamixAttribute(key, name, /*type*/null, parent, /*persistIt*/true);
 		}
 
 		return fmx;

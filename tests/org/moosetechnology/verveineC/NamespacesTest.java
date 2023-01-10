@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.Namespace;
+import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TPackageable;
 import org.moosetechnology.famix.famixtraits.TWithFunctions;
 
 class NamespacesTest extends AbstractTest {
@@ -33,11 +35,10 @@ class NamespacesTest extends AbstractTest {
 		Namespace nspace = entityNamed(Namespace.class, "first_space");
 		assertNotNull(nspace);
 
-		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
-		assertEquals(0, nspace.getNumberOfChildren());
-		assertNull(nspace.getParentPackage());
+		assertEquals(1, nspace.numberOfChildEntities());
+		assertEquals("func", ((TNamedEntity)first( nspace.getChildEntities())).getName() );
 
-		assertEquals("func", first( ((TWithFunctions)nspace).getFunctions()).getName());
+		assertNull(nspace.getParentPackage());
 	}
 
 	@Test
@@ -45,11 +46,25 @@ class NamespacesTest extends AbstractTest {
 		Namespace nspace = entityNamed(Namespace.class, "second_space");
 		assertNotNull(nspace);
 
-		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
-		assertEquals(1, nspace.getNumberOfChildren());
-		assertNull(nspace.getParentPackage());
+		assertEquals(2, nspace.numberOfChildEntities());
 
-		assertEquals("func", first( ((TWithFunctions)nspace).getFunctions()).getName());
+		TNamedEntity func = null;
+		TNamedEntity subNamespace = null;
+		for ( TPackageable child : nspace.getChildEntities()) {
+			if (child instanceof Function) {
+				func = (TNamedEntity) child;
+			}
+			else if (child instanceof Namespace) {
+				subNamespace = (TNamedEntity) child;
+			}
+		}
+
+		assertNotNull(func);
+		assertEquals("func", func.getName() );
+		assertNotNull(subNamespace);
+		assertEquals("third_space", subNamespace.getName() );
+
+		assertNull(nspace.getParentPackage());
 	}
 
 	@Test
@@ -57,13 +72,11 @@ class NamespacesTest extends AbstractTest {
 		Namespace nspace = entityNamed(Namespace.class, "third_space");
 		assertNotNull(nspace);
 
-		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
-		assertEquals(0, nspace.getNumberOfChildren());
+		assertEquals(1, nspace.numberOfChildEntities());
+		assertEquals("func", ((TNamedEntity)first( nspace.getChildEntities())).getName() );
 
 		assertNotNull(nspace.getParentPackage());
 		assertEquals("second_space", nspace.getParentPackage().getName());
-
-		assertEquals("func", first( ((TWithFunctions)nspace).getFunctions()).getName());
 	}
 
 }

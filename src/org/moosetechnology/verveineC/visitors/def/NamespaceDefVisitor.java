@@ -33,7 +33,7 @@ public class NamespaceDefVisitor extends AbstractVisitor {
 		if (! nodeName.toString().equals("")) {
 			nodeBnd = resolver.getBinding(nodeName);
 
-			fmx = dico.ensureFamixNamespace(nodeBnd, nodeName.toString(), (Namespace)null/*this.getContext().top()*/ );
+			fmx = dico.ensureFamixNamespace(nodeBnd, nodeName.toString(), (Namespace)this.getContext().top() );
 			//fmx.setIsStub(false);
 			
 			this.getContext().push(fmx);

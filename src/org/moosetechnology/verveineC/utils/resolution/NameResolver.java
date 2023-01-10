@@ -352,7 +352,7 @@ public class NameResolver {
 				fmx = dico.ensureFamixMethod(bnd, new QualifiedName(name).unqualifiedName(), sig, /*owner*/(TWithMethods)parent);
 			}
 			else {                    //   C function or may be a stub ?
-				fmx = dico.ensureFamixFunction(bnd, new QualifiedName(name).unqualifiedName(), SignatureBuilderVisitor.signatureFromAST(node), (TWithFunctions)context.top());
+				fmx = dico.ensureFamixFunction(bnd, new QualifiedName(name).unqualifiedName(), SignatureBuilderVisitor.signatureFromAST(node), (Namespace) context.top());
 			}
 		}
 

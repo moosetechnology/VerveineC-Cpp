@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -36,7 +37,6 @@ import org.eclipse.core.runtime.Path;
 import org.moosetechnology.famix.famixcppentities.FamixCppEntitiesModel;
 import org.moosetechnology.famix.famixtraits.TSourceLanguage;
 import org.moosetechnology.verveineC.utils.Constants;
-import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.visitors.AbstractIssueReporterVisitor;
 import org.moosetechnology.verveineC.visitors.ErrorVisitor;
@@ -248,11 +248,10 @@ public class VerveineCParser {
         return true;
 	}
 
-	private void runAllVisitors(CDictionary dico, ICProject cproject) throws CoreException {
+	protected void runAllVisitors(CDictionary dico, ICProject cproject) throws CoreException {
 		/*Having very specialized visitors helps because each one is simpler
 		 * so it is worth the impact on execution time
 		 * Note that the order is important, the visitors are not independent */
-Trace.off();
 		
 		AbstractIssueReporterVisitor issueVisitor;
 
@@ -292,7 +291,7 @@ Trace.off();
 		cproject.accept(new PreprocessorStmtDefVisitor(dico, index, projectPrefix));
 	}
 
-	private void configWorkspace(IWorkspace workspace) {
+	protected void configWorkspace(IWorkspace workspace) {
 		IWorkspaceDescription workspaceDesc = workspace.getDescription();
 		workspaceDesc.setAutoBuilding(false); // we do not want the workspace to rebuild the project every time a new resource is added
 		try {
@@ -300,29 +299,18 @@ Trace.off();
 		} catch (CoreException exc) {
 			System.err.println("Error trying to set workspace description: " + exc.getMessage());
 		}
-
 	}
 
-	private ICProject createEclipseProject(String projName, String sourcePath) {
+	protected ICProject createEclipseProject(String projName, String sourcePath) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		configWorkspace(workspace);
 		IWorkspaceRoot root = workspace.getRoot();
 		// we make a directory at the workspace root to copy source files
 		IPath eclipseProjPath = root.getRawLocation().removeLastSegments(1).append(WORKSPACE_NAME).append(projName);
+		eclipseProjPath.toFile().mkdirs();  // not really needed ?
+		
+		IProject project = root.getProject(projName);
 
-		final IProject project = root.getProject(projName);
-		try {
-			// delete content if the project exists
-			if (project.exists()) {
-				project.delete(/*deleteContent*/true, /*force*/true, Constants.NULL_PROGRESS_MONITOR);
-				project.refreshLocal(IResource.DEPTH_INFINITE, Constants.NULL_PROGRESS_MONITOR);
-			}
-		} catch (Exception exc) {
-			System.err.println("project path=" + project.getFullPath().toString());
-			exc.printStackTrace();
-		}
-
-		eclipseProjPath.toFile().mkdirs();  // not really needed
 		IProjectDescription eclipseProjDesc = workspace.newProjectDescription(project.getName());
 		eclipseProjDesc.setLocation(eclipseProjPath);
 
@@ -352,6 +340,9 @@ Trace.off();
 			System.err.println("Project directory "+sourcePath+ " not found !");
 			return null;
 		}
+		
+		deleteDirContent( project.getFolder(SOURCE_ROOT_DIR));
+		
 		FileUtil.copySourceFilesInProject(project, SOURCE_ROOT_DIR, projSrc, /*toLowerCase*/windows, /*addHExtension*/forceIncludeH);
 		ICProjectDescriptionManager descManager = CoreModel.getDefault().getProjectDescriptionManager();
         try {
@@ -363,10 +354,20 @@ Trace.off();
         return CoreModel.getDefault().getCModel().getCProject(project.getName());
 	}
 
+	private void deleteDirContent(IFolder folder) {
+		try {
+			for (IResource file : folder.members()) {
+				file.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT , null);
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * sets include path (system, given by user) and macros into the project
 	 */
-	private void configIndexer(ICProject proj) {
+	protected void configIndexer(ICProject proj) {
 		IPath projPath = proj.getPath();
 		List<String> includeFromConf=new ArrayList<>();
 		IPathEntry[] oldEntries=null;
@@ -421,7 +422,7 @@ Trace.off();
 		}
 	}
 
-	private void readIncludeConf(String confFileName, List<String> lines) {
+	protected void readIncludeConf(String confFileName, List<String> lines) {
 		BufferedReader read = null;
 		try {
 			read = new BufferedReader( new FileReader(confFileName));
@@ -450,7 +451,7 @@ Trace.off();
 		}
 	}
 
-	private void computeIndex(ICProject cproject) {
+	protected void computeIndex(ICProject cproject) {
 		System.out.println("Indexing source files");
 
 		IIndexManager imanager = CCorePlugin.getIndexManager();
@@ -540,7 +541,7 @@ Trace.off();
 		userProjectDir = dir;
 	}
 
-	private void parseMacroDefinition(String arg) {
+	protected void parseMacroDefinition(String arg) {
 		int i;
 		String macro;
 		String value;

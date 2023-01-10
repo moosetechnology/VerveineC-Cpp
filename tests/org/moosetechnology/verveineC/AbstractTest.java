@@ -19,6 +19,13 @@ public class AbstractTest {
 	protected static VerveineCParser parser;
 	protected static Repository repo;
 
+	/* static method because used as BeforeAll tests
+	 */
+	public static void newParser() {
+		parser = new VerveineCParser();
+		repo = parser.getFamixRepo();
+	}
+
 	/** All Entity of class <code>clazz</code> in the repository of the parser
 	 */
     protected <T extends Entity> Collection<T> entitiesOfType(Class<T> clazz) {
@@ -69,9 +76,4 @@ public class AbstractTest {
     	}
     }
     
-	public static void newParser() {
-		parser = new VerveineCParser();
-		repo = parser.getFamixRepo();
-	}
-
 }
