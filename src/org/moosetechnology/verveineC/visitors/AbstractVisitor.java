@@ -21,9 +21,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.Path;
 
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.Namespace;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.SourcedEntity;
-import org.moosetechnology.famix.famixcppentities.Package;
 
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.AnonymousName;
@@ -105,7 +105,7 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 		currentPath = (Path) currentPath.append(elt.getElementName());
 
 	    if (currentPath.segmentCount() > 2) {  // i.e. skip the project directories: tempProj/src
-	    	nodeBnd = StubBinding.getInstance(Package.class, currentPath.toString());
+	    	nodeBnd = StubBinding.getInstance(Namespace.class, currentPath.toString());
 	    }
 	    else {
 	    	nodeBnd = null;
@@ -129,12 +129,12 @@ public abstract class AbstractVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public int visit(ICPPASTNamespaceDefinition node) {
-		Package fmx;
+		Namespace fmx;
 	
 
 		nodeBnd = resolver.getBinding(node.getName());
 
-		fmx = dico.getEntityByKey(Package.class, nodeBnd);
+		fmx = dico.getEntityByKey(Namespace.class, nodeBnd);
 		
 		getContext().push(fmx);
 

@@ -30,12 +30,13 @@ import org.moosetechnology.famix.famixcentities.Invocation;
 import org.moosetechnology.famix.famixcentities.NamedEntity;
 import org.moosetechnology.famix.famixcentities.SourcedEntity;
 import org.moosetechnology.famix.famixcentities.Type;
-import org.moosetechnology.famix.famixcentities.UnknownBehaviour;
+import org.moosetechnology.famix.famixcentities.UnknownBehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.UnknownVariable;
 import org.moosetechnology.famix.famixcppentities.Class;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixtraits.TAccess;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
+import org.moosetechnology.famix.famixtraits.TWithDereferencedInvocations;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 import org.moosetechnology.verveineC.visitors.AbstractDispatcherVisitor;
@@ -185,7 +186,7 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 		}
 
 		if ( (fmx == null) && (nodeName != null) ) {
-			fmx = (NamedEntity) resolver.resolveOrCreate(nodeName.toString(), /*mayBeNull*/false, UnknownBehaviour.class);
+			fmx = (NamedEntity) resolver.resolveOrCreate(nodeName.toString(), /*mayBeNull*/false, UnknownBehaviouralEntity.class);
 		}
 
 		if (fmx instanceof org.moosetechnology.famix.famixcppentities.Class) {
@@ -202,7 +203,7 @@ public class InvocationAccessRefVisitor extends AbstractRefVisitor {
 			else if (fmx instanceof TStructuralEntity) {
 				// fmx is probably a pointer to a BehavioralEntity
 				String stubSig =  resolver.mkStubSig(fmx.getName(), node.getArguments().length);
-				invok = dereferencedInvocation( (TStructuralEntity)fmx, stubSig);
+				invok = dereferencedInvocation( (TWithDereferencedInvocations)fmx, stubSig);
 				dico.addSourceAnchor(invok, filename, node.getFileLocation());
 			}
 		}

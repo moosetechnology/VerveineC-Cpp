@@ -13,6 +13,8 @@ import org.moosetechnology.famix.famixtraits.TInvocation;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
+import org.moosetechnology.famix.famixtraits.TType;
+import org.moosetechnology.famix.famixtraits.TTypedEntity;
 import org.moosetechnology.famix.famixtraits.TWithAccesses;
 import org.moosetechnology.famix.famixtraits.TWithInvocations;
 import org.moosetechnology.famix.famixtraits.TWithReferences;
@@ -21,7 +23,7 @@ import org.moosetechnology.famix.famixtraits.TWithStatements;
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("BehaviouralEntity")
-public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TWithAccesses, TWithInvocations, TWithReferences, TWithStatements {
+public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithReferences, TWithStatements {
 
     private Collection<BehaviouralPointer> behaviouralAddressers; 
 
@@ -33,6 +35,8 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
     
     private Collection<TAccess> accesses; 
 
+    private TType declaredType;
+    
     private Collection<TInvocation> incomingInvocations; 
 
     private Boolean isStub;
@@ -220,6 +224,21 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
         return !getAccesses().isEmpty();
     }
 
+    @FameProperty(name = "declaredType", opposite = "typedEntities")
+    public TType getDeclaredType() {
+        return declaredType;
+    }
+
+    public void setDeclaredType(TType declaredType) {
+        if (this.declaredType != null) {
+            if (this.declaredType.equals(declaredType)) return;
+            this.declaredType.getTypedEntities().remove(this);
+        }
+        this.declaredType = declaredType;
+        if (declaredType == null) return;
+        declaredType.getTypedEntities().add(this);
+    }
+    
     @FameProperty(name = "incomingInvocations", opposite = "candidates", derived = true)
     public Collection<TInvocation> getIncomingInvocations() {
         if (incomingInvocations == null) {

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
+import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;

@@ -1,5 +1,6 @@
 package org.moosetechnology.verveineC.utils.resolution;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -16,15 +17,20 @@ import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.ContainerEntity;
 import org.moosetechnology.famix.famixcentities.Function;
+import org.moosetechnology.famix.famixcentities.GlobalVariable;
+import org.moosetechnology.famix.famixcentities.LocalVariable;
+import org.moosetechnology.famix.famixcentities.Namespace;
+import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcentities.UnknownContainerEntity;
 import org.moosetechnology.famix.famixcppentities.Method;
-import org.moosetechnology.famix.famixcppentities.Package;
 import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
 import org.moosetechnology.famix.famixtraits.TAttribute;
 import org.moosetechnology.famix.famixtraits.TFunction;
 import org.moosetechnology.famix.famixtraits.TMethod;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TPackage;
+import org.moosetechnology.famix.famixtraits.TPackageable;
 import org.moosetechnology.famix.famixtraits.TParameterizedType;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.famix.famixtraits.TType;
@@ -105,7 +111,7 @@ public class NameResolver {
 				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.famixcppentities.Class.class);
 			}
 			else {
-				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, Package.class);
+				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, Namespace.class);
 			}
 			simpleName = qualName.unqualifiedName();
 		}
@@ -364,7 +370,7 @@ public class NameResolver {
 		for (Type cl : dico.getEntityByName(Type.class, name)) {
 			return cl;   // return the 1st type found (if any)
 		}
-		for (Package ns : dico.getEntityByName(Package.class, name)) {
+		for (Namespace ns : dico.getEntityByName(Namespace.class, name)) {
 			return ns;   // return the 1st namespace found (if any)
 		}
 		for (Function fct : dico.getEntityByName(Function.class, name)) {
@@ -411,8 +417,7 @@ public class NameResolver {
 			}
 		}
 
-		// if not found call the "super" (by casting the variable)
-		return findInLocals(name, (ContainerEntity)context);
+		return null;
 	}
 
 	/**
@@ -434,52 +439,53 @@ public class NameResolver {
 			}
 		}
 
-		// if not found call the "super" (by casting the variable)
-		return findInLocals(name, (ContainerEntity)context);
+		return null;
 	}
 
 	/**
 	 * Search for a unqualified name within the scope of a context.
 	 * @return TNamedEntity found or null if none match
 	 */
-	public TNamedEntity findInLocals(String name, TWithGlobalVariables context) {		
-		for (TStructuralEntity child : context.getGlobalVariables()) {
-			if (child.getName().equals(name)) {
-				return child;
+	public TNamedEntity findInLocals(String name, Namespace context) {		
+		for (TPackageable child : context.getChildEntities()) {
+			if (((TNamedEntity) child).getName().equals(name)) {
+				return (TNamedEntity) child;
 			}
 		}
 
-		for (ScopingEntity child : context.getChildScopes()) {
-			if (child.getName().equals(name)) {
-				return child;
-			}
-		}
-
-		// if not found call the "super" (by casting the variable)
-		return findInLocals(name, (ContainerEntity)context);
+		return null;
 	}
 
 	/**
 	 * Search for a unqualified name within the scope of a context.
 	 * In the case of looking for a behavioural, name is actually a signature.
-	 * If cannot find it and recursive is <code>true</code>, looks in the scope of parent context.
-	 * This is a dispatcher method that calls the correct methods from the type of the second parameter
+	 * If cannot find it and <code>recursive</code> is true, looks in the scope of parent context.
+	 * This is a dispatcher method that calls the correct methods from the type of the second parameter,
+	 * it would be best implemented with a double-dispatch, but the Famix entities are generated and cannot be modified
 	 * @return TNamedEntity found or null if none match
 	 */
 	public TNamedEntity findInParent(String name, TNamedEntity context, boolean recursive) {
 		TNamedEntity found = null;
+		TNamedEntity parent = null;
 
 		if (context == null) {
 			return findAtTopLevel(name);
 		}
-		else if (context instanceof BehaviouralEntity) {
-			found = findInLocals(name, (BehaviouralEntity)context);
+		else if (context instanceof Function) {
+			found = findInLocals(name, (Function)context);
+			parent = ((Function)context).getParentPackage();
 		}
-		else if (context instanceof ScopingEntity) {
-			found = findInLocals(name, (ScopingEntity)context);
+		else if (context instanceof Method) {
+			found = findInLocals(name, (Method)context);
+			parent = (Type) ((Method)context).getParentType();
+		}
+		else if (context instanceof Package) {
+			found = findInLocals(name, (Namespace)context);
+			parent = ((Namespace)context).getParentPackage();
 		}
 		else if (context instanceof Type) {
 			found = findInLocals(name, (Type)context);
+			parent = ((Namespace)context).getParentPackage();
 		}
 		else {
 			// non ContainerEntity, should never happen
@@ -491,8 +497,7 @@ public class NameResolver {
 		}
 
 		if (recursive) {
-			TNamedEntity belongsTo = context.getBelongsTo();
-			return findInParent(name, belongsTo, recursive);
+			return findInParent(name, parent, recursive);
 		}
 		else {
 			return null;
@@ -554,12 +559,46 @@ public class NameResolver {
 				parent = null;
 			}
 
-				bnd = mkStubKey(simpleName, parent, asEntityType);
-				tmp = dico.ensureFamixEntity(asEntityType, bnd, simpleName);
-				tmp.setBelongsTo( parent);
+			bnd = mkStubKey(simpleName, parent, asEntityType);
+			tmp = dico.ensureFamixEntity(asEntityType, bnd, simpleName);
+			setBelongsTo( tmp, parent);
 		}
 
 		return tmp;
+	}
+
+	/**
+	 * sets the parent of a Famix entity
+ 	 * It would be best implemented with a double-dispatch, but the Famix entities are generated and cannot be modified
+	 */
+	private void setBelongsTo(TNamedEntity fmx, ContainerEntity parent) {
+		if (fmx == null) {
+			return;
+		}
+		else if (fmx instanceof Namespace) {
+			((Namespace)fmx).setParentPackage((TPackage) parent);
+		}
+		else if (fmx instanceof org.moosetechnology.famix.famixcppentities.Class) {
+			((org.moosetechnology.famix.famixcppentities.Class)fmx).setParentPackage((TPackage) parent);
+		}
+		else if (fmx instanceof Function) {
+			((Function)fmx).setParentPackage((TPackage) parent);
+		}
+		else if (fmx instanceof Method) {
+			((Method)fmx).setParentType((TWithMethods) parent);
+		}
+		else if (fmx instanceof Parameter) {
+			((Parameter)fmx).setParentBehaviouralEntity((TWithParameters) parent);
+		}
+		else if (fmx instanceof LocalVariable) {
+			((LocalVariable)fmx).setParentBehaviouralEntity((TWithLocalVariables) parent);
+		}
+		else if (fmx instanceof Attribute) {
+			((Attribute)fmx).setParentType((TWithAttributes) parent);
+		}
+		else if (fmx instanceof GlobalVariable) {
+			((GlobalVariable)fmx).setParentPackage((TPackage) parent);
+		}
 	}
 
 	/**
@@ -602,7 +641,6 @@ public class NameResolver {
 		}
 		return parent;
 	}
-
 
 	/**
 	 * Find a referenced type from its name
@@ -680,7 +718,7 @@ public class NameResolver {
 			try {
 				Type arg = (Type) findInParent(typArg, getContext().top(), /*recursive*/true);
 				if (arg != null) {
-//TODO					fmx.addArguments(arg);
+//TODO ?					fmx.addArguments(arg);
 				}
 			}
 			catch (ClassCastException e) {

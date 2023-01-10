@@ -48,7 +48,6 @@ import org.moosetechnology.verveineC.visitors.def.AttributeGlobalVarDefVisitor;
 import org.moosetechnology.verveineC.visitors.def.BehaviouralDefVisitor;
 import org.moosetechnology.verveineC.visitors.def.CommentDefVisitor;
 import org.moosetechnology.verveineC.visitors.def.NamespaceDefVisitor;
-import org.moosetechnology.verveineC.visitors.def.PackageDefVisitor;
 import org.moosetechnology.verveineC.visitors.def.PreprocessorStmtDefVisitor;
 import org.moosetechnology.verveineC.visitors.def.TemplateParameterDefVisitor;
 import org.moosetechnology.verveineC.visitors.def.TypeDefVisitor;
@@ -262,25 +261,23 @@ Trace.off();
 		
 		AbstractIssueReporterVisitor issueVisitor;
 
-		issueVisitor = new IncludeVisitor(dico, index, projectPrefix);
-		cproject.accept(issueVisitor);
 		if (errorlog) {
+			issueVisitor = new IncludeVisitor(dico, index, projectPrefix);
+			cproject.accept(issueVisitor);
+			issueVisitor.reportIssues();
+
+			issueVisitor = new ErrorVisitor(dico, index, projectPrefix);
+			cproject.accept(issueVisitor);
 			issueVisitor.reportIssues();
 		}
 
-		// another issue reporter
-		issueVisitor = new ErrorVisitor(dico, index, projectPrefix);
-
-		cproject.accept(new PackageDefVisitor(dico, index, projectPrefix));
 		if (!cModel) {
 			cproject.accept(new NamespaceDefVisitor(dico, index, projectPrefix));
 		}
-		
 		cproject.accept(new TypeDefVisitor(dico, index, projectPrefix));
 		if (!cModel) {
 			cproject.accept(new InheritanceRefVisitor(dico, index, projectPrefix));
 		}
-		//cproject.accept(new TypeDefFromRefVisitor(dico, index, projectPrefix));
 
 		BehaviouralDefVisitor behavVisitor = new BehaviouralDefVisitor(dico, index, projectPrefix);		// must be after class definitions
 		behavVisitor.setHeaderFiles(true);
@@ -298,11 +295,6 @@ Trace.off();
 
 		cproject.accept(new CommentDefVisitor(dico, index, projectPrefix));
 		cproject.accept(new PreprocessorStmtDefVisitor(dico, index, projectPrefix));
-
-		if (errorlog) {
-			cproject.accept(issueVisitor);
-			issueVisitor.reportIssues();
-		}
 	}
 
 	private void configWorkspace(IWorkspace workspace) {

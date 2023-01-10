@@ -10,6 +10,8 @@ import org.moosetechnology.famix.famixtraits.TAccess;
 import org.moosetechnology.famix.famixtraits.TAccessible;
 import org.moosetechnology.famix.famixtraits.TGlobalVariable;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TPackage;
+import org.moosetechnology.famix.famixtraits.TPackageable;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
@@ -22,7 +24,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("GlobalVariable")
-public class GlobalVariable extends NamedEntity implements TAccessible, TEntityMetaLevelDependency, TGlobalVariable, TNamedEntity, TSourceEntity, TStructuralEntity, TTypedEntity {
+public class GlobalVariable extends NamedEntity implements TAccessible, TEntityMetaLevelDependency, TGlobalVariable, TNamedEntity, TPackageable, TSourceEntity, TStructuralEntity, TTypedEntity {
 
     private TType declaredType;
     
@@ -33,6 +35,8 @@ public class GlobalVariable extends NamedEntity implements TAccessible, TEntityM
     private String name;
     
     private Number numberOfLinesOfCode;
+    
+    private TPackage parentPackage;
     
     private TWithGlobalVariables parentScope;
     
@@ -227,6 +231,21 @@ public class GlobalVariable extends NamedEntity implements TAccessible, TEntityM
     public Number getNumberOfLocalAccesses() {
         // TODO: this is a derived property, implement this method manually.
         throw new UnsupportedOperationException("Not yet implemented!");  
+    }
+    
+    @FameProperty(name = "parentPackage", opposite = "childEntities", container = true)
+    public TPackage getParentPackage() {
+        return parentPackage;
+    }
+
+    public void setParentPackage(TPackage parentPackage) {
+        if (this.parentPackage != null) {
+            if (this.parentPackage.equals(parentPackage)) return;
+            this.parentPackage.getChildEntities().remove(this);
+        }
+        this.parentPackage = parentPackage;
+        if (parentPackage == null) return;
+        parentPackage.getChildEntities().add(this);
     }
     
     @FameProperty(name = "parentScope", opposite = "globalVariables", container = true)

@@ -24,8 +24,8 @@ import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.GlobalVariable;
 import org.moosetechnology.famix.famixcentities.IndexedFileAnchor;
 import org.moosetechnology.famix.famixcentities.LocalVariable;
-import org.moosetechnology.famix.famixcentities.Module;
 import org.moosetechnology.famix.famixcentities.MultipleFileAnchor;
+import org.moosetechnology.famix.famixcentities.Namespace;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.PrimitiveType;
 import org.moosetechnology.famix.famixcentities.Reference;
@@ -36,7 +36,6 @@ import org.moosetechnology.famix.famixcppentities.ImplicitVariable;
 import org.moosetechnology.famix.famixcppentities.Inheritance;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixcppentities.OOInvocation;
-import org.moosetechnology.famix.famixcppentities.Package;
 import org.moosetechnology.famix.famixcppentities.ParameterType;
 import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
 import org.moosetechnology.famix.famixcppentities.ParameterizedType;
@@ -648,13 +647,6 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public Module ensureFamixModule(IBinding key, String name, Package owner) {
-		Module fmx = ensureFamixEntity(Module.class, key, name, /*persistIt*/true);
-		fmx.setParentPackage(owner);
-
-		return fmx;
-	}
-
 	public Include addFamixInclude(CFile src, CFile tgt) {
 		if ( (src == null) || (tgt == null) ) {
 			return null;
@@ -922,7 +914,7 @@ public class CDictionary {
 		return fmx;
 	}
 	
-	public UnknownVariable ensureFamixUnknownVariable(IBinding key, String name, Package parent) {
+	public UnknownVariable ensureFamixUnknownVariable(IBinding key, String name, Namespace parent) {
 		UnknownVariable fmx = null;
 		
 		if (key != null) {
@@ -975,8 +967,8 @@ public class CDictionary {
 	}
 */
 
-	public Package ensureFamixPackage(IBinding key, String name, Package parent) {
-		Package fmx = ensureFamixEntity(Package.class, key, name, /*persitIt*/true);
+	public Namespace ensureFamixNamespace(IBinding key, String name, Namespace parent) {
+		Namespace fmx = ensureFamixEntity(Namespace.class, key, name, /*persitIt*/true);
 		fmx.setIsStub(false);
 		if (parent != null) {
 			fmx.setParentPackage(parent);
@@ -1053,7 +1045,7 @@ public class CDictionary {
 		// apparently CDT gives a binding to the parameterType at its declaration ("template <class T> ...")
 		// but not when used ("... mth(T)") so we ignore CDT binding and always use our custom build one
     	IBinding bnd;
-    	bnd = StubBinding.getInstance(Type.class, mooseName(owner, name));
+    	bnd = StubBinding.getInstance(Type.class, mooseName((ContainerEntity) owner, name));
 
 		if (owner instanceof ParameterizableClass) {
 			return ensureFamixParameterType(bnd, name, owner);
@@ -1185,15 +1177,11 @@ public class CDictionary {
 	 * Computes moose name for an entity in a Container.
 	 * This is a convenience method that delegates to one of {@link #mooseName(Function, String)}; {@link #mooseName(Method, String)}; {@link #mooseName(Package, String)};
 	 * {@link #mooseName(Package, String)}; or {@link #mooseName(Type, String)}
-	 * And this is required because at some point we need to call it with an unknown ContainerEntity :-(
+	 * it would be best implemented with a double-dispatch, but the Famix entities are generated and cannot be modified
 	 */
 	static public String mooseName(ContainerEntity parent, String name) {
-		/*if (parent instanceof Namespace) {
+		if (parent instanceof Namespace) {
 			return mooseName((Namespace)parent, name);
-		}
-		else */
-		if (parent instanceof Package) {
-			return mooseName((Package)parent, name);
 		}
 		else if (parent instanceof Type) {
 			return mooseName((Type)parent, name);
@@ -1210,28 +1198,12 @@ public class CDictionary {
 	}
 
 	/**
-	 * Computes moose name for a Namespace child.
-	 * MooseName is the concatenation of the moosename of the parent Namescape with the simple name of the child
-	 * /
-	static public String mooseName(Package parent, String name) {
-		String ret;
-		if (parent != null) {
-			ret = concatMooseName( mooseName((Namespace)parent.getParentScope(), parent.getName()) , name);
-		}
-		else {
-			ret = name;
-		}
-		return ret;
-	}
-*/
-
-	/**
-	 * Computes moose name for a Package child
+	 * Computes moose name for a Package (i.e C++ Namespace) child
 	 * MooseName is the concatenation of the moosename of the parent Package with the simple name of the child
 	 */
-	static public String mooseName(Package parent, String name) {
+	static public String mooseName(Namespace parent, String name) {
 		if (parent != null) {
-			return concatMooseName( mooseName( (Package)parent.getParentPackage(), parent.getName()) , name);
+			return concatMooseName( mooseName( (Namespace)parent.getParentPackage(), parent.getName()) , name);
 		}
 		else {
 			return name;
@@ -1239,10 +1211,16 @@ public class CDictionary {
 	}
 
 	/**
-	 * Computes moose name for a Module.
+	 * Computes moose name for a Type.
+	 * MooseName is the concatenation of the mooseName of the parent package with the simple name of the type
 	 */
-	static public String mooseName(Module parent, String name) {
-		return name;
+	static public String mooseName(Type parent, String name) {
+		if (parent != null) {
+			return concatMooseName( mooseName((ContainerEntity) parent.getTypeContainer(), parent.getName()) , name);
+		}
+		else {
+			return name;
+		}
 	}
 
 	/**
@@ -1264,20 +1242,7 @@ public class CDictionary {
 	 */
 	static public String mooseName(Function parent, String name) {
 		if (parent != null) {
-			return concatMooseName( mooseName((Module)parent.getFunctionOwner(), parent.getSignature()) , name);
-		}
-		else {
-			return name;
-		}
-	}
-
-	/**
-	 * Computes moose name for a Type.
-	 * MooseName is the concatenation of the mooseName of the parent package with the simple name of the type
-	 */
-	static public String mooseName(Type parent, String name) {
-		if (parent != null) {
-			return concatMooseName( mooseName((ContainerEntity) parent.getTypeContainer(), parent.getName()) , name);
+			return concatMooseName( mooseName((Namespace)parent.getFunctionOwner(), parent.getSignature()) , name);
 		}
 		else {
 			return name;

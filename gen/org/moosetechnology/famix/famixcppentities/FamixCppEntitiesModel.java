@@ -21,7 +21,6 @@ public class FamixCppEntitiesModel {
 		metamodel.with(org.moosetechnology.famix.famixcppentities.Method.class);
 		metamodel.with(org.moosetechnology.famix.famixcppentities.NamedEntity.class);
 		metamodel.with(org.moosetechnology.famix.famixcppentities.OOInvocation.class);
-		metamodel.with(org.moosetechnology.famix.famixcppentities.Package.class);
 		metamodel.with(org.moosetechnology.famix.famixcppentities.ParameterType.class);
 		metamodel.with(org.moosetechnology.famix.famixcppentities.ParameterizableClass.class);
 		metamodel.with(org.moosetechnology.famix.famixcppentities.ParameterizedType.class);

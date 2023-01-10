@@ -17,7 +17,6 @@ import org.moosetechnology.famix.famixtraits.TLocalVariable;
 import org.moosetechnology.famix.famixtraits.TMethod;
 import org.moosetechnology.famix.famixtraits.TMethodMetrics;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
-import org.moosetechnology.famix.famixtraits.TNamespace;
 import org.moosetechnology.famix.famixtraits.TParameter;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
@@ -37,7 +36,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Cpp-Entities")
 @FameDescription("Method")
-public class Method extends BehaviouralEntity implements TEntityMetaLevelDependency, THasKind, THasSignature, TInvocable, TMethod, TMethodMetrics, TNamedEntity, TNamespace, TSourceEntity, TTypedEntity, TWithAccesses, TWithImplicitVariables, TWithInvocations, TWithLocalVariables, TWithParameters, TWithReferences, TWithStatements {
+public class Method extends BehaviouralEntity implements TEntityMetaLevelDependency, THasKind, THasSignature, TInvocable, TMethod, TMethodMetrics, TNamedEntity, TSourceEntity, TTypedEntity, TWithAccesses, TWithImplicitVariables, TWithInvocations, TWithLocalVariables, TWithParameters, TWithReferences, TWithStatements {
 
     private Collection<TAccess> accesses; 
 

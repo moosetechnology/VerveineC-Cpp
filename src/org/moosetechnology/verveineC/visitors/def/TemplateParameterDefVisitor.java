@@ -119,7 +119,7 @@ public class TemplateParameterDefVisitor extends AbstractVisitor {
 				// use UnknownVariable as a temporary(!) workaround
 				name = ((ICPPASTParameterDeclaration)param).getDeclarator().getName().toString();
 				bnd = resolver.mkStubKey( name, UnknownVariable.class);
-				dico.ensureFamixUnknownVariable( bnd, name, /*parent*/getContext().topPckg());
+				dico.ensureFamixUnknownVariable( bnd, name, /*parent*/getContext().topNamespace());
 			}
 
 			else {

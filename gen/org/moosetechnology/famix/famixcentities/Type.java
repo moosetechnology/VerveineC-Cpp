@@ -7,6 +7,8 @@ import ch.akuhn.fame.FameProperty;
 import ch.akuhn.fame.internal.MultivalueSet;
 import java.util.*;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TPackage;
+import org.moosetechnology.famix.famixtraits.TPackageable;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TReferenceable;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
@@ -21,7 +23,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("Type")
-public class Type extends ContainerEntity implements TEntityMetaLevelDependency, TNamedEntity, TReferenceable, TSourceEntity, TType, TWithTypeAliases {
+public class Type extends ContainerEntity implements TEntityMetaLevelDependency, TNamedEntity, TPackageable, TReferenceable, TSourceEntity, TType, TWithTypeAliases {
 
     private Collection<TReference> incomingReferences; 
 
@@ -30,6 +32,8 @@ public class Type extends ContainerEntity implements TEntityMetaLevelDependency,
     private String name;
     
     private Number numberOfLinesOfCode;
+    
+    private TPackage parentPackage;
     
     private TSourceAnchor sourceAnchor;
     
@@ -177,6 +181,21 @@ public class Type extends ContainerEntity implements TEntityMetaLevelDependency,
     public Number getNumberOfLinesOfCodeWithMoreThanOneCharacter() {
         // TODO: this is a derived property, implement this method manually.
         throw new UnsupportedOperationException("Not yet implemented!");  
+    }
+    
+    @FameProperty(name = "parentPackage", opposite = "childEntities", container = true)
+    public TPackage getParentPackage() {
+        return parentPackage;
+    }
+
+    public void setParentPackage(TPackage parentPackage) {
+        if (this.parentPackage != null) {
+            if (this.parentPackage.equals(parentPackage)) return;
+            this.parentPackage.getChildEntities().remove(this);
+        }
+        this.parentPackage = parentPackage;
+        if (parentPackage == null) return;
+        parentPackage.getChildEntities().add(this);
     }
     
     @FameProperty(name = "sourceAnchor", opposite = "element", derived = true)

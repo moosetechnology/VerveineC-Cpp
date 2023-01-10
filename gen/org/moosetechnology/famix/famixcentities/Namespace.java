@@ -1,12 +1,11 @@
 // Automagically generated code, please do not change
-package org.moosetechnology.famix.famixcppentities;
+package org.moosetechnology.famix.famixcentities;
 
 import ch.akuhn.fame.FameDescription;
 import ch.akuhn.fame.FamePackage;
 import ch.akuhn.fame.FameProperty;
 import ch.akuhn.fame.internal.MultivalueSet;
 import java.util.*;
-import org.moosetechnology.famix.famixcentities.ContainerEntity;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
 import org.moosetechnology.famix.famixtraits.TPackage;
 import org.moosetechnology.famix.famixtraits.TPackageable;
@@ -15,9 +14,9 @@ import org.moosetechnology.famix.famixtraits.TSourceEntity;
 import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 
-@FamePackage("Famix-Cpp-Entities")
-@FameDescription("Package")
-public class Package extends ContainerEntity implements TEntityMetaLevelDependency, TNamedEntity, TPackage, TPackageable, TSourceEntity {
+@FamePackage("Famix-C-Entities")
+@FameDescription("Namespace")
+public class Namespace extends ContainerEntity implements TEntityMetaLevelDependency, TNamedEntity, TPackage, TPackageable, TSourceEntity {
 
     private Collection<TPackageable> childEntities; 
 
@@ -43,7 +42,7 @@ public class Package extends ContainerEntity implements TEntityMetaLevelDependen
                 }
                 @Override
                 protected void setOpposite(TPackageable e) {
-                    e.setParentPackage(Package.this);
+                    e.setParentPackage(Namespace.this);
                 }
             };
         }

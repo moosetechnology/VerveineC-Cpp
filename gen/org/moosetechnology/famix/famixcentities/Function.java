@@ -11,6 +11,8 @@ import org.moosetechnology.famix.famixtraits.TFunction;
 import org.moosetechnology.famix.famixtraits.THasSignature;
 import org.moosetechnology.famix.famixtraits.TInvocation;
 import org.moosetechnology.famix.famixtraits.TNamedEntity;
+import org.moosetechnology.famix.famixtraits.TPackage;
+import org.moosetechnology.famix.famixtraits.TPackageable;
 import org.moosetechnology.famix.famixtraits.TParameter;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
@@ -28,7 +30,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("Function")
-public class Function extends BehaviouralEntity implements TEntityMetaLevelDependency, TFunction, THasSignature, TNamedEntity, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithParameters, TWithReferences, TWithStatements {
+public class Function extends BehaviouralEntity implements TEntityMetaLevelDependency, TFunction, THasSignature, TNamedEntity, TPackageable, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithParameters, TWithReferences, TWithStatements {
 
     private Collection<TAccess> accesses; 
 
@@ -48,6 +50,8 @@ public class Function extends BehaviouralEntity implements TEntityMetaLevelDepen
 
     private Collection<TParameter> parameters; 
 
+    private TPackage parentPackage;
+    
     private String signature;
     
     private TSourceAnchor sourceAnchor;
@@ -393,6 +397,21 @@ public class Function extends BehaviouralEntity implements TEntityMetaLevelDepen
         return !getParameters().isEmpty();
     }
 
+    @FameProperty(name = "parentPackage", opposite = "childEntities", container = true)
+    public TPackage getParentPackage() {
+        return parentPackage;
+    }
+
+    public void setParentPackage(TPackage parentPackage) {
+        if (this.parentPackage != null) {
+            if (this.parentPackage.equals(parentPackage)) return;
+            this.parentPackage.getChildEntities().remove(this);
+        }
+        this.parentPackage = parentPackage;
+        if (parentPackage == null) return;
+        parentPackage.getChildEntities().add(this);
+    }
+    
     @FameProperty(name = "signature")
     public String getSignature() {
         return signature;

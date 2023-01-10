@@ -30,9 +30,9 @@ public class FamixCEntitiesModel {
 		metamodel.with(org.moosetechnology.famix.famixcentities.IndexedFileAnchor.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Invocation.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.LocalVariable.class);
-		metamodel.with(org.moosetechnology.famix.famixcentities.Module.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.MultipleFileAnchor.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.NamedEntity.class);
+		metamodel.with(org.moosetechnology.famix.famixcentities.Namespace.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Parameter.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.PrimitiveType.class);
 		metamodel.with(org.moosetechnology.famix.famixcentities.Reference.class);

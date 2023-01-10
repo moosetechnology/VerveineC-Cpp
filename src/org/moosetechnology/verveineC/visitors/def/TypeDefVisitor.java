@@ -18,9 +18,9 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.moosetechnology.famix.famixcentities.AliasType;
 import org.moosetechnology.famix.famixcentities.Enum;
 import org.moosetechnology.famix.famixcentities.NamedEntity;
+import org.moosetechnology.famix.famixcentities.Namespace;
 import org.moosetechnology.famix.famixcentities.SourcedEntity;
 import org.moosetechnology.famix.famixcentities.Type;
-import org.moosetechnology.famix.famixcppentities.Package;
 import org.moosetechnology.famix.famixtraits.TWithTypes;
 import org.moosetechnology.verveineC.plugin.CDictionary;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
@@ -31,7 +31,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 	/**
 	 * The file directory being visited at any given time
 	 */
-	protected Package currentPackage;
+	protected Namespace currentNamespace;
 
 	/**
 	 * used between {@link #visit(ICPPASTTemplateDeclaration)} and {@link #visit(ICPPASTCompositeTypeSpecifier)}
@@ -48,7 +48,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 	 */
 	public TypeDefVisitor(CDictionary dico, IIndex index, String rootFolder) {
 		super(dico, index, rootFolder);
-		currentPackage = null;
+		currentNamespace = null;
 		definitionOfATemplate = false;
 	}
 
@@ -64,16 +64,16 @@ public class TypeDefVisitor extends AbstractVisitor {
 
 		enterPath(elt);
 		if (nodeBnd != null) {
-			currentPackage = dico.getEntityByKey(Package.class, nodeBnd);
+			currentNamespace = dico.getEntityByKey(Namespace.class, nodeBnd);
 		}
 		else {
-			currentPackage = null;
+			currentNamespace = null;
 		}
 
 		super.visit(elt);                                // visit children
 
-		if (currentPackage != null) {
-			currentPackage = (Package) currentPackage.getParentPackage();    // back to parent package
+		if (currentNamespace != null) {
+			currentNamespace = (Namespace) currentNamespace.getParentPackage();    // back to parent Namespace
 		}
 		leavePath(elt);
 	}
@@ -282,7 +282,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 			// if node is a stub with a fully qualified name, its parent is not context.top() :-(
 			fmx = dico.ensureFamixClass(nodeBnd, nodeName.toString(), (TWithTypes)getContext().top());
 		}
-		fmx.setParentPackage(currentPackage);
+		fmx.setParentPackage(currentNamespace);
 		
 		/* We can be in a case where the class declaration being processed belongs to a file imported using an #includes statement
 		 In such a case, filename instance variable will be initialized with location of the file "including" the external file. 

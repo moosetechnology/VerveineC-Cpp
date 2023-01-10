@@ -20,11 +20,11 @@ import org.moosetechnology.famix.famixcentities.ContainerEntity;
 import org.moosetechnology.famix.famixcentities.Enum;
 import org.moosetechnology.famix.famixcentities.EnumValue;
 import org.moosetechnology.famix.famixcentities.GlobalVariable;
+import org.moosetechnology.famix.famixcentities.Namespace;
 import org.moosetechnology.famix.famixcentities.SourcedEntity;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcentities.UnknownContainerEntity;
 import org.moosetechnology.famix.famixcentities.UnknownVariable;
-import org.moosetechnology.famix.famixcppentities.Package;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.famix.famixtraits.TWithAttributes;
 import org.moosetechnology.famix.famixtraits.TWithGlobalVariables;
@@ -150,14 +150,14 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 			parent = (ContainerEntity) getContext().top();
 		}
 
-		if ( (parent == null) || (parent instanceof Package) ) {
+		if ( (parent == null) || (parent instanceof Namespace) ) {
 			kind = VariableKind.GLOBAL;
 		}
 		else if (parent instanceof Type) {
 			kind = VariableKind.ATTRIBUTE;
 		}
 		else {
-			parent = getContext().topPckg();
+			parent = getContext().topNamespace();
 			kind = VariableKind.UNKNOWN;
 		}
 
@@ -184,7 +184,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 			break;
 		case UNKNOWN:
 			try {			
-			fmx = dico.ensureFamixUnknownVariable(bnd, name.toString(), (Package) parent);
+			fmx = dico.ensureFamixUnknownVariable(bnd, name.toString(), (Namespace) parent);
 			break;}  catch( ClassCastException ex) {  
 			// issue #910 hack
 			// faced a case where an expected UnknownVariable was finally resolved as an Attribute.

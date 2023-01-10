@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.moosetechnology.famix.famixcentities.Function;
-import org.moosetechnology.famix.famixcppentities.Package;
+import org.moosetechnology.famix.famixcentities.Namespace;
 import org.moosetechnology.famix.famixtraits.TWithFunctions;
 
 class NamespacesTest extends AbstractTest {
@@ -24,13 +24,13 @@ class NamespacesTest extends AbstractTest {
 
 	@Test
 	public void testNumberOfEntities() {	
-		assertEquals( 3, entitiesOfType(Package.class).size());
+		assertEquals( 3, entitiesOfType(Namespace.class).size());
 		assertEquals( 4, entitiesOfType(Function.class).size());
 	}
 
 	@Test
 	public void testFirstSpace() {
-		Package nspace = entityNamed(Package.class, "first_space");
+		Namespace nspace = entityNamed(Namespace.class, "first_space");
 		assertNotNull(nspace);
 
 		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
@@ -42,7 +42,7 @@ class NamespacesTest extends AbstractTest {
 
 	@Test
 	public void testSecondSpace() {
-		Package nspace = entityNamed(Package.class, "second_space");
+		Namespace nspace = entityNamed(Namespace.class, "second_space");
 		assertNotNull(nspace);
 
 		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
@@ -54,7 +54,7 @@ class NamespacesTest extends AbstractTest {
 
 	@Test
 	public void testThirdSpace() {
-		Package nspace = entityNamed(Package.class, "third_space");
+		Namespace nspace = entityNamed(Namespace.class, "third_space");
 		assertNotNull(nspace);
 
 		assertEquals(1, ((TWithFunctions)nspace).numberOfFunctions());
