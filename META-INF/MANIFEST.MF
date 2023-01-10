@@ -14,7 +14,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: moostechnology
 Bundle-ClassPath: .,
  lib/akuhn-util-r28011.jar,
- lib/fame.jar,
- lib/famix.jar,
- lib/verveine.core.jar
+ lib/fame.jar
 Bundle-Activator: org.moosetechnology.verveineC.plugin.Activator

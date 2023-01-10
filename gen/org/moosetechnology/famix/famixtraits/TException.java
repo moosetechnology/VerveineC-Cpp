@@ -10,7 +10,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Traits")
 @FameDescription("TException")
-public interface TException extends TNamedEntity, TEntityMetaLevelDependency, TWithAttributes, TWithMethods, TSourceEntity, TReferenceable, TInvocationsReceiver, TWithInheritances, TType, TPackageable, TClass, TWithComments {
+public interface TException extends TEntityMetaLevelDependency, TNamedEntity, TWithAttributes, TWithMethods, TSourceEntity, TReferenceable, TInvocationsReceiver, TWithInheritances, TType, TPackageable, TClass, TWithComments {
 
         @FameProperty(name = "throwingEntities", opposite = "thrownExceptions", derived = true)
     public Collection<TWithExceptions> getThrowingEntities();

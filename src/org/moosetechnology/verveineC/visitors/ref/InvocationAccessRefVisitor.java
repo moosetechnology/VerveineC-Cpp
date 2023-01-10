@@ -32,7 +32,6 @@ import org.moosetechnology.famix.famixcentities.SourcedEntity;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcentities.UnknownBehaviouralEntity;
 import org.moosetechnology.famix.famixcentities.UnknownVariable;
-import org.moosetechnology.famix.famixcppentities.Class;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixtraits.TAccess;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;

@@ -10,8 +10,6 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.moosetechnology.verveineC.plugin.CDictionary;
-import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.resolution.QualifiedName;
 
 /**

@@ -1,6 +1,5 @@
 package org.moosetechnology.verveineC.utils.resolution;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -36,10 +35,8 @@ import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.famix.famixtraits.TType;
 import org.moosetechnology.famix.famixtraits.TWithAttributes;
 import org.moosetechnology.famix.famixtraits.TWithFunctions;
-import org.moosetechnology.famix.famixtraits.TWithGlobalVariables;
 import org.moosetechnology.famix.famixtraits.TWithLocalVariables;
 import org.moosetechnology.famix.famixtraits.TWithMethods;
-import org.moosetechnology.famix.famixtraits.TWithParameterizedTypes;
 import org.moosetechnology.famix.famixtraits.TWithParameters;
 import org.moosetechnology.famix.famixtraits.TWithTypes;
 import org.moosetechnology.famix.moose.Entity;
@@ -271,7 +268,7 @@ public class NameResolver {
 				parent = (ContainerEntity) resolveOrCreate(qualName.nameQualifiers(), /*mayBeNull*/false, org.moosetechnology.famix.famixcppentities.Class.class);
 			}
 			else {
-				parent = context.getTopCppNamespace();
+				parent = context.topNamespace();
 			}
 
 			if (parent instanceof org.moosetechnology.famix.famixcppentities.Class) {
@@ -485,7 +482,7 @@ public class NameResolver {
 		}
 		else if (context instanceof Type) {
 			found = findInLocals(name, (Type)context);
-			parent = ((Namespace)context).getParentPackage();
+			parent = ((Type)context).getParentPackage();
 		}
 		else {
 			// non ContainerEntity, should never happen

@@ -10,6 +10,7 @@ import org.moosetechnology.famix.famixtraits.TAccess;
 import org.moosetechnology.famix.famixtraits.THasSignature;
 import org.moosetechnology.famix.famixtraits.TInvocable;
 import org.moosetechnology.famix.famixtraits.TInvocation;
+import org.moosetechnology.famix.famixtraits.TLocalVariable;
 import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceAnchor;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
@@ -17,13 +18,15 @@ import org.moosetechnology.famix.famixtraits.TType;
 import org.moosetechnology.famix.famixtraits.TTypedEntity;
 import org.moosetechnology.famix.famixtraits.TWithAccesses;
 import org.moosetechnology.famix.famixtraits.TWithInvocations;
+import org.moosetechnology.famix.famixtraits.TWithLocalVariables;
 import org.moosetechnology.famix.famixtraits.TWithReferences;
 import org.moosetechnology.famix.famixtraits.TWithStatements;
+import org.moosetechnology.famix.famixtraits.TWithTypes;
 
 
 @FamePackage("Famix-C-Entities")
 @FameDescription("BehaviouralEntity")
-public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithReferences, TWithStatements {
+public class BehaviouralEntity extends ContainerEntity implements THasSignature, TInvocable, TSourceEntity, TTypedEntity, TWithAccesses, TWithInvocations, TWithLocalVariables, TWithReferences, TWithStatements, TWithTypes {
 
     private Collection<BehaviouralPointer> behaviouralAddressers; 
 
@@ -41,6 +44,8 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
 
     private Boolean isStub;
     
+    private Collection<TLocalVariable> localVariables; 
+
     private Number numberOfLinesOfCode;
     
     private Collection<TInvocation> outgoingInvocations; 
@@ -51,6 +56,8 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
     
     private TSourceAnchor sourceAnchor;
     
+    private Collection<TType> types; 
+
 
 
     @FameProperty(name = "behaviouralAddressers", opposite = "behaviouralPointed", derived = true)
@@ -298,6 +305,57 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
         this.isStub = isStub;
     }
     
+    @FameProperty(name = "localVariables", opposite = "parentBehaviouralEntity", derived = true)
+    public Collection<TLocalVariable> getLocalVariables() {
+        if (localVariables == null) {
+            localVariables = new MultivalueSet<TLocalVariable>() {
+                @Override
+                protected void clearOpposite(TLocalVariable e) {
+                    e.setParentBehaviouralEntity(null);
+                }
+                @Override
+                protected void setOpposite(TLocalVariable e) {
+                    e.setParentBehaviouralEntity(BehaviouralEntity.this);
+                }
+            };
+        }
+        return localVariables;
+    }
+    
+    public void setLocalVariables(Collection<? extends TLocalVariable> localVariables) {
+        this.getLocalVariables().clear();
+        this.getLocalVariables().addAll(localVariables);
+    }                    
+    
+        
+    public void addLocalVariables(TLocalVariable one) {
+        this.getLocalVariables().add(one);
+    }   
+    
+    public void addLocalVariables(TLocalVariable one, TLocalVariable... many) {
+        this.getLocalVariables().add(one);
+        for (TLocalVariable each : many)
+            this.getLocalVariables().add(each);
+    }   
+    
+    public void addLocalVariables(Iterable<? extends TLocalVariable> many) {
+        for (TLocalVariable each : many)
+            this.getLocalVariables().add(each);
+    }   
+                
+    public void addLocalVariables(TLocalVariable[] many) {
+        for (TLocalVariable each : many)
+            this.getLocalVariables().add(each);
+    }
+    
+    public int numberOfLocalVariables() {
+        return getLocalVariables().size();
+    }
+
+    public boolean hasLocalVariables() {
+        return !getLocalVariables().isEmpty();
+    }
+
     @FameProperty(name = "numberOfLinesOfCode")
     public Number getNumberOfLinesOfCode() {
         return numberOfLinesOfCode;
@@ -450,6 +508,57 @@ public class BehaviouralEntity extends ContainerEntity implements THasSignature,
         throw new UnsupportedOperationException("Not yet implemented!");  
     }
     
+    @FameProperty(name = "types", opposite = "typeContainer", derived = true)
+    public Collection<TType> getTypes() {
+        if (types == null) {
+            types = new MultivalueSet<TType>() {
+                @Override
+                protected void clearOpposite(TType e) {
+                    e.setTypeContainer(null);
+                }
+                @Override
+                protected void setOpposite(TType e) {
+                    e.setTypeContainer(BehaviouralEntity.this);
+                }
+            };
+        }
+        return types;
+    }
+    
+    public void setTypes(Collection<? extends TType> types) {
+        this.getTypes().clear();
+        this.getTypes().addAll(types);
+    }                    
+    
+        
+    public void addTypes(TType one) {
+        this.getTypes().add(one);
+    }   
+    
+    public void addTypes(TType one, TType... many) {
+        this.getTypes().add(one);
+        for (TType each : many)
+            this.getTypes().add(each);
+    }   
+    
+    public void addTypes(Iterable<? extends TType> many) {
+        for (TType each : many)
+            this.getTypes().add(each);
+    }   
+                
+    public void addTypes(TType[] many) {
+        for (TType each : many)
+            this.getTypes().add(each);
+    }
+    
+    public int numberOfTypes() {
+        return getTypes().size();
+    }
+
+    public boolean hasTypes() {
+        return !getTypes().isEmpty();
+    }
+
 
 
 }

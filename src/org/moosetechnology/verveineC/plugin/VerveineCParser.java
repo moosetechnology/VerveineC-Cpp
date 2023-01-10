@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.moosetechnology.famix.famixcppentities.FamixCppEntitiesModel;
-import org.moosetechnology.famix.famixcppentities.FamixCppModel;
 import org.moosetechnology.famix.famixtraits.TSourceLanguage;
-import org.moosetechnology.famix.moose.Entity;
 import org.moosetechnology.verveineC.utils.Constants;
 import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
@@ -71,8 +68,6 @@ public class VerveineCParser {
 	 * Defaults to {@link VerveineParser#OUTPUT_FILE}
 	 */
 	private String outputFileName;   // name of the MSE file to output the model
-	private boolean incrementalParsing = false;   // if true we add the model to an existing one (found in 'outputFileName')
-
 
 	/**
 	 * Famix repository where the entities are stored

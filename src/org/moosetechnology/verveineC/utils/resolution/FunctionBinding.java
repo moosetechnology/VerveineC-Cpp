@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import javax.swing.text.html.parser.DTD;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -26,8 +24,6 @@ import org.moosetechnology.famix.moose.Entity;
  * @author Anquetil and Bhatti
  */
 public class FunctionBinding implements IFunction {
-
-	private static final String KEY_SEPARATOR = "/";
 
 	/**
 	 * The CDT binding of the entity

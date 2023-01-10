@@ -208,13 +208,7 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 		else if (node instanceof IASTFieldDeclarator) {  // actually seems to never occur ???
 			return this.visit((IASTFieldDeclarator)node);
 		}
-/* removed to deal with C attributes: IASTDeclarators
-  		else if (node instanceof ICPPASTDeclarator) {
-			return this.visit((ICPPASTDeclarator)node);
-		}
-	replaced by the following:
-*/	
-  		else {
+  		else { // for IASTDeclarators and ICPPASTDeclarator
 			return this.visitInternal(node);
 		}
 	}

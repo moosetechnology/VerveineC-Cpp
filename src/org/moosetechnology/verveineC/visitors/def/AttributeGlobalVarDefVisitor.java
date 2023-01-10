@@ -219,7 +219,7 @@ public class AttributeGlobalVarDefVisitor extends ClassMemberDefVisitor {
 		nodeBnd = null;
 		nodeName = node.getName();
 
-		if (nodeName.equals("")) {
+		if (nodeName.toString().equals("")) {
 			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), Enum.class);
 		}
 		else {

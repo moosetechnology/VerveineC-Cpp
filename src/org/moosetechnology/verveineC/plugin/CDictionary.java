@@ -391,7 +391,7 @@ public class CDictionary {
 		}
 		
 		try {
-			fmx = fmxClass.newInstance();
+			fmx = fmxClass.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			System.err.println("Unexpected error, could not create a FAMIX entity: "+e.getMessage());
 			e.printStackTrace();
@@ -601,7 +601,7 @@ public class CDictionary {
 		Access acc = new Access();
 		acc.setAccessor(accessor);
 		acc.setVariable(var);
-		acc.setIsWrite(new Boolean(isWrite));
+		acc.setIsWrite( isWrite);
 		chainPrevNext(prev, acc);
 		famixRepoAdd(acc);
 		
@@ -775,7 +775,7 @@ public class CDictionary {
 	 */
 	public ParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner, boolean persistIt) {
 		ParameterType fmx = ensureFamixEntity(ParameterType.class, key, name, persistIt);
-		fmx.setTypeContainer(owner);
+		fmx.setParameterizableClass((ParameterizableClass) owner);
 		return fmx;
 	}
 

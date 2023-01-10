@@ -118,7 +118,6 @@ public class FileUtil {
 	 * @param toLowerCase -- convert all file names to lower case (in windows, case is not important and might be inconsistent)
 	 * @param dest -- path within the project where to put the file
 	 */
-	@SuppressWarnings("resource")
 	private static void copyFile(IProject project, IFolder destPath, File orig, boolean toLowerCase, boolean addHExtension) {
 		if (checkFileType(orig.getName()) != SOURCE_FILE) {
 			return;

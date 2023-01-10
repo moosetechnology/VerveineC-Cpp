@@ -236,7 +236,7 @@ public class TypeDefVisitor extends AbstractVisitor {
 		Enum fmx;
 
 		nodeName = node.getName();
-		if (nodeName.equals("")) {
+		if (nodeName.toString().equals("")) {
 			// case of anonymous enum: it is probably within a typedef and will never be used directly
 			// so the key is mostly irrelevant, only used to find back the type when creating its enumerated values 
 			nodeBnd = resolver.mkStubKey(""+node.getFileLocation().getNodeOffset(), Enum.class);

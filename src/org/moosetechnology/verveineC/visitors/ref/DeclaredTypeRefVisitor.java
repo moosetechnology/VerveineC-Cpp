@@ -12,14 +12,15 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
 import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.BehaviouralEntity;
-import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
@@ -34,8 +35,9 @@ public class DeclaredTypeRefVisitor extends AbstractRefVisitor {
 	private boolean inKnRParams;
 
 	/**
-	 * The referred type set in visit(ICPPASTFunctionDefinition) or visit(IASTSimpleDeclaration)
-	 * used in visit(ICPPASTFunctionDeclarator) for methods or visit(ICPPASTDeclarator) for attribute
+	 * The type referred to in the declaration.
+	 * It is set in visit(ICPPASTFunctionDefinition) or visit(IASTSimpleDeclaration)
+	 * and used in visit(ICPPASTFunctionDeclarator) for methods or visit(ICPPASTDeclarator) for attribute
 	 */
 	private Type referredType;
 
@@ -100,6 +102,10 @@ public class DeclaredTypeRefVisitor extends AbstractRefVisitor {
 		return PROCESS_SKIP;
 	}
 
+	@Override
+	public int visit(ICPPASTCompositeTypeSpecifier node) {
+		return super.visit(node);
+	}
 	/**
 	 * can be an attribute or K&R style parameter declaration.
 	 * The inKnRParams is used to tell them apart

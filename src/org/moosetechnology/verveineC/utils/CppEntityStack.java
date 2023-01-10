@@ -280,35 +280,6 @@ public class CppEntityStack {
 		return this.lookUpto(Method.class);
 	}
 
-	/**
-	 * Returns the higher-most namespace in the Famix sense on the EntityStack
-	 * C++ namespaces we are interested in are: methods, classes, namespaces
-	 * @return null if could not find a C++ namespace
-	 */
-	@Deprecated
-	public Namespace getTopCppNamespace() {
-		return this.lookUpto(Namespace.class);
-/*		Stack<TNamedEntity> tmp = new Stack<TNamedEntity>();
-		TNamedEntity top;
-		
-		top = pop();
-		tmp.push(top);
-		while ( ! ((top == null) ||
-				   (top instanceof Method) ||
-				   (top instanceof org.moosetechnology.famix.cpp.Class) ||
-				   (top instanceof Namespace) )) {
-			top = pop();
-			tmp.push(top);
-		}
-		
-		while (! tmp.empty()) {
-			push( tmp.pop());
-		}
-
-		return (ContainerEntity) top;
-*/
-	}
-
 	// PROPERTIES OF THE TOP METHOD
 
 	/**

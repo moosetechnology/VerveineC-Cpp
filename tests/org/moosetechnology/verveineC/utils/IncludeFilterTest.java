@@ -4,9 +4,9 @@ package org.moosetechnology.verveineC.utils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
 
 import org.junit.jupiter.api.Test;
 import org.moosetechnology.verveineC.utils.fileAndStream.IncludeToLowerFilterStream;
@@ -39,13 +39,25 @@ public class IncludeFilterTest {
 					"#include \"otherone.h\"\n" +
 					"void AndMore() {}";
 
+	// utility
+	private InputStream stringToStream(String src2) {
+		InputStream stream = null;
+		try {
+			stream = new ByteArrayInputStream(SRC.getBytes("UTF-8"));
+		}
+		catch (IOException e) {
+			// should not happen
+		}
+		return stream;
+	}
+
 	@Test
 	public void testIncludeToLowerFilterStream() {
 		byte[] srcBuf = new byte[SRC.length()+2];  // +2 to give room for added ext
 		InputStream input;
 		int byteRead = 0;
 
-		input = new IncludeToLowerFilterStream( new StringBufferInputStream(SRC) );
+		input = new IncludeToLowerFilterStream( stringToStream(SRC) );
 		try {
 			byteRead = input.read(srcBuf);
 		} catch (IOException e) {
@@ -61,7 +73,7 @@ public class IncludeFilterTest {
 		InputStream input;
 		int byteRead = 0;
 
-		input = new IncludeWithHExtensionFilterStream( new StringBufferInputStream(SRC) );
+		input = new IncludeWithHExtensionFilterStream( stringToStream(SRC) );
 		try {
 			byteRead = input.read(srcBuf);
 		} catch (IOException e) {
@@ -70,14 +82,14 @@ public class IncludeFilterTest {
 		assertEquals( TGT_ADD_H.length(), byteRead);
 		assertEquals( TGT_ADD_H, new String(srcBuf, 0, byteRead) );
 	}
-	
+
 	@Test
 	public void testIncludeToLowerWithHExtensionFilterStream() {
 		byte[] srcBuf = new byte[SRC.length()+2];  // +2 to give room for added ext
 		InputStream input;
 		int byteRead = 0;
 
-		input = new IncludeToLowerFilterStream( new IncludeWithHExtensionFilterStream( new StringBufferInputStream(SRC)));
+		input = new IncludeToLowerFilterStream( new IncludeWithHExtensionFilterStream( stringToStream(SRC)));
 		try {
 			byteRead = input.read(srcBuf);
 		} catch (IOException e) {
@@ -93,7 +105,7 @@ public class IncludeFilterTest {
 		InputStream input;
 		int byteRead = 0;
 
-		input = new IncludeWithHExtensionFilterStream( new IncludeToLowerFilterStream( new StringBufferInputStream(SRC)));
+		input = new IncludeWithHExtensionFilterStream( new IncludeToLowerFilterStream( stringToStream(SRC)));
 		try {
 			byteRead = input.read(srcBuf);
 		} catch (IOException e) {

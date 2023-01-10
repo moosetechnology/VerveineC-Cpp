@@ -36,7 +36,6 @@ import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixtraits.TWithParameters;
 import org.moosetechnology.verveineC.plugin.CDictionary;
-import org.moosetechnology.verveineC.utils.Trace;
 import org.moosetechnology.verveineC.utils.WrongClassGuessException;
 import org.moosetechnology.verveineC.utils.fileAndStream.FileUtil;
 import org.moosetechnology.verveineC.visitors.AbstractVisitor;

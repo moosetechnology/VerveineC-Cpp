@@ -9,6 +9,7 @@ class mypair {
   public:
     mypair (T first, T second)
     {
+    	int toto;
       values[0]=first; values[1]=second;
     }
 };

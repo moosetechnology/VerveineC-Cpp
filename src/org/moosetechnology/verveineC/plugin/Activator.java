@@ -5,11 +5,11 @@ import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
 
+	@SuppressWarnings("unused")
 	static private BundleContext context;
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		System.out.println("Activating VerveineC");
 		Activator.context = bundleContext;
 	}
 

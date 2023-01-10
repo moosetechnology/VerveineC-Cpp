@@ -73,6 +73,7 @@ public abstract class AbstractRefVisitor extends AbstractVisitor {
 
 		this.getContext().push(fmx);
 		for (IASTDeclaration decl : node.getDeclarations(/*includeInactive*/true)) {
+			decl.accept(this);
 		}
 		returnedEntity = (SourcedEntity) getContext().pop();
 

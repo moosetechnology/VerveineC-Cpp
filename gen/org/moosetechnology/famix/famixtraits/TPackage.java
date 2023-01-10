@@ -10,7 +10,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Traits")
 @FameDescription("TPackage")
-public interface TPackage extends TNamedEntity, TEntityMetaLevelDependency, TSourceEntity {
+public interface TPackage extends TEntityMetaLevelDependency, TNamedEntity, TSourceEntity {
 
         @FameProperty(name = "childEntities", opposite = "parentPackage", derived = true)
     public Collection<TPackageable> getChildEntities();

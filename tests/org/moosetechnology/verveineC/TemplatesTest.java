@@ -7,10 +7,8 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.moosetechnology.famix.famixcentities.Attribute;
 import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcentities.NamedEntity;
-import org.moosetechnology.famix.famixcentities.Parameter;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixcppentities.ParameterType;
 import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
@@ -44,8 +42,8 @@ class TemplatesTest extends AbstractTest {
 		ParameterizableClass generic = first(entitiesOfType(ParameterizableClass.class));
 		assertEquals( "mypair",	generic.getName());
 
-		assertEquals(1, generic.getParameterizedTypes().size());
-		ParameterizedType tparam = (ParameterizedType) first( generic.getParameterizedTypes());
+		assertEquals(1, generic.getParameterTypes().size());
+		ParameterType tparam = (ParameterType) first( generic.getParameterTypes());
 		assertEquals("T", tparam.getName());
 
 		assertEquals(1, generic.getAttributes().size());
@@ -59,6 +57,8 @@ class TemplatesTest extends AbstractTest {
 		for (TParameter p : params) {
 			assertEquals(tparam, p.getDeclaredType());
 		}
+
+		assertEquals(6, tparam.getTypedEntities().size());  // values[2], first, second, GetMax(), a, b
 	}
 
 	@Test
@@ -70,7 +70,7 @@ class TemplatesTest extends AbstractTest {
 		assertEquals(ParameterType.class, fct.getDeclaredType().getClass());
 		ParameterType tparam = (ParameterType) fct.getDeclaredType();
 		
-		assertEquals("mypair", ((NamedEntity) tparam.getTypeContainer()).getName());  // not sure this is what should be (the T of GetMax is the same as the one of mypair)
+		assertEquals("mypair", tparam.getParameterizableClass().getName());  // not sure this is what should be (the T of GetMax is the same as the one of mypair)
 		
 		for (TParameter param : fct.getParameters()) {
 			assertEquals("T", param.getDeclaredType().getName()); // this should be the same as 'tparam', no ?
