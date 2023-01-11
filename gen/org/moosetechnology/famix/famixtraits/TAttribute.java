@@ -9,7 +9,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Traits")
 @FameDescription("TAttribute")
-public interface TAttribute extends TNamedEntity, TEntityMetaLevelDependency, TSourceEntity, TStructuralEntity, TTypedEntity, TAccessible {
+public interface TAttribute extends TNamedEntity, TSourceEntity, TEntityMetaLevelDependency, TStructuralEntity, TTypedEntity, TAccessible {
 
         @FameProperty(name = "hierarchyNestingLevel", derived = true)
     public Number getHierarchyNestingLevel();

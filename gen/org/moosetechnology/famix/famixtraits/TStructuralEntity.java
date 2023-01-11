@@ -8,7 +8,7 @@ import org.moosetechnology.famix.moosequery.TEntityMetaLevelDependency;
 
 @FamePackage("Famix-Traits")
 @FameDescription("TStructuralEntity")
-public interface TStructuralEntity extends TNamedEntity, TEntityMetaLevelDependency, TSourceEntity, TTypedEntity, TAccessible {
+public interface TStructuralEntity extends TSourceEntity, TNamedEntity, TEntityMetaLevelDependency, TTypedEntity, TAccessible {
 
     
 

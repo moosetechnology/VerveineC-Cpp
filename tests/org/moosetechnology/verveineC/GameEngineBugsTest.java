@@ -25,7 +25,6 @@ class GameEngineBugsTest extends AbstractTest {
 		org.moosetechnology.famix.famixcppentities.Class clazz = entityNamed(org.moosetechnology.famix.famixcppentities.Class.class, "Allocator");
 		assertNotNull(clazz);
 		assertEquals(4, clazz.getMethods().size());
-		//repo.all(NamedEntity.class);
 	}
 
 	@Test

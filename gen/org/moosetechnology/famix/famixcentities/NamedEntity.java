@@ -18,10 +18,7 @@ public class NamedEntity extends SourcedEntity implements TEntityMetaLevelDepend
 
     private String name;
     
-    @Override
-    public String toString() {
-    	return this.getClass().getSimpleName() + "(" + this.getName() + ")";
-    }
+
 
     @FameProperty(name = "fanIn", derived = true)
     public Number getFanIn() {
