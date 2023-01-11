@@ -42,7 +42,7 @@ class TemplatesTest extends AbstractTest {
 
 		assertEquals(1, generic.getParameterTypes().size());
 		ParameterType tparam = (ParameterType) first( generic.getParameterTypes());
-		assertEquals("T", tparam.getName());
+		assertEquals("T1", tparam.getName());
 
 		assertEquals(1, generic.getAttributes().size());
 		TAttribute attribute = first( generic.getAttributes());
@@ -56,7 +56,7 @@ class TemplatesTest extends AbstractTest {
 			assertEquals(tparam, p.getDeclaredType());
 		}
 
-		assertEquals(6, tparam.getTypedEntities().size());  // values[2], first, second, GetMax(), a, b
+		assertEquals(3, tparam.numberOfTypedEntities());
 	}
 
 	@Test
@@ -64,14 +64,14 @@ class TemplatesTest extends AbstractTest {
 		Function fct = entityNamed(Function.class, "GetMax");
 		assertNotNull(fct);
 
-		assertEquals("T", fct.getDeclaredType().getName());
+		assertEquals("T2", fct.getDeclaredType().getName());
 		assertEquals(ParameterType.class, fct.getDeclaredType().getClass());
 		ParameterType tparam = (ParameterType) fct.getDeclaredType();
 		
 		assertEquals("mypair", tparam.getParentParameterizableClass().getName());  // not sure this is what should be (the T of GetMax is the same as the one of mypair)
 		
 		for (TParameter param : fct.getParameters()) {
-			assertEquals("T", param.getDeclaredType().getName()); // this should be the same as 'tparam', no ?
+			assertEquals("T2", param.getDeclaredType().getName()); // this should be the same as 'tparam', no ?
 		}
 	}
 

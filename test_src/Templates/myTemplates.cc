@@ -2,21 +2,21 @@
 
 using namespace std;
 
-// TEMPLATE CLASS
-template <class T>
+// TEMPLATE CLASS  -- note: could put 'class' instead of  'typename'
+template <typename T1>
 class mypair {
-    T values [2];
+    T1 values [2];
   public:
-    mypair (T first, T second)
+    mypair (T1 first, T1 second)
     {
     	int toto;
       values[0]=first; values[1]=second;
     }
 };
 
-// TEMPLATE FUNCTION
-template <class T>
-T GetMax (T a, T b) {
+// TEMPLATE FUNCTION  -- note: could put 'class' instead of  'typename'
+template <typename T2>
+T2 GetMax (T2 a, T2 b) {
   return (a>b?a:b);
 }
 

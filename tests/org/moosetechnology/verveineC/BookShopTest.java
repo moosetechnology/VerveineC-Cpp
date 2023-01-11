@@ -73,8 +73,8 @@ class BookShopTest extends AbstractTest {
 			assertEquals(fct, invok.getSender());
 			assertEquals(1, invok.getCandidates().size() );
 			
-			TMethod candidate = (TMethod) first(invok.getCandidates());
-			if (candidate.getIsStub()) {
+			TInvocable candidate = first(invok.getCandidates());
+			if ( ((TSourceEntity)candidate).getIsStub()) {
 				assertEquals( UnknownBehaviouralEntity.class, candidate.getClass());
 			}
 			else  {
