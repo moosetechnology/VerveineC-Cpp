@@ -1,0 +1,18 @@
+Proposed meta-model for templates (in PlantUML)
+
+@startuml
+hide members
+Type <|-- TemplateType
+ParameterizableEntity <|-- TemplateType
+ParameterizableEntity <|-- TemplateBehavioural
+TemplateBehavioural <|-- TemplateFunction
+TemplateBehavioural <|-- TemplateMethod
+Behavioural <|-- Function
+Behavioural <|-- Method
+Function <|-- TemplateFunction
+Method <|-- TemplateMethod
+Type <|-- TemplateParameterType
+ParameterizableEntity o-- "*" TemplateParameterType
+ParameterizableEntity o-- "*" TemplateInstanciationEntity
+TemplateInstanciationEntity --> "*" Type : hasArgument
+@enduml
