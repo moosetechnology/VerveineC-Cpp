@@ -7,7 +7,7 @@ import ch.akuhn.fame.FamePackage;
 
 @FamePackage("Famix-Cpp-Entities")
 @FameDescription("NamedEntity")
-public class NamedEntity extends Entity  {
+public class NamedEntity extends org.moosetechnology.famix.famixcentities.NamedEntity  {
 
 
 
