@@ -230,14 +230,8 @@ public class CDictionary {
 	}
 
 	/**
-	 * Returns the key associated to a Famix Entity.
-	 * @param e -- the Named entity
-	 * @return the key associated to this entity or null if none
+	 * Returns the Famix Entity associated, raises an error if it does not have the required type
 	 */
-	public IBinding getEntityKey(TNamedEntity e) {
-		return entityToKey.get(e);
-	}
-
 	@SuppressWarnings("unchecked")
  	public <T extends TNamedEntity> T getEntityByKey(Class<T> clazz, IBinding key) {
  		TNamedEntity found = getEntityByKey(key); 
@@ -249,6 +243,15 @@ public class CDictionary {
 			return (T) found;
 		}
  	}
+
+	/**
+	 * Returns the key associated to a Famix Entity.
+	 * @param e -- the Named entity
+	 * @return the key associated to this entity or null if none
+	 */
+	public IBinding getEntityKey(TNamedEntity e) {
+		return entityToKey.get(e);
+	}
 
 	@SuppressWarnings("unchecked")
 	protected <T extends TNamedEntity> T getEntityIfNotNull(Class<T> clazz, IBinding key) {
@@ -323,31 +326,18 @@ public class CDictionary {
 	 * @return the Famix SourceAnchor added to fmx. May be null in case of incorrect/null parameter
 	 */
 	public SourceAnchor addSourceAnchorMulti(TSourceEntity fmx, String filename, IASTFileLocation anchor) {
-
-		if (anchor == null) {
-			return null;
-		}
-		else {
-			int beg = anchor.getNodeOffset();
-			int end = beg + anchor.getNodeLength();
-			
-			return addSourceAnchorMulti( fmx, filename, beg, end);
-		}
-	}
-
-	public SourceAnchor addSourceAnchorMulti(TSourceEntity fmx, String filename, int start, int end) {
-		MultipleFileAnchor mfa;
-
 		if (fmx == null) {
 			return null;
 		}
 
-		mfa = (MultipleFileAnchor) fmx.getSourceAnchor();
-		if (mfa == null) {
-			mfa = new MultipleFileAnchor();
-			fmx.setSourceAnchor(mfa);
-			famixRepoAdd(mfa);
+		if (anchor == null) {
+			return null;
 		}
+
+		int start = anchor.getNodeOffset();
+		int end = start + anchor.getNodeLength();
+
+		MultipleFileAnchor mfa = ensureMultipleFileAnchor(fmx);
 
 		// check if we already have this filename in the MultipleFileAnchor
 		for (TFileAnchor f : mfa.getFileAnchors()) {
@@ -356,9 +346,18 @@ public class CDictionary {
 				return mfa;
 			}
 		}
-		
-		mfa.addFileAnchors( createIndexedSourceAnchor(filename, start, end) );
 
+		mfa.addFileAnchors( createIndexedSourceAnchor(filename, start, end) );
+		return mfa;
+	}
+
+	private MultipleFileAnchor ensureMultipleFileAnchor(TSourceEntity fmx) {
+		MultipleFileAnchor mfa = (MultipleFileAnchor) fmx.getSourceAnchor();
+		if (mfa == null) {
+			mfa = new MultipleFileAnchor();
+			fmx.setSourceAnchor(mfa);
+			famixRepoAdd(mfa);
+		}
 		return mfa;
 	}
 
@@ -479,12 +478,12 @@ public class CDictionary {
 	 * @param name -- the name of the FAMIX ImplicitVariable (should be Dictionary.SELF_NAME or Dictionary.SUPER_NAME)
 	 * @param type -- the Famix Type for this ImplicitVariable (should not be null)
 	 * @param owner -- the ContainerEntity where the implicit variable appears (should be a method inside <b>type</b>)
-	 * @param persistIt -- whether the ImplicitVariable should be persisted in the Famix repository
 	 * @return the FAMIX ImplicitVariable or null in case of a FAMIX error
 	 */
-	public ImplicitVariable ensureFamixImplicitVariable(IBinding key, String name, Type type, Method owner, boolean persistIt) {
+	public ImplicitVariable ensureFamixImplicitVariable(String name, Type type, Method owner) {
 		ImplicitVariable fmx;
-		fmx = ensureFamixEntity(ImplicitVariable.class, key, name);
+		IBinding bnd = StubBinding.getInstance(Type.class, mooseName(owner, name));
+		fmx = ensureFamixEntity(ImplicitVariable.class, bnd, name);
 		fmx.setParentBehaviouralEntity(owner);
 		return fmx;
 	}
@@ -707,12 +706,16 @@ public class CDictionary {
 	 * Returns a FAMIX Type with the given <b>name</b>, creating it if it does not exist yet.
 	 * In the second case, sets some default properties: not Abstract, not Final, not Private, not Protected, not Public, not Interface
 	 * @param name -- the name of the FAMIX Class
-	 * @param persistIt -- whether the Type should be persisted in the Famix repository
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
-	public Type ensureFamixType(IBinding key, String name, TWithTypes owner, boolean persistIt) {
-		Type fmx = ensureFamixEntity(Type.class, key, name);
-		fmx.setTypeContainer(owner);
+	public Type ensureFamixType(IBinding key, String name, TWithTypes owner) {
+		Type fmx = getEntityIfNotNull(Type.class, key);
+
+		if (fmx == null) {
+			fmx = ensureFamixEntity(Type.class, key, name);
+			fmx.setTypeContainer(owner);
+		}
+		
 		return fmx;
 	}
 
@@ -739,25 +742,33 @@ public class CDictionary {
 	 * Returns a FAMIX ParameterizableClass with the given <b>name</b>, creating it if it does not exist yet
 	 * In the second case, sets some default properties: not Abstract, not Final, not Private, not Protected, not Public, not Interface
 	 * @param name -- the name of the FAMIX Class
-	 * @param persistIt -- whether the ParameterizableClass should be persisted in the Famix repository
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
-	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, TWithTypes owner, boolean persistIt) {
-		ParameterizableClass fmx = ensureFamixEntity(ParameterizableClass.class, key, name);
-		fmx.setTypeContainer(owner);
+	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, TWithTypes owner) {
+		ParameterizableClass fmx = getEntityIfNotNull(ParameterizableClass.class, key);
+
+		if (fmx == null) {
+			fmx = ensureFamixEntity(ParameterizableClass.class, key, name);
+			fmx.setTypeContainer(owner);
+		}
+		
 		return fmx;
 	}
 
 	/**
 	 * Returns a FAMIX ParameterizableType with the given <b>name</b>, creating it if it does not exist yet
 	 * @param name -- the name of the FAMIX Type
-	 * @param persistIt -- whether the ParameterizableClass should be persisted in the Famix repository
 	 * @return the FAMIX ParameterizableType or null in case of a FAMIX error
 	 */
-	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, TWithTypes owner, boolean persistIt) {
-		ParameterizedType fmx = ensureFamixEntity(ParameterizedType.class, key, name);
-		fmx.setTypeContainer(owner);
-		fmx.setParameterizableClass(generic);
+	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, TWithTypes owner) {
+		ParameterizedType fmx = getEntityIfNotNull(ParameterizedType.class, key);
+
+		if (fmx == null) {
+			fmx = ensureFamixEntity(ParameterizedType.class, key, name);
+			fmx.setTypeContainer(owner);
+			fmx.setParameterizableClass(generic);
+		}
+
 		return fmx;
 	}
 
@@ -765,12 +776,15 @@ public class CDictionary {
 	 * Returns a FAMIX ParameterType (created by a FAMIX ParameterizableClass) with the given <b>name</b>, creating it if it does not exist yet
 	 * In the second case, sets some default properties: not Abstract, not Final, not Private, not Protected, not Public
 	 * @param name -- the name of the FAMIX ParameterType
-	 * @param persistIt -- whether the ParameterType should be persisted in the Famix repository
 	 * @return the FAMIX ParameterType or null in case of a FAMIX error
 	 */
-	public ParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner, boolean persistIt) {
-		ParameterType fmx = ensureFamixEntity(ParameterType.class, key, name);
-		fmx.setParentParameterizableClass((ParameterizableClass) owner);
+	public ParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner) {
+		ParameterType fmx = getEntityIfNotNull(ParameterType.class, key);
+
+		if (fmx == null) {
+			fmx = ensureFamixEntity(ParameterType.class, key, name);
+			fmx.setParentParameterizableClass((ParameterizableClass) owner);
+		}
 		return fmx;
 	}
 
@@ -792,28 +806,34 @@ public class CDictionary {
 	 * @param name -- the name of the FAMIX PrimitiveType
 	 * @return the FAMIX PrimitiveType or null in case of a FAMIX error
 	 */
-	public PrimitiveType ensureFamixPrimitiveType(IBinding key, String name) {
-		return  ensureFamixUniqEntity(PrimitiveType.class, key, name);
+	public Type ensureFamixPrimitiveType(int type) {
+		StubBinding bnd = StubBinding.getInstance(Type.class, "_primitive_/"+type);
+		return  ensureFamixUniqEntity(PrimitiveType.class, bnd, primitiveTypeName(type));
 	}
-	
+
 	/**
 	 * Returns a FAMIX Method with the given <b>name</b>, creating it if it does not exist yet
 	 * @param key to which the entity will be mapped (may be null, but then it will be difficult to recover the entity)
 	 * @param name -- the name of the FAMIX Method (MUST NOT be null, but this is not checked)
-	 * @param sig -- method's signature, including type of parameters and return type (should not be null, but it will work if it is)
-	 * @param ret -- Famix Type returned by the method (ideally should only be null in case of a constructor, but will accept it in any case)
-	 * @param owner -- type defining the method (should not be null, but it will work if it is)
-	 * @param persistIt -- whether the Method should be persisted in the Famix repository
+	 * @param signature -- method's signature, including type of parameters and return type (should not be null, but it will work if it is)
+	 * @param parent-- type defining the method (should not be null, but it will work if it is)
 	 * @return the FAMIX Method or null in case of a FAMIX error
 	 */
-	public Method ensureFamixMethod(IBinding key, String name, String sig, Type ret, TWithMethods owner, boolean persistIt) {
-		Method fmx = (Method) ensureFamixEntity(Method.class, key, name);
-		fmx.setSignature(sig);
-		fmx.setDeclaredType(ret);
-		fmx.setParentType(owner);
+	public Method ensureFamixMethod(IBinding key, String name, String signature, TWithMethods parent) {
+		Method fmx = getEntityIfNotNull(Method.class, key);
+
+		if (fmx == null) {
+			fmx = ensureFamixEntity(Method.class, key, name);
+			fmx.setCyclomaticComplexity(1);
+			fmx.setNumberOfStatements(0);
+		}
+
+		fmx.setSignature(signature);
+		fmx.setParentType(parent);
+
 		return fmx;
 	}
-	
+
 	/**
 	 * Returns a FAMIX Function with the given <b>name</b>, creating it if it does not exist yet
 	 * @param key to which the entity will be mapped (may be null, but then it will be difficult to recover the entity)
@@ -950,45 +970,6 @@ public class CDictionary {
 		return fmx;
 	}
 
-	public Type ensureFamixType(IBinding key, String name, TWithTypes owner) {
-		Type fmx = getEntityIfNotNull(Type.class, key);
-
-		if (fmx == null) {
-			fmx = ensureFamixType(key, name, owner, /*persistIt*/true);
-		}
-		
-		return fmx;
-	}
-
-	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, TWithTypes owner) {
-		ParameterizableClass fmx = getEntityIfNotNull(ParameterizableClass.class, key);
-
-		if (fmx == null) {
-			fmx = ensureFamixParameterizableClass(key, name, owner, /*persistIt*/true);
-		}
-		
-		return fmx;
-	}
-
-	public ParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner) {
-		ParameterType fmx = getEntityIfNotNull(ParameterType.class, key);
-
-		if (fmx == null) {
-			fmx = ensureFamixParameterType(key, name, owner, /*persistIt*/true);
-		}
-		return fmx;
-	}
-
-	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, TWithTypes owner) {
-		ParameterizedType fmx = getEntityIfNotNull(ParameterizedType.class, key);
-
-		if (fmx == null) {
-			fmx = ensureFamixParameterizedType(key, name, generic, owner, /*persistIt*/true);
-		}
-
-		return fmx;
-	}
-
 	/** 
 	 * Creating a "parameter type" depends on the context
 	 * <ul>
@@ -1008,26 +989,6 @@ public class CDictionary {
 		else {
 			return ensureFamixType(bnd, name, owner);
 		}
-	}
-
-	/**
-	 * May return null
-	 */
-	public Type ensureFamixPrimitiveType(int type) {
-		StubBinding bnd = StubBinding.getInstance(Type.class, "_primitive_/"+type);
-		return ensureFamixPrimitiveType(bnd, primitiveTypeName(type));
-	}
-
-	public Method ensureFamixMethod(IBinding key, String name, String signature, TWithMethods parent) {
-		Method fmx = getEntityIfNotNull(Method.class, key);
-
-		if (fmx == null) {
-			fmx = ensureFamixMethod(key, name, signature, /*returnType*/null, parent, /*persistIt*/true);
-			fmx.setCyclomaticComplexity(1);
-			fmx.setNumberOfStatements(0);
-		}
-
-		return fmx;
 	}
 
 	/**
@@ -1051,11 +1012,6 @@ public class CDictionary {
 		}
 
 		return fmx;
-	}
-
-	public ImplicitVariable ensureFamixImplicitVariable(String name, Type type, Method owner) {
-		IBinding bnd = StubBinding.getInstance(Type.class, mooseName(owner, name));
-		return ensureFamixImplicitVariable( bnd, name, type, owner, /*persistIt*/true);
 	}
 
 	/**
