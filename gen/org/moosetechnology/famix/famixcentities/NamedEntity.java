@@ -17,9 +17,14 @@ public class NamedEntity extends SourcedEntity implements TEntityMetaLevelDepend
     private Collection<String> modifiers; 
 
     private String name;
+    @Override
+    public String toString() {
+    	// to ease debugging
+    	return "a-" + this.getClass().getCanonicalName() + "(" + this.getName() + ")";
+    }
+
     
-
-
+    
     @FameProperty(name = "fanIn", derived = true)
     public Number getFanIn() {
         // TODO: this is a derived property, implement this method manually.
