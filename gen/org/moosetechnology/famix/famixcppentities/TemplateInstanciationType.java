@@ -10,8 +10,8 @@ import org.moosetechnology.famix.famixtraits.TWithParameterizedTypes;
 
 
 @FamePackage("Famix-Cpp-Entities")
-@FameDescription("ParameterizedType")
-public class ParameterizedType extends Type implements TParameterizedType {
+@FameDescription("TemplateInstanciationType")
+public class TemplateInstanciationType extends Type implements TParameterizedType {
 
     private TWithParameterizedTypes parameterizableClass;
     

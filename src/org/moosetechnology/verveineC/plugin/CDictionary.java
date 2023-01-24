@@ -35,9 +35,9 @@ import org.moosetechnology.famix.famixcppentities.Inheritance;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixcppentities.Namespace;
 import org.moosetechnology.famix.famixcppentities.OOInvocation;
-import org.moosetechnology.famix.famixcppentities.ParameterType;
-import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
-import org.moosetechnology.famix.famixcppentities.ParameterizedType;
+import org.moosetechnology.famix.famixcppentities.TemplateParameterType;
+import org.moosetechnology.famix.famixcppentities.TemplateClass;
+import org.moosetechnology.famix.famixcppentities.TemplateInstanciationType;
 import org.moosetechnology.famix.famixcpreprocentities.CFile;
 import org.moosetechnology.famix.famixcpreprocentities.CompilationUnit;
 import org.moosetechnology.famix.famixcpreprocentities.HeaderFile;
@@ -51,7 +51,6 @@ import org.moosetechnology.famix.famixtraits.TReference;
 import org.moosetechnology.famix.famixtraits.TSourceEntity;
 import org.moosetechnology.famix.famixtraits.TStructuralEntity;
 import org.moosetechnology.famix.famixtraits.TWithAttributes;
-import org.moosetechnology.famix.famixtraits.TWithComments;
 import org.moosetechnology.famix.famixtraits.TWithDereferencedInvocations;
 import org.moosetechnology.famix.famixtraits.TWithMethods;
 import org.moosetechnology.famix.famixtraits.TWithParameters;
@@ -171,7 +170,7 @@ public class CDictionary {
 
 	public void removeEntity( TNamedEntity ent) {
 		IBinding key;
-		key = entityToKey.get(ent);
+		key = getEntityKey(ent);
 		entityToKey.remove(ent);
 		keyToEntity.remove(key);
 
@@ -258,16 +257,26 @@ public class CDictionary {
 		if (key == null) {
 			return null;
 		}
-		else {
-			TNamedEntity found = keyToEntity.get(key);
-			if ((found != null) && ! clazz.isInstance(found)) {
-				WrongClassGuessException.reportWrongClassGuess(clazz, found);
-				return null;
-			}
-			else {
+
+		TNamedEntity found = keyToEntity.get(key);
+		if (found == null) {
+			return null;
+		}
+
+		if (clazz.isInstance(found)) {
+			return (T)found;
+		}
+
+		// may be it's an alias, looks for the real type
+		if (found instanceof AliasType) {
+			if (clazz.isInstance(((AliasType)found).getAliasedType())) {
 				return (T)found;
 			}
+			WrongClassGuessException.reportWrongClassGuess(clazz, found);
+			return null;
 		}
+		
+		return null;
 	}
 
 	protected IndexedFileAnchor createIndexedSourceAnchor(String filename, int beg, int end) {
@@ -739,16 +748,16 @@ public class CDictionary {
 	}
 
 	/**
-	 * Returns a FAMIX ParameterizableClass with the given <b>name</b>, creating it if it does not exist yet
+	 * Returns a FAMIX TemplateClass with the given <b>name</b>, creating it if it does not exist yet
 	 * In the second case, sets some default properties: not Abstract, not Final, not Private, not Protected, not Public, not Interface
 	 * @param name -- the name of the FAMIX Class
 	 * @return the FAMIX Class or null in case of a FAMIX error
 	 */
-	public ParameterizableClass ensureFamixParameterizableClass(IBinding key, String name, TWithTypes owner) {
-		ParameterizableClass fmx = getEntityIfNotNull(ParameterizableClass.class, key);
+	public TemplateClass ensureFamixParameterizableClass(IBinding key, String name, TWithTypes owner) {
+		TemplateClass fmx = getEntityIfNotNull(TemplateClass.class, key);
 
 		if (fmx == null) {
-			fmx = ensureFamixEntity(ParameterizableClass.class, key, name);
+			fmx = ensureFamixEntity(TemplateClass.class, key, name);
 			fmx.setTypeContainer(owner);
 		}
 		
@@ -760,11 +769,11 @@ public class CDictionary {
 	 * @param name -- the name of the FAMIX Type
 	 * @return the FAMIX ParameterizableType or null in case of a FAMIX error
 	 */
-	public ParameterizedType ensureFamixParameterizedType(IBinding key, String name, ParameterizableClass generic, TWithTypes owner) {
-		ParameterizedType fmx = getEntityIfNotNull(ParameterizedType.class, key);
+	public TemplateInstanciationType ensureFamixParameterizedType(IBinding key, String name, TemplateClass generic, TWithTypes owner) {
+		TemplateInstanciationType fmx = getEntityIfNotNull(TemplateInstanciationType.class, key);
 
 		if (fmx == null) {
-			fmx = ensureFamixEntity(ParameterizedType.class, key, name);
+			fmx = ensureFamixEntity(TemplateInstanciationType.class, key, name);
 			fmx.setTypeContainer(owner);
 			fmx.setParameterizableClass(generic);
 		}
@@ -773,17 +782,17 @@ public class CDictionary {
 	}
 
 	/**
-	 * Returns a FAMIX ParameterType (created by a FAMIX ParameterizableClass) with the given <b>name</b>, creating it if it does not exist yet
+	 * Returns a FAMIX TemplateParameterType (created by a FAMIX TemplateClass) with the given <b>name</b>, creating it if it does not exist yet
 	 * In the second case, sets some default properties: not Abstract, not Final, not Private, not Protected, not Public
-	 * @param name -- the name of the FAMIX ParameterType
-	 * @return the FAMIX ParameterType or null in case of a FAMIX error
+	 * @param name -- the name of the FAMIX TemplateParameterType
+	 * @return the FAMIX TemplateParameterType or null in case of a FAMIX error
 	 */
-	public ParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner) {
-		ParameterType fmx = getEntityIfNotNull(ParameterType.class, key);
+	public TemplateParameterType ensureFamixParameterType(IBinding key, String name, TWithTypes owner) {
+		TemplateParameterType fmx = getEntityIfNotNull(TemplateParameterType.class, key);
 
 		if (fmx == null) {
-			fmx = ensureFamixEntity(ParameterType.class, key, name);
-			fmx.setParentParameterizableClass((ParameterizableClass) owner);
+			fmx = ensureFamixEntity(TemplateParameterType.class, key, name);
+			fmx.setParentParameterizableClass((TemplateClass) owner);
 		}
 		return fmx;
 	}
@@ -906,22 +915,6 @@ public class CDictionary {
 	}
 
 	/**
-	 * Creates and returns a FAMIX Comment and associates it with an Entity (ex: for Javadocs)
-	 * @param cmt -- the content (String) of the comment 
-	 * @param owner -- the entity concerned by this comment
-	 * @return the FAMIX Comment
-	 */
-	public Comment createFamixComment(String cmt, TWithComments owner) {
-		Comment fmx = null;
-		
-		if ( (cmt != null) && (owner != null) ) {
-			fmx = createFamixComment(cmt);
-			fmx.setContainer(owner);
-		}
-		return fmx;
-	}
-	
-	/**
 	 * Creates and returns a FAMIX Parameter and associates it with a BehaviouralEntity
 	 * @param name -- the name of the parameter
 	 * @param type -- the type of the parameter
@@ -973,7 +966,7 @@ public class CDictionary {
 	/** 
 	 * Creating a "parameter type" depends on the context
 	 * <ul>
-	 * <li> If it is a ParameterizableClass (e.g. "<code>template &lt;class T&gt; class C</code> ...", we create a ParameterType
+	 * <li> If it is a TemplateClass (e.g. "<code>template &lt;class T&gt; class C</code> ...", we create a TemplateParameterType
 	 * <li> If it is a Method (e.g. "<code>template &lt;class T&gt; void fct(T)</code> ..."), we create a Type
 	 * </ul>
 	 */
@@ -983,7 +976,7 @@ public class CDictionary {
     	IBinding bnd;
     	bnd = StubBinding.getInstance(Type.class, mooseName((ContainerEntity) owner, name));
 
-		if (owner instanceof ParameterizableClass) {
+		if (owner instanceof TemplateClass) {
 			return ensureFamixParameterType(bnd, name, owner);
 		}
 		else {

@@ -23,8 +23,8 @@ import org.moosetechnology.famix.famixcentities.Type;
 import org.moosetechnology.famix.famixcentities.UnknownContainerEntity;
 import org.moosetechnology.famix.famixcppentities.Method;
 import org.moosetechnology.famix.famixcppentities.Namespace;
-import org.moosetechnology.famix.famixcppentities.ParameterType;
-import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
+import org.moosetechnology.famix.famixcppentities.TemplateParameterType;
+import org.moosetechnology.famix.famixcppentities.TemplateClass;
 import org.moosetechnology.famix.famixtraits.TAttribute;
 import org.moosetechnology.famix.famixtraits.TFunction;
 import org.moosetechnology.famix.famixtraits.TLocalVariable;
@@ -459,9 +459,9 @@ public class NameResolver {
 		return findInLocals(name, (ContainerEntity)context);
 	}
 
-	public TNamedEntity findInLocals(String name, ParameterizableClass context) {		
+	public TNamedEntity findInLocals(String name, TemplateClass context) {		
 
-		for (ParameterType child : context.getParameterTypes()) {
+		for (TemplateParameterType child : context.getParameterTypes()) {
 			if (child.getName().equals(name)) {
 				return child;
 			}
@@ -708,8 +708,8 @@ public class NameResolver {
 	}
 
 	/**
-	 * Creates a ParameterizedType, if possible in link with its ParameterizableClass
-	 * Puts parameterTypes argument into the ParameterizedType when possible
+	 * Creates a TemplateInstanciationType, if possible in link with its TemplateClass
+	 * Puts parameterTypes argument into the TemplateInstanciationType when possible
 	 */
 	private Type referedParameterTypeInstance(IBinding bnd, IASTName name) {
 		String strName = name.toString();
@@ -717,12 +717,12 @@ public class NameResolver {
 		String typName = new QualifiedName(strName.substring(0, i)).unqualifiedName();
 
 		TParameterizedType fmx = null;
-		ParameterizableClass generic = null;
+		TemplateClass generic = null;
 		try {
-			generic = (ParameterizableClass) findInParent(typName, getContext().top(), /*recursive*/true);
+			generic = (TemplateClass) findInParent(typName, getContext().top(), /*recursive*/true);
 		}
 		catch (ClassCastException e) {
-			// create a ParameterizedType for an unknown generic
+			// create a TemplateInstanciationType for an unknown generic
 			// 'generic' var. remains null
 		}
 		TWithTypes owner = (TWithTypes) resolveOrCreate(new QualifiedName(name).nameQualifiers().toString(), /*mayBeNull*/false, UnknownContainerEntity.class);

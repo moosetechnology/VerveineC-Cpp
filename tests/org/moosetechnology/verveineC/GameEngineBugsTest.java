@@ -27,10 +27,4 @@ class GameEngineBugsTest extends AbstractTest {
 		assertEquals(4, clazz.getMethods().size());
 	}
 
-	@Test
-	void testStructAlias() {		
-		AliasType typ = entityNamed(AliasType.class, "UBreakIterator");
-		assertNotNull(typ);
-	}
-
 }

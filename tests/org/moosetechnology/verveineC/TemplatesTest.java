@@ -9,8 +9,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.moosetechnology.famix.famixcentities.Function;
 import org.moosetechnology.famix.famixcppentities.Method;
-import org.moosetechnology.famix.famixcppentities.ParameterType;
-import org.moosetechnology.famix.famixcppentities.ParameterizableClass;
+import org.moosetechnology.famix.famixcppentities.TemplateParameterType;
+import org.moosetechnology.famix.famixcppentities.TemplateClass;
 import org.moosetechnology.famix.famixtraits.TAttribute;
 import org.moosetechnology.famix.famixtraits.TParameter;
 
@@ -29,19 +29,19 @@ class TemplatesTest extends AbstractTest {
 
 	@Test
 	public void testNumberOfEntities() {	
-		assertEquals( 1, entitiesOfType(ParameterizableClass.class).size());
-		assertEquals( 1, entitiesOfType(ParameterType.class).size());
+		assertEquals( 1, entitiesOfType(TemplateClass.class).size());
+		assertEquals( 1, entitiesOfType(TemplateParameterType.class).size());
 		assertEquals( 1, entitiesOfType(Method.class).size());
 		assertEquals( 2, entitiesOfType(Function.class).size());
 	}
 
 	@Test
 	public void testTemplateClass() {
-		ParameterizableClass generic = first(entitiesOfType(ParameterizableClass.class));
+		TemplateClass generic = first(entitiesOfType(TemplateClass.class));
 		assertEquals( "mypair",	generic.getName());
 
 		assertEquals(1, generic.getParameterTypes().size());
-		ParameterType tparam = (ParameterType) first( generic.getParameterTypes());
+		TemplateParameterType tparam = (TemplateParameterType) first( generic.getParameterTypes());
 		assertEquals("T1", tparam.getName());
 
 		assertEquals(1, generic.getAttributes().size());
@@ -65,8 +65,8 @@ class TemplatesTest extends AbstractTest {
 		assertNotNull(fct);
 
 		assertEquals("T2", fct.getDeclaredType().getName());
-		assertEquals(ParameterType.class, fct.getDeclaredType().getClass());
-		ParameterType tparam = (ParameterType) fct.getDeclaredType();
+		assertEquals(TemplateParameterType.class, fct.getDeclaredType().getClass());
+		TemplateParameterType tparam = (TemplateParameterType) fct.getDeclaredType();
 		
 		assertEquals("mypair", tparam.getParentParameterizableClass().getName());  // not sure this is what should be (the T of GetMax is the same as the one of mypair)
 		

@@ -114,7 +114,7 @@ public class TemplateParameterDefVisitor extends AbstractVisitor {
 			else if (param instanceof ICPPASTParameterDeclaration ) {
 				IBinding bnd;
 				// non type parameter for a template (such has N in "template <Class T, size_t N> class List ...")
-				// should represent them as Parameters but implies redefining ParameterizableClass
+				// should represent them as Parameters but implies redefining TemplateClass
 				// use UnknownVariable as a temporary(!) workaround
 				name = ((ICPPASTParameterDeclaration)param).getDeclarator().getName().toString();
 				bnd = resolver.mkStubKey( name, UnknownVariable.class);

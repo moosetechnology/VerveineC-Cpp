@@ -11,55 +11,55 @@ import org.moosetechnology.famix.famixtraits.TWithParameterizedTypes;
 
 
 @FamePackage("Famix-Cpp-Entities")
-@FameDescription("ParameterizableClass")
-public class ParameterizableClass extends Class implements TWithParameterizedTypes {
+@FameDescription("TemplateClass")
+public class TemplateClass extends Class implements TWithParameterizedTypes {
 
-    private Collection<ParameterType> parameterTypes; 
+    private Collection<TemplateParameterType> parameterTypes; 
 
     private Collection<TParameterizedType> parameterizedTypes; 
 
 
 
     @FameProperty(name = "parameterTypes", opposite = "parentParameterizableClass", derived = true)
-    public Collection<ParameterType> getParameterTypes() {
+    public Collection<TemplateParameterType> getParameterTypes() {
         if (parameterTypes == null) {
-            parameterTypes = new MultivalueSet<ParameterType>() {
+            parameterTypes = new MultivalueSet<TemplateParameterType>() {
                 @Override
-                protected void clearOpposite(ParameterType e) {
+                protected void clearOpposite(TemplateParameterType e) {
                     e.setParentParameterizableClass(null);
                 }
                 @Override
-                protected void setOpposite(ParameterType e) {
-                    e.setParentParameterizableClass(ParameterizableClass.this);
+                protected void setOpposite(TemplateParameterType e) {
+                    e.setParentParameterizableClass(TemplateClass.this);
                 }
             };
         }
         return parameterTypes;
     }
     
-    public void setParameterTypes(Collection<? extends ParameterType> parameterTypes) {
+    public void setParameterTypes(Collection<? extends TemplateParameterType> parameterTypes) {
         this.getParameterTypes().clear();
         this.getParameterTypes().addAll(parameterTypes);
     }                    
     
         
-    public void addParameterTypes(ParameterType one) {
+    public void addParameterTypes(TemplateParameterType one) {
         this.getParameterTypes().add(one);
     }   
     
-    public void addParameterTypes(ParameterType one, ParameterType... many) {
+    public void addParameterTypes(TemplateParameterType one, TemplateParameterType... many) {
         this.getParameterTypes().add(one);
-        for (ParameterType each : many)
+        for (TemplateParameterType each : many)
             this.getParameterTypes().add(each);
     }   
     
-    public void addParameterTypes(Iterable<? extends ParameterType> many) {
-        for (ParameterType each : many)
+    public void addParameterTypes(Iterable<? extends TemplateParameterType> many) {
+        for (TemplateParameterType each : many)
             this.getParameterTypes().add(each);
     }   
                 
-    public void addParameterTypes(ParameterType[] many) {
-        for (ParameterType each : many)
+    public void addParameterTypes(TemplateParameterType[] many) {
+        for (TemplateParameterType each : many)
             this.getParameterTypes().add(each);
     }
     
@@ -81,7 +81,7 @@ public class ParameterizableClass extends Class implements TWithParameterizedTyp
                 }
                 @Override
                 protected void setOpposite(TParameterizedType e) {
-                    e.setParameterizableClass(ParameterizableClass.this);
+                    e.setParameterizableClass(TemplateClass.this);
                 }
             };
         }

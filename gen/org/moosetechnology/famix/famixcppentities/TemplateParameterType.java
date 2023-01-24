@@ -9,19 +9,19 @@ import org.moosetechnology.famix.famixtraits.TParameterType;
 
 
 @FamePackage("Famix-Cpp-Entities")
-@FameDescription("ParameterType")
-public class ParameterType extends Type implements TParameterType {
+@FameDescription("TemplateParameterType")
+public class TemplateParameterType extends Type implements TParameterType {
 
-    private ParameterizableClass parentParameterizableClass;
+    private TemplateClass parentParameterizableClass;
     
 
 
     @FameProperty(name = "parentParameterizableClass", opposite = "parameterTypes", container = true)
-    public ParameterizableClass getParentParameterizableClass() {
+    public TemplateClass getParentParameterizableClass() {
         return parentParameterizableClass;
     }
 
-    public void setParentParameterizableClass(ParameterizableClass parentParameterizableClass) {
+    public void setParentParameterizableClass(TemplateClass parentParameterizableClass) {
         if (this.parentParameterizableClass != null) {
             if (this.parentParameterizableClass.equals(parentParameterizableClass)) return;
             this.parentParameterizableClass.getParameterTypes().remove(this);
